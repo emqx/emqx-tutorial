@@ -92,7 +92,7 @@ EMQ X对资源的使用主要有以下的影响因素，每个因素都会对计
 
 
 
-**Q: MQTT协议与HTTP协议相比，有何优点和弱点？ **
+**Q: MQTT协议与HTTP协议相比，有何优点和弱点?**
 
 HTTP协议是一个无状态的协议，每个HTTP请求为TCP短连接，每次请求都需要重新创建一个TCP连接（可以通过keep-alive属性来优化TCP连接的使用，多个HTTP请求可以共享该TCP连接）；而MQTT协议为长连接协议，每个客户端都会保持一个长连接。与HTTP协议相比优势在于，
 
@@ -117,15 +117,25 @@ HTTP协议是一个无状态的协议，每个HTTP请求为TCP短连接，每次
 
 **Q: 我可以捕获设备上下线的事件吗？该如何使用？**
 
-EMQ X可以捕获设备的上下线的事件，并将其保存到数据库中（支持的数据库包括Redis、MySQL、PostgreSQL、MongoDB和Cassandra）。用户可以通过
+EMQ X可以捕获设备的上下线的事件，并将其保存到数据库中（支持的数据库包括Redis、MySQL、PostgreSQL、MongoDB和Cassandra）。用户可以通过配置文件指定所要保存的数据库，以及监听client.connected和client.disconnected事件，这样在设备上、下线的时候把数据保存到数据库中。
 
-
+*注：该功能只在企业版中提供*
 
 **Q: 什么是hook？使用场景是什么？**
+
+钩子（hook）指的是由EMQ X在连接、对话和消息触发某些事件的时候提供给对外部的接口，主要提供了如下的钩子，EMQ X提供了将这些hook产生的事件持久化至数据库的功能，从而很方便地查询得知客户端的连接、断开等各种信息。
+
+- client.connected
+- client.disconnected
+- session.subscribed
+- message.publish
+- message.acked
 
 
 
 **Q: 什么是WebSocket？什么情况下我需要通过WebSocket去调用EMQ X的服务？**
+
+WebSocket 是一种在单个 TCP 连接上进行全双工通讯的协议。
 
 
 
