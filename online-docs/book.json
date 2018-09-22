@@ -1,0 +1,36 @@
+{
+  "plugins": [
+    "prism",
+    "-highlight",
+    "-sharing",
+    "expandable-chapters-small",
+    "simple-page-toc",
+    "anchors",
+    "copy-code-button"
+  ],
+  "pluginsConfig": {
+    "simple-page-toc": {
+      "maxDepth": 3,
+      "skipFirstH1": true
+    },
+    "anchor-navigation-ex": {
+      "isRewritePageTitle": true,
+      "isShowTocTitleIcon": true,
+      "tocLevel1Icon": "fa fa-hand-o-right",
+      "tocLevel2Icon": "fa fa-hand-o-right",
+      "tocLevel3Icon": "fa fa-hand-o-right"
+    }
+  },
+  "title": "EMQ X 在线手册",
+  "author" : "EMQX Team",
+  "language": "zh-hans",
+  "links": {
+    "sharing": {
+      "facebook": false,
+      "twitter": false
+    }
+  },
+  "structure": {
+    "summary": "SUMMARY.zh-CN.md"
+  }
+}
