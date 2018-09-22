@@ -249,9 +249,9 @@ EMQ X可以转发消息到其他消息中间件，通过EMQ X提供的桥接就�
 
 
 
-**Q: MQTT Broker（比如Mosquito）可以转发消息到EMQ X吗？**
+**Q: MQTT Broker（比如Mosquitto）可以转发消息到EMQ X吗？**
 
-Mosquito可以配置转发消息到EMQ X，请参考[TODO](https://www.emqx.io)。
+Mosquitto可以配置转发消息到EMQ X，请参考[TODO](https://www.emqx.io)。
 
 
 
