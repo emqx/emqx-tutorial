@@ -2,15 +2,14 @@
 
 ## 快速开始
 * [EMQ X 简介](README.md)
+    * [什么是 MQTT](quick-start/whats-mqtt.md)
+    * [什么是 EMQ X](quick-start/whats-emqx.md)
 
-* [什么是 MQTT](quick-start/quick-start.md)
-    * [什么是 MQTT](quick-start/descrption.md)
-    * [什么是 EMQ X]()
-
-* [下载及安装]()
-    * [安装预制条件]()
-    * [如何选择并下载 EMQ X]()
-    * [第一次安装 EMQ X]()
+* [下载及安装](quick-start/download-install.md)
+    * [安装预置条件](quick-start/precondition.md)
+    * [如何选择并下载 EMQ X](quick-start/choose-download.md)
+    * [第一次安装 EMQ X](quick-start/install-first.md)
+    * [第一次运行 EMQ X](quick-start/run-first.md)
 
 
 ## 集群
@@ -35,30 +34,28 @@
     * [消息队列]()
 * [配置 EMQ X 插件]()    
 
-<!--
-# 桥接
-## 其他消息中间件桥接至 EMQ X
-### Mosquitto
-### HiveMQ
-### RabbitMQ
-### VerneMQ
-## EMQ X 桥接至其他消息中间件
-### Mosquitto
-### HiveMQ
-### RabbitMQ
-### VerneMQ
-## EMQ X 桥接至流式服务
-### Kafka 桥接
+## 桥接
+* [其他消息中间件桥接至 EMQ X]()
+   * [Mosquitto]()
+   * [HiveMQ]()
+   * [RabbitMQ]()
+   * [VerneMQ]()
+* [EMQ X 桥接至其他消息中间件]()
+   * [Mosquitto]()
+   * [HiveMQ]()
+   * [RabbitMQ]()
+   * [VerneMQ]()
+*[EMQ X 桥接至流式服务]()
+   * [Kafka 桥接]()
 
-# 安全
-## 认证
-## ACL 访问控制
-## 安全链接
-### 证书配置
-### PSK
+## 安全
+* [认证]()
+* [ACL 访问控制]()
+* [安全链接]()
+    * [证书配置]()
+    * [PSK]()
 
-# 进阶功能
-## 代理订阅
-## 流控
-## 离线消息
--->
+## 进阶功能
+* [代理订阅]()
+* [流控]()
+* [离线消息]()
