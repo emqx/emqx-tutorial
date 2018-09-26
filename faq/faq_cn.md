@@ -56,30 +56,25 @@ EMQ X 企业版支持下载试用，用户可以在[https://www.emqx.io/download
 
 - [阿里云](https://market.aliyun.com/products/56014009/cmjj029182.html?spm=5176.730005.productlist.d_cmjj029182.53cf3524sCmfnp)
 
-- [青云](https://appcenter.qingcloud.com/search/category/iot)。
+- [青云](https://appcenter.qingcloud.com/search/category/iot)
 
-
-Q: EMQ X 提供方案咨询服务吗？
+## Q: EMQ X 提供方案咨询服务吗？
 
 A: 提供。EMQ X 在为客户搭建物联网平台的咨询方面有丰富的经验，包括为互联网客户和电信运营商搭建千万级物联网平台的实践。包括如何搭建负载均衡、集群、安全策略、数据存储和分析方案等方面可以根据客户的需求制定方案，满足业务发展的需求。
 
-
-Q: EMQ X 推荐部署的操作系统是什么？
+## Q: EMQ X 推荐部署的操作系统是什么？
 
 A: EMQ X 支持跨平台部署在Linux、Windows、MacOS、ARM嵌入系统，生产系推荐在 CentOS、Ubuntu、Debian 等 Linux 发行版上部署。
 
-
-Q: EMQ X 支持Windows操作系统吗？
+## Q: EMQ X 支持Windows操作系统吗？
 
 A: 支持。部署参考[文章](https://www.jianshu.com/p/e5cf0c1fd55c).
 
-
-Q: EMQ X 支持私有协议进行扩展吗？如支持应该如何实现？
+## Q: EMQ X 支持私有协议进行扩展吗？如支持应该如何实现？
 
 A: TODO...
 
-
-Q: EMQ X 如何预估资源的使用？
+## Q: EMQ X 如何预估资源的使用？
 
 A: EMQ X 对资源的使用主要有以下的影响因素，每个因素都会对计算和存储资源的使用产生影响：
 
@@ -97,8 +92,7 @@ A: EMQ X 对资源的使用主要有以下的影响因素，每个因素都会�
 
 可参考[TODO](https://www.emqx.io)来预估计算资源的使用；公有云快速部署 EMQ X 实例，请参考[TODO](https://www.emqx.io)。
 
-
-Q: MQTT 协议与 HTTP 协议相比，有何优点和弱点?
+## Q: MQTT 协议与 HTTP 协议相比，有何优点和弱点?
 
 A: HTTP 协议是一个无状态的协议，每个 HTTP 请求为 TCP 短连接，每次请求都需要重新创建一个 TCP 连接（可以通过keep-alive属性来优化TCP连接的使用，多个 HTTP 请求可以共享该 TCP 连接）；而 MQTT 协议为长连接协议，每个客户端都会保持一个长连接。与HTTP协议相比优势在于
 ：
@@ -111,7 +105,7 @@ A: HTTP 协议是一个无状态的协议，每个 HTTP 请求为 TCP 短连接�
 
 - MQTT 提供消息质量控制（QoS），消息质量等级越高，消息交付的质量就越有保障，在物联网的应用场景下，用户可以根据不同的使用场景来设定不同的消息质量等级；
 
-Q: 什么是认证鉴权？使用场景是什么？
+## Q: 什么是认证鉴权？使用场景是什么？
 
 A: 认证鉴权指的是当一个客户端连接到 MQTT 服务器的时候，通过服务器端的配置来控制客户端连接服务器的权限。EMQ的认证机制包含了有三种，
 
@@ -123,12 +117,11 @@ A: 认证鉴权指的是当一个客户端连接到 MQTT 服务器的时候，�
 
 通过用户名密码、ClientID认证的方式除了通过配置文件之外，还可以通过各类数据库和外部应用来配置，比如MySQL、PostgreSQL、Redis、MongoDB、HTTP和LDAP等。
 
-
-Q: 我可以捕获设备上下线的事件吗？该如何使用？
+## Q: 我可以捕获设备上下线的事件吗？该如何使用？
 
 A: EMQ X 企业版支持捕获设备的上下线的事件，并将其保存到数据库中（支持的数据库包括Redis、MySQL、PostgreSQL、MongoDB和Cassandra）。用户可以通过配置文件指定所要保存的数据库，以及监听client.connected和client.disconnected事件，这样在设备上、下线的时候把数据保存到数据库中。
 
-Q: 什么是Hook？使用场景是什么？
+## Q: 什么是Hook？使用场景是什么？
 
 A: 钩子（hook）指的是由 EMQ X 在连接、对话和消息触发某些事件的时候提供给对外部的接口，主要提供了如下的钩子，EMQ X提供了将这些hook产生的事件持久化至数据库的功能，从而很方便地查询得知客户端的连接、断开等各种信息。
 
@@ -146,13 +139,11 @@ A: 钩子（hook）指的是由 EMQ X 在连接、对话和消息触发某些事
 - message.acked：MQTT 消息回执
 - message.dropped：MQTT 消息丢弃
 
-
-Q: 什么是WebSocket？什么情况下需要通过WebSocket去连接EMQ X服务器？
+## Q: 什么是WebSocket？什么情况下需要通过WebSocket去连接EMQ X服务器？
 
 A: WebSocket 是一种在基于HTTP连接上支持全双工通讯的协议，通过该协议，用户可以使用浏览器和服务器之间的双向通信，比如可以通过服务器往浏览器端推送消息。EMQ X 提供了 WebSocket 连接支持，用户可以在浏览器端直接实现对主题的订阅和消息发送等操作。
 
-
-Q: 我想限定某些主题只为特定的客户端所使用，EMQ X该如何进行配置？
+## Q: 我想限定某些主题只为特定的客户端所使用，EMQ X该如何进行配置？
 
 A: EMQ X 支持限定客户端可以使用的主题，从而实现设备权限的管理。如果要做这样的限定，需要在 EMQ X 启用ACL（Access Control List），并禁用匿名访问和关闭无ACL命中的访问许可（为了测试调试方便，在默认配置中，后两项是开启的，请注意关闭）。
 
