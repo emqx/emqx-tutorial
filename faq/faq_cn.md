@@ -80,7 +80,7 @@ A: EMQ X 对资源的使用主要有以下的影响因素，每个因素都会�
 
 - 连接数：对于每一个 MQTT 长连接，EMQ X 会创建两个Erlang进程，每个进程都会耗费一定的资源。连接数越高，所需的资源越多；
 
-- 平均吞吐量：值的是每秒 Pub 和 Sub 的消息数量。吞吐量越高，EMQ X 的路由处理和消息转发处理就需要更多的资源；
+- 平均吞吐量：指的是每秒 Pub 和 Sub 的消息数量。吞吐量越高，EMQ X 的路由处理和消息转发处理就需要更多的资源；
 
 - 消息体大小：消息体越大，在 EMQ X 中处理消息转发的时候在内存中进行数据存储和处理，所需的资源就越多；
 
@@ -111,7 +111,7 @@ A: 认证鉴权指的是当一个客户端连接到 MQTT 服务器的时候，�
 
 - 用户名密码：针对每个 MQTT 客户端的连接，可以在服务器端进行配置，用于设定用户名和密码，只有在用户名和密码匹配的情况下才可以让客户端进行连接
 
-- ClientID：每个MQTT客户端在连接到服务器的时候都会有个唯一的ClientID，可以在服务器中配置可以连接该服务器的ClientID列表，这些ClientID的列表
+- ClientID：每个MQTT客户端在连接到服务器的时候都会有个唯一的ClientID，可以在服务器中配置可以连接该服务器的ClientID列表，这些ClientID的列表里的客户端可以连接该服务器
 
 - 匿名：允许匿名访问
 
@@ -119,7 +119,15 @@ A: 认证鉴权指的是当一个客户端连接到 MQTT 服务器的时候，�
 
 ## Q: 我可以捕获设备上下线的事件吗？该如何使用？
 
-A: EMQ X 企业版支持捕获设备的上下线的事件，并将其保存到数据库中（支持的数据库包括Redis、MySQL、PostgreSQL、MongoDB和Cassandra）。用户可以通过配置文件指定所要保存的数据库，以及监听client.connected和client.disconnected事件，这样在设备上、下线的时候把数据保存到数据库中。
+A: EMQ X 企业版可以通过以下的三种方式捕获设备的上下线的事件，
+
+- Web Hook
+- 订阅相关的$SYS主题
+  - $SYS/brokers/${node}/clients/${clientid}/connected
+  - $SYS/brokers/${node}/clients/${clientid}/disconnected
+- 直接保存到数据库
+
+最后一种方法只有在企业版里才支持，支持的数据库包括Redis、MySQL、PostgreSQL、MongoDB和Cassandra。用户可以通过配置文件指定所要保存的数据库，以及监听client.connected和client.disconnected事件，这样在设备上、下线的时候把数据保存到数据库中。
 
 ## Q: 什么是Hook？使用场景是什么？
 

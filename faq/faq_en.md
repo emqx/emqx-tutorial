@@ -68,41 +68,52 @@ A: TODO...
 
 ## Q: How to estimize reource usage of EMQ X?
 
-A: EMQ X 对资源的使用主要有以下的影响因素，每个因素都会对计算和存储资源的使用产生影响：
+A: Following factors will have an impact on EMQ X resource consumption, mainly for CPU and memory usage. 
 
-- 连接数：对于每一个 MQTT 长连接，EMQ X 会创建两个Erlang进程，每个进程都会耗费一定的资源。连接数越高，所需的资源越多；
+- Connection number: EMQ X creates 2 Erlang process for every MQTT connection, and every Erlang process consumes some resource. With more connections, more resoure is required.
 
-- 平均吞吐量：值的是每秒 Pub 和 Sub 的消息数量。吞吐量越高，EMQ X 的路由处理和消息转发处理就需要更多的资源；
+- Everage throughput: Throughput means (pub message number + sub message number) per second. With higher throughput number, more resource will be used for handling route and message delivery in EMQ X.
 
-- 消息体大小：消息体越大，在 EMQ X 中处理消息转发的时候在内存中进行数据存储和处理，所需的资源就越多；
+- Payload size: With bigger size of payload, more memory and CPU are required for message cache and processing. 
 
-- 主题数目：如果主题数越多，在EMQ X中的路由表会相应增长，因此所需的资源就越多；
+- Topic number: With more topic numbers, the route table in EMQ X will increase, and more resource is required.
 
-- QoS：消息的 QoS 越高，EMQ X 服务器端所处理的逻辑会更多，因此会耗费更多的资源；
+- QoS：With higher message QoS level, more resource will be used for message handling. 
 
-另外，如果设备通过TLS（加密的连接）连接EMQ X，EMQ X 会需要额外的资源（主要是CPU资源）。推荐方案是在 EMQ X 前面部署负载均衡，由负载均衡节点卸载TLS，实现职责分离。
+If client devices connect to EMQ X through TLS, more CPU resource is required for encryption and decryption. Our suggested solution is to add a load balancer before EMQ X nodes, the TLS is offload at load balance node, connections between load balancer and backend EMQ X nodes use non-secured TCP connections. 
 
-可参考[TODO](https://www.emqx.io)来预估计算资源的使用；公有云快速部署 EMQ X 实例，请参考[TODO](https://www.emqx.io)。
+You can use our online calculation tool [TODO](https://www.emqx.io) to estimize the resource consumption. 
 
-## Q: 什么是认证鉴权？使用场景是什么？
+## Q: What's EMQ X authentication and it's use scenario?
 
-A: 认证鉴权指的是当一个客户端连接到 MQTT 服务器的时候，通过服务器端的配置来控制客户端连接服务器的权限。EMQ的认证机制包含了有三种，
+A: When a client connects to EMQ X server,  EMQ X use different ways to authenticate a client. It includes following 3 approaches, 
 
-- 用户名密码：针对每个 MQTT 客户端的连接，可以在服务器端进行配置，用于设定用户名和密码，只有在用户名和密码匹配的情况下才可以让客户端进行连接
+- User name and password: Per every MQTT client connection, which can be configured at server, only passing with correct user name and password, the client connection can be established.
 
-- ClientID：每个MQTT客户端在连接到服务器的时候都会有个唯一的ClientID，可以在服务器中配置可以连接该服务器的ClientID列表，这些ClientID的列表
+- ClientID: Every MQTT client will have a unique ClientID,  and a list of ClientIds can be configured in server, only ClientIds in the list can be authenticated successfully.
 
-- 匿名：允许匿名访问
+- Anonymous: Allows anonymous access.
 
-通过用户名密码、ClientID认证的方式除了通过配置文件之外，还可以通过各类数据库和外部应用来配置，比如MySQL、PostgreSQL、Redis、MongoDB、HTTP和LDAP等。
+Besides using the configuration file (to configure authentication), EMQ X can also use database and integration with external applications, such as MySQL, PostgreSQL, Redis, MongoDB, HTTP and LDAP. 
 
 ## Q: Can I capture device online and offline events? How to use it? 
 
-A: EMQ X 企业版支持捕获设备的上下线的事件，并将其保存到数据库中（支持的数据库包括Redis、MySQL、PostgreSQL、MongoDB和Cassandra）。用户可以通过配置文件指定所要保存的数据库，以及监听client.connected和client.disconnected事件，这样在设备上、下线的时候把数据保存到数据库中。
+A: EMQ X supports to capture device online and offline events through below 3 approaches,
+
+- Web Hook
+
+- Subscribe related $SYS topics 
+
+  - $SYS/brokers/${node}/clients/${clientid}/connected
+  - $SYS/brokers/${node}/clients/${clientid}/disconnected
+
+- Directly save events into database
+
+  The final approach is only supported in enterprise version, and supported database includes Redis, MySQL, PostgreSQL, MongoDB and Cassandra. User can configure database,  client.connected and client.disconnected events in the configuration file. When a device is online or offline, the information will be saved into database.
 
 ## Q: What's Hook? What's the use scenario?
 
-A: 钩子（hook）指的是由 EMQ X 在连接、对话和消息触发某些事件的时候提供给对外部的接口，主要提供了如下的钩子，EMQ X提供了将这些hook产生的事件持久化至数据库的功能，从而很方便地查询得知客户端的连接、断开等各种信息。
+A:  Hook is the interface provided by EMQ X, which will be triggered when a connection, session or message is established/delivered. EMQ X provides hooks listed in below, which allows user to save these triggered events to database, and user can conveniently query all kinds of information, such as client connect,  disconnect.  
 
 - client.connected: client online
 - client.disconnected: client offline
