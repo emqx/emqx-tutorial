@@ -7,7 +7,7 @@ MQTT是Message Queuing Telemetry Transport（消息队列遥测传输）的缩�
 - 基于TCP/IP协议栈
 - 事实的IoT通讯的标准协议
 
-该协议于1999年由IBM的Dr Andy Stanford-Clark和Arcom的Arlen Nipper (现为Eurotech) 提出，协议版本经历了多次升级和改进，于2013年成立OASIS MQTT技术规范委员会，并持续发布协议的新版本，
+该协议于1999年由IBM的Dr Andy Stanford-Clark和Arcom(现为Eurotech)的Arlen Nipper提出，协议版本经历了多次升级和改进，于2013年成立OASIS MQTT技术规范委员会，并持续发布协议的新版本，
 
 - 2015年，MQTT3.1.1协议发布
 - 2018年，MQTT5.0协议发布
@@ -51,4 +51,3 @@ MQTT服务器是发布者和订阅者之间通信的代理（中文中也有将M
 - TCP：默认端口为1883
 - TLS：默认端口为8883
 - WebSocket：默认端口为8083
-
