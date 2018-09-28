@@ -1,6 +1,6 @@
 ## Q: What's EMQ X?
 
-A: EMQ X is an open-source, distributed MQTT messaging broker, it can support up to million level of concurrent MQTT connections.  It can be used to connected to any devices that supports MQTT protocol, and it can also be used for delivering message from server side to client. 
+A: EMQ X is an open-source, distributed MQTT messaging broker, it can support up to million level of concurrent MQTT connections.  It can be used to connected to any devices that supports MQTT protocol, and it can also be used for delivering message from server side to client.
 
 
 
@@ -11,22 +11,22 @@ A: EMQ X totally has [3 products.](https://www.emqx.io/products) Different produ
 
 - EMQ X Broker: EMQ X open source version, support the popular IoT protocols, such as MQTT, CoAP and LwM2M. It supports 100k level concurrent MQTT connections.
 - EMQ X Enterprise: EMQ X enterprise version.  It is based on open source version, and adds data persistence (support Redis, MySQL, MongoDB or PostgreSQL), data bridge to Kafka, LoRaWAN support, EMQ X monitoring, Kubernates deployment etc.  It supports 1M level concurrent MQTT connections.
-- EMQ X Platform: EMQ X Platform version is based on Enterprise version，and support 10M level concurrent MQTT connections. We can provide consulting service for complex IoT platforms, such as cross data center solutions. All kinds of services building an IoT platform can be provided, such as consulting, training, architect design, customized development, platform implementation, testing and operation. 
+- EMQ X Platform: EMQ X Platform version is based on Enterprise version，and support 10M level concurrent MQTT connections. We can provide consulting service for complex IoT platforms, such as cross data center solutions. All kinds of services building an IoT platform can be provided, such as consulting, training, architect design, customized development, platform implementation, testing and operation.
 
 
 ## Q: What's the major difference between EMQ X enterprise and broker?
 
 A: EMQ X Enterprise (enterprise version) is based on Broker (open source version), it includes all of features of open source version.  Comparing to open source version, it has following difference:
 
-- Concurrent connection level: the stable concurrent connection level for open source version is 100k, while enterprise version is 1M. 
-- Data persistence : Enterprise version supports to persist data to several kinds of databases, includes the popular relational database, such as MySQL, PostgresSQL; Memory database, such as Redis; Non-SQL DB, such as MongoDB. 
+- Concurrent connection level: the stable concurrent connection level for open source version is 100k, while enterprise version is 1M.
+- Data persistence : Enterprise version supports to persist data to several kinds of databases, includes the popular relational database, such as MySQL, PostgresSQL; Memory database, such as Redis; Non-SQL DB, such as MongoDB.
 - Kafka bridge: Forward MQTT message to Kafka clusters through internal bridge plugins, application can consume Kafka message to implement the streaming data process.
 - RabbitMQ bridge: Support to forward MQTT message to RabbitMQ, application can consume RabbitMQ message to integrate the 3rd party system.
 - System monitoring (EMQ X Control Center)
 
   - EMQ X cluster monitor: Include statistics of connections, topics, message & sessions.
 
-  - Erlang VM monitor: Erlang process, threads, memory, distributed database & distributed locks etc. 
+  - Erlang VM monitor: Erlang process, threads, memory, distributed database & distributed locks etc.
 
   - Host monitor: Measurements of CPU, memory, disk, network and operate system.
 - Securities: By configuration of TLS, DTLS connections and certifications to get higher secured connections.
@@ -40,16 +40,16 @@ A: EMQ X Broker is free and it can be download at [https://www.emqx.io/downloads
 
 EMQ X Enterprise can be downloaded and evaluated by free.  You can download it from [https://www.emqx.io/downloads/emq/enterprise](https://www.emqx.io/downloads/emq/enterprise?osType=Linux), and then apply trial license at [https://www.emqx.io/account?tab=login](https://www.emqx.io/account?tab=login).
 
-Also you can use the EMQ X enterprise version through public cloud service. 
+Also you can use the EMQ X enterprise version through public cloud service.
 
 - [TODO AWS](https://www.emqx.io)
 
-  
+
 
 
 ## Q: Can EMQ X provide consulting service?
 
-A: Yes. We have rich experience at consulting of building IoT platforms, include practice of helping Internet companies and carriers to build IoT platform that supports 10M level concurrent connections.  We can help to customize solutions for creating load-balancing, clustering, security policies, data storage and analytics, and to make the solution can satisfy future business evolvement. 
+A: Yes. We have rich experience at consulting of building IoT platforms, include practice of helping Internet companies and carriers to build IoT platform that supports 10M level concurrent connections.  We can help to customize solutions for creating load-balancing, clustering, security policies, data storage and analytics, and to make the solution can satisfy future business evolvement.
 
 ## Q: What's EMQ X suggested OS?
 
@@ -61,25 +61,25 @@ A: TODO...
 
 ## Q: How to estimate resource usage of EMQ X?
 
-A: Following factors will have an impact on EMQ X resource consumption, mainly for CPU and memory usage. 
+A: Following factors will have an impact on EMQ X resource consumption, mainly for CPU and memory usage.
 
 - Connection number: EMQ X creates 2 Erlang process for every MQTT connection, and every Erlang process consumes some resource. With more connections, more resource is required.
 
 - Everage throughput: Throughput means (pub message number + sub message number) processed by EMQ X per second. With higher throughput value, more resource will be used for handling route and message delivery in EMQ X.
 
-- Payload size: With bigger size of payload, more memory and CPU are required for message cache and processing. 
+- Payload size: With bigger size of payload, more memory and CPU are required for message cache and processing.
 
 - Topic number: With more topic numbers, the route table in EMQ X will increase, and more resource is required.
 
-- QoS：With higher message QoS level, more resource will be used for message handling. 
+- QoS：With higher message QoS level, more resource will be used for message handling.
 
-If client devices connect to EMQ X through TLS, more CPU resource is required for encryption and decryption. Our suggested solution is to add a load balancer before EMQ X nodes, the TLS is offload at load balance node, connections between load balancer and backend EMQ X nodes use non-secured TCP connections. 
+If client devices connect to EMQ X through TLS, more CPU resource is required for encryption and decryption. Our suggested solution is to add a load balancer before EMQ X nodes, the TLS is offload at load balance node, connections between load balancer and backend EMQ X nodes use non-secured TCP connections.
 
-You can use our online calculation tool [TODO](https://www.emqx.io) to estimate the resource consumption. 
+You can use our online calculation tool [TODO](https://www.emqx.io) to estimate the resource consumption.
 
 ## Q: What's EMQ X authentication and it's use scenario?
 
-A: When a client connects to EMQ X server,  EMQ X use different ways to authenticate a client. It includes following 3 approaches, 
+A: When a client connects to EMQ X server,  EMQ X use different ways to authenticate a client. It includes following 3 approaches,
 
 - User name and password: Per every MQTT client connection, which can be configured at server, only passing with correct user name and password, the client connection can be established.
 
@@ -87,15 +87,15 @@ A: When a client connects to EMQ X server,  EMQ X use different ways to authenti
 
 - Anonymous: Allows anonymous access.
 
-Besides using the configuration file (to configure authentication), EMQ X can also use database and integration with external applications, such as MySQL, PostgreSQL, Redis, MongoDB, HTTP and LDAP. 
+Besides using the configuration file (to configure authentication), EMQ X can also use database and integration with external applications, such as MySQL, PostgreSQL, Redis, MongoDB, HTTP and LDAP.
 
-## Q: Can I capture device online and offline events? How to use it? 
+## Q: Can I capture device online and offline events? How to use it?
 
 A: EMQ X supports to capture device online and offline events through below 3 approaches,
 
 - Web Hook
 
-- Subscribe related $SYS topics 
+- Subscribe related $SYS topics
 
   - $SYS/brokers/${node}/clients/${clientid}/connected
   - $SYS/brokers/${node}/clients/${clientid}/disconnected
@@ -111,7 +111,7 @@ A:  Hook is the interface provided by EMQ X, which will be triggered when a conn
 - client.connected: client online
 - client.disconnected: client offline
 - client.subscribe: client subscribes topics
-- client.unsubscribe: client unsubscribes topics 
+- client.unsubscribe: client unsubscribes topics
 - session.created: session was created
 - session.resumed: session is resumed
 - session.subscribed: after session subscribe topic
@@ -124,7 +124,7 @@ A:  Hook is the interface provided by EMQ X, which will be triggered when a conn
 
 ## Q: What's WebSocket? When to use Websocket to connect EMQ X?
 
-A: WebSocket is a full-duplex communication based on HTTP protocol, user can realize dual communications between browser and server. Through Websocket, server can push message to web browser. EMQ X provides support of WebSocket, user can realize pub to topics and sub to topic from browsers. 
+A: WebSocket is a full-duplex communication based on HTTP protocol, user can realize dual communications between browser and server. Through Websocket, server can push message to web browser. EMQ X provides support of WebSocket, user can realize pub to topics and sub to topic from browsers.
 
 ## Q: I want to control topics can be used for specific clients, how to configure it in EMQ X?
 
@@ -155,39 +155,42 @@ listener.tcp.external.max_conn_rate = 1000
 listener.tcp.external.rate_limit = 1024,4096
 ```
 
-## Q: 什么是离线消息？
+## Q: What is offf-line message?
 
-A: 一般情况下 MQTT 客户端仅在连接到消息服务器的时候，如果客户端离线将收不到消息。但是在客户端有固定的ClientID，clean_session为false，且QoS设置满足服务器端的配置要求时，在客户端离线时，服务器可以为客户端保持一定量的离线消息，并在客户端再次连接是发送给客户端。
+A: Usually an MQTT client receivces messages only when it is connected to an EMQ X, if this client is off-line, it will not receive messages. But if a client has a fixed ClientID, and it connects to the broker with clean_seesion = false, the broker will store particular meesage for it when it is off-line, if the Pub/Sub is done at certain QoS level (broker configuration). These messages will be delivered when this client is conencted again.  
 
-离线消息在网络连接不是很稳定时，或者对QoS有一定要求时非常有用。
-
-
-## Q: 什么是代理订阅？使用场景是什么？
-
-A: 通常情况客户端需要在连接到 EMQ X 之后主动订阅主题。代理订阅是指服务器为客户端订阅主题，这一过程不需要客户端参与，客户端和需要代理订阅的主题的对应关系保存在服务器中。
-
-试用代理订阅可以集中管理大量的客户端的订阅，同时为客户端省略掉订阅这个步骤，可以节省客户端侧的计算资源和网络带宽。
-
-*注：目前 EMQ X 企业版支持代理订阅。*
+Off-line message is useful when the connection is not stable, or the application has special requirements on QoS.
 
 
-## Q: EMQ X 是如何实现支持大规模并发和高可用的？
 
-A: 高并发和高可用是EMQ X的设计目标，为了实现这些目标EMQ X中应用了多种技术，比如：
+## Q: What is Subscription by Broker? And its use scenario?
 
-- 利用Erlang/OTP平台的软实时、高并发和容错；
-- 全异步架构；
-- 连接、会话、路由、集群的分层设计；
-- 消息平面和控制平面的分离等。
+A: Usually an MQTT client has to subscribe to the topics expressly by itself, if it want to receive the messages unter these topics. Subscription by Broker means that the broker can subscribe to particular topics for a client without client's interaction. The relation of such clients and their topics to be subscribed to is stored at broker side.
 
-在精心设计和实现之后，单个EMQ X Enterprise节点就可以处理百万级的连接。
+Using of Subscription by Broker can ease the management of massive client, and save the computational resource and bandwidth on the client side.
 
-EMQ X 支持多节点集群，集群下整个系统的性能会成倍高于单节点，并能在单节点故障时保证系统服务不中断。
+*Note: Currently this feature is available in the EMQ X Enterprise edition. *
 
 
-## Q: EMQ X 能把接入的 MQTT 消息保存到数据库吗？
 
-A: EMQ X 企业版支持消息持久化，可以将消息保存到数据库，开源版还暂时不支持。目前EMQ X企业版消息持久化支持的数据库有：
+## Q: How does the EMQ X achieve high concurrency and high availability?
+
+A: High concurrency and high availability are design goals of EMQ X. To achieve these goals, multiple technologies are applied:
+
+- Making maximum use of the soft-realtime, high concurrent and fault-tolerant Erlang/OTP platform;
+- Full asynchronous architecture；
+- Layered design of connection, session, route and cluster;
+- Separated messaging panel and control panel;
+- Etc.
+
+Well designed and implemented, a single EMQ X node can handle million level connections.
+
+EMQ X supports clustering. In a cluster with multiple nodes, the performance is multiplied, and the MQTT service will not be interrupted when a single node is down.
+
+
+## Q: Can EMQ X store messages to database?
+
+A: The EMQ X Enterprise edition supports data persistence. Supproted databases are:
 
 - Redis
 - MongoDB
@@ -196,73 +199,72 @@ A: EMQ X 企业版支持消息持久化，可以将消息保存到数据库，�
 - Cassandra
 
 
-## Q: EMQ X 能把接入的消息转发到 Kafka 吗？
+## Q: Can EMQ X forward messages to Kafka?
 
-A: 能。目前EMQ X企业版提供了内置的Kafka桥接方式，支持把消息桥接至Kafka进行流式处理。
+A: The EMQ X Enterprise edition integrates a Kafka bridge, it can bridge data to Kafka.
 
-## Q: EMQ X支持集群自动发现吗？有哪些实现方式？
+## Q: Does EMQ X support cluster auto discovery? What clustering methods are supported?
 
-A: EMQ X 支持集群自动发现。集群可以通过手动配置或自动配置的方式实现。
+A: EMQ X supports cluster auto discovery. EMQ X clustering can be done manually or automatically.
 
-目前支持的自动发现方式有：
+Currently supported clustering methods:
 
-- 手动集群
-- 静态集群
-- DNS自动集群
-- ETCD自动集群
-- K8S自动集群
-
-
-## Q: 我可以把 MQTT 消息从 EMQ X 转发其他消息中间件吗？例如RabbitMQ？
-
-A: EMQ X 支持转发消息到其他消息中间件，通过 EMQ X 提供的桥接方式就可以做基于主题级别的配置，从而实现主题级别的消息转发。
+- Manual clustering
+- Static clustering
+- Auto clustering using IP multi-cast
+- Auto clustering using DNS
+- Auto clustering using ETCD
+- Auto clustering using K8S
 
 
-## Q: 我可以把消息从 EMQ X 转到公有云 MQTT 服务上吗？比如 AWS 或者 Azure 的IoT Hub？
+## Q: Can I forward MQTT messages EMQ X to other MQTT broker, like RabbitMQ?
 
-A: EMQ X 可以转发消息到公有云的 IoT Hub，通过 EMQ X 提供的桥接就可以实现。
-
-
-## Q: MQTT Broker（比如Mosquitto）可以转发消息到EMQ X吗？
-
-A: Mosquitto可以配置转发消息到EMQ X，请参考[TODO](https://www.emqx.io)。
+A: EMQ X support forward messages to other MQTT broker. Using MQTT bridge, EMQ X can forward messages of interested topics to other broker.
 
 
-## Q: 系统主题有何用处？都有哪些系统主题？
+## Q: Can I forward messages from EMQ X to MQTT services hosted on public cloud?
 
-A: 系统主题以`$SYS/`开头。EMQ X会以系统主题的方式周期性的发布关于自身运行状态、MQTT协议统计、客户端上下线状态到系统主题。订阅系统主题可以获得这些信息。
-
-这里列举一些系统主题，完整的系统主题请参考EMQ X文档的相关章节：
-
-- $SYS/brokers:  集群节点列表
-- $SYS/brokers/${node}/clients/${clientid}/connected: 当客户端连接是发送的客户端信息
-- $SYS/broker/${node}/stats/connections/count: 当前客户端总数
-- $SYS/broker/${node}/stats/sessions/count: 当前会话总数
+A: EMQ X can forward messages to IoT Hub hosted on public cloud, this is a feature of EMQ X bridge.
 
 
-## Q: 我想跟踪特定消息的发布和订阅过程，应该如何做？
+## Q: Can other MQTT broker (for example Mosquitto) forward messages to EQM X?
 
-A: EMQ X 支持追踪来自某个客户端的报文或者发布到某个主题的报文。追踪消息的发布和订阅需要使用命令行工具（emqx_ctl）的trace命令，下面给出一个最终‘topic’主题的消息并保存在`trace_topic.log`中的例子。更详细的说明请参阅EMQ X文档的相关章节。
+A: EMQ X can receive messages from other broker, but it depends also on the implementation of other brokers, Mosquitto can forward messages to EMQ X, please refer to [TODO](https://www.emqx.io)。
+
+
+## Q: What is the use of system topics? What system topics are available?
+
+A: The system topics have a prefix of `$SYS/`. Periodically, EMQ X publishes system messages under system topics, these messages include system status, statistics of MQTT, client's online/offline status and so on.
+
+Here are some examples of system topics, for a whole system topic list please refer to EMQ X document:
+
+- $SYS/brokers:  List of nodes in cluster
+- $SYS/brokers/${node}/clients/${clientid}/connected: this message is published when a client connects
+- $SYS/broker/${node}/stats/connections/count: Number of connections on a node
+- $SYS/broker/${node}/stats/sessions/count: Number of sessions on a node
+
+
+## Q: What should I do if I want trace the subscription and publish of some particular message?
+
+A: EMQ X support the tracing of messages from particular client or under particular topic. You can use the command line tool `emqx_ctl` for tracing. The example below shows how to trace messages under 'topic' and save the result in 'trace_topic.log'. For more details please refer to EMQ X document.
 
 ```
 ./bin/emqx_ctl trace topic "topic" "trace_topic.log"
 ```
 
 
-## Q: 为什么我做压力测试的时候，连接数目和吞吐量老是上不去，有系统调优指南吗？
+## Q: When I was doing stress test, the connection number and throughput are lower than expected. How can I tune the system to make full use of it?
 
-A: 在做压力测试的时候，除了要选用有足够计算能力的硬件，也需要对软件运行环境做一定的调优。比如修改修改操作系统的全局最大文件句柄数，允许用户打开的文件句柄数，TCP的backlog和buffer，erlang虚拟机的进程数限制等等。甚至包括需要在客户端上做一定的调优以保证客户端可以有足够的连接资源。
+A: When doing a stress test, besides ensuring the necessary hardware resource, it is also necessary to tune the OS and the Erlang VM to make the maximum use of the resource. The most common tuning is to modify the global limitation of file handles, the user limitation of file handles, the TCP backlog and buffer, the limitation fo process number of Erlang VM and so on. In some case you will also need to tune the client to ensure it has the ability and resource to handle all the subs and pubs.
 
-系统的调优在不同的需求下有不同的方式，在EMQ X的文档[TODO](https://www.emqx.io)中对用于普通场景的调优有较详细的说明
-
-
-## Q: 我的连接数目并不大，EMQ X 生产环境部署需要多节点吗？
-
-A: 即使在连接数量，消息率不高的情况下（服务器低负载），在生产环境下部署多节点的集群依然收很有意义的。集群能提高系统的可用性，降低单点故障的可能性。当一个节点宕机时，其他在线节点可以保证整个系统的服务不中断。
+Different use scenario requires diferent tuning。 In the EQM X document there is a chapter about tuning the system for general purpose. [TODO](https://www.emqx.io)
 
 
-## Q: EMQ X 支持加密连接吗？推荐的部署方案是什么？
+## Q: My number of connections is small, do I still need to deploy multiple nodes in production?
 
-A：EMQ X 支持加密连接。在生产环境部署时，推荐的方案是使用 Load Balancer 终结TLS。
+A: Even when the number of connctions is small message rate is low, to deploy a cluster with multiple nodes in production is still very meaningful. A cluster improves the availability of system, when a single node is down, the rest nodes in cluster ensures the service is not interrupted.  
 
 
+## Q: Dose EMQ X supports encrypted connection? What is the recommended deployment?
+
+A: EMQ X Support SSL/TLS. In production, we recommend to terminate the TLS connection by Load Balancer.
