@@ -1,0 +1,38 @@
+/*.book-summary ul.summary li ul {*/
+    /*padding-left: 0;*/
+/*}*/
+
+/*.book-summary ul.summary .articles li {*/
+    /*border-left: 4px solid transparent;*/
+/*}*/
+
+.book-summary ul.summary li.active {
+    border-left-color: #07ae79;
+}
+
+.book-summary ul.summary li a:hover {
+    text-decoration: none;
+    color: #07ae79;
+}
+
+.book-summary ul.summary li.active > a {
+    color: #07ae79;
+}
+
+@media (min-width: 1200px) {
+    .page-inner {
+        max-width: 800px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .page-inner {
+        max-width: 1200px;
+    }
+}
+
+@media (min-width: 2560px) {
+    .page-inner {
+        max-width: 1920px;
+    }
+}
