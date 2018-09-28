@@ -10,7 +10,7 @@ A: EMQ X is an open-source, distributed MQTT messaging broker, it can support up
 A: EMQ X totally has [3 products.](https://www.emqx.io/products) Different products supports different level of connections, features and services etc.
 
 - EMQ X Broker: EMQ X open source version, support the popular IoT protocols, such as MQTT, CoAP and LwM2M. It supports 100k level concurrent MQTT connections.
-- EMQ X Enterprise: EMQ X enterprise version.  It is based on open source version, and adds data persistence (support Redis, MySQL, MongoDB or PostgreSQL), data bridge to Kafka, LoRaWAN support, EMQ monitoring, Kubernates deployment etc.  It supports 1M level concurrent MQTT connections.
+- EMQ X Enterprise: EMQ X enterprise version.  It is based on open source version, and adds data persistence (support Redis, MySQL, MongoDB or PostgreSQL), data bridge to Kafka, LoRaWAN support, EMQ X monitoring, Kubernates deployment etc.  It supports 1M level concurrent MQTT connections.
 - EMQ X Platform: EMQ X Platform version is based on Enterprise version，and support 10M level concurrent MQTT connections. We can provide consulting service for complex IoT platforms, such as cross data center solutions. All kinds of services building an IoT platform can be provided, such as consulting, training, architect design, customized development, platform implementation, testing and operation. 
 
 
@@ -38,7 +38,7 @@ A: EMQ X Enterprise (enterprise version) is based on Broker (open source version
 
 A: EMQ X Broker is free and it can be download at [https://www.emqx.io/downloads/emq/broker](https://www.emqx.io/downloads/emq/broker?osType=Linux).
 
-EMQ X Enterprise can be downloaded and evaluated by free.  You can download it from [https://www.emqx.io/downloads/emq/enterprise](https://www.emqx.io/downloads/emq/enterprise?osType=Linux), and the apply trial license at[https://www.emqx.io/account?tab=login](https://www.emqx.io/account?tab=login).
+EMQ X Enterprise can be downloaded and evaluated by free.  You can download it from [https://www.emqx.io/downloads/emq/enterprise](https://www.emqx.io/downloads/emq/enterprise?osType=Linux), and then apply trial license at [https://www.emqx.io/account?tab=login](https://www.emqx.io/account?tab=login).
 
 Also you can use the EMQ X enterprise version through public cloud service. 
 
@@ -49,7 +49,7 @@ Also you can use the EMQ X enterprise version through public cloud service.
 
 ## Q: Can EMQ X provide consulting service?
 
-A: Yes. We have rich experience at consulting of building IoT platforms, include practice of helping Internet companies and carriers to build 10M level concurrent connections.  We can help to customize solutions for creating load-balancing, clustering, security policies, data storage and analytics, and to make the solution can satisfy future business evolvement. 
+A: Yes. We have rich experience at consulting of building IoT platforms, include practice of helping Internet companies and carriers to build IoT platform that supports 10M level concurrent connections.  We can help to customize solutions for creating load-balancing, clustering, security policies, data storage and analytics, and to make the solution can satisfy future business evolvement. 
 
 ## Q: What's EMQ X suggested OS?
 
@@ -65,7 +65,7 @@ A: Following factors will have an impact on EMQ X resource consumption, mainly f
 
 - Connection number: EMQ X creates 2 Erlang process for every MQTT connection, and every Erlang process consumes some resource. With more connections, more resource is required.
 
-- Everage throughput: Throughput means (pub message number + sub message number) per second. With higher throughput number, more resource will be used for handling route and message delivery in EMQ X.
+- Everage throughput: Throughput means (pub message number + sub message number) processed by EMQ X per second. With higher throughput value, more resource will be used for handling route and message delivery in EMQ X.
 
 - Payload size: With bigger size of payload, more memory and CPU are required for message cache and processing. 
 
@@ -83,7 +83,7 @@ A: When a client connects to EMQ X server,  EMQ X use different ways to authenti
 
 - User name and password: Per every MQTT client connection, which can be configured at server, only passing with correct user name and password, the client connection can be established.
 
-- ClientID: Every MQTT client will have a unique ClientID,  and a list of ClientIds can be configured in server, only ClientIds in the list can be authenticated successfully.
+- ClientID: Every MQTT client will have a unique ClientID,  and a list of ClientIds can be configured in server, and only ClientIds in the list can be authenticated successfully.
 
 - Anonymous: Allows anonymous access.
 
