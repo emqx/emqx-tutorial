@@ -7,9 +7,14 @@
 
 * [下载及安装](quick-start/download-install.md)
     * [安装预置条件](quick-start/precondition.md)
-    * [如何选择并下载 EMQ X](quick-start/choose-download.md)
     * [第一次安装 EMQ X](quick-start/install-first.md)
+        * [如何选择并下载 EMQ X](quick-start/choose-download.md)
     * [第一次运行 EMQ X](quick-start/run-first.md)
+
+* [客户端编程初步](client_dev/client_dev.md)
+    * [WebSocket](client_dev/ws.md)
+    * [Python](client_dev/python.md)
+    * [Java](client_dev/java.md)
 
 
 ## 集群
