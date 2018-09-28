@@ -10,24 +10,18 @@ A: EMQ X is an open-source, distributed MQTT messaging broker, it can support up
 A: EMQ X totally has [3 products.](https://www.emqx.io/products) Different products supports different level of connections, features and services etc.
 
 - EMQ X Broker: EMQ X open source version, support the popular IoT protocols, such as MQTT, CoAP and LwM2M. It supports 100k level concurrent MQTT connections.
-
-- EMQ X Enterprise: EMQ X enterprise version.  It is based on open source version, and  adds data persistance (support Redis, MySQL, MongoDB or PostgreSQL),  data bridge to Kafka, LoRaWAN support, EMQ monitoring, Kubernates deployment etc.  It supports 1M level concurrent MQTT connections.
-
-- EMQ X Platform: EMQ X Platform version is based on Enterprise version，and support 10M level concurrent MQTT connections. We can provide consulting service for complex IoT platforms, such as cross data center solutions. All kinds of servcies building an IoT platform can be provided, such as consulting, training, architect design, customized development, platform implementation, testing and operation. 
+- EMQ X Enterprise: EMQ X enterprise version.  It is based on open source version, and adds data persistence (support Redis, MySQL, MongoDB or PostgreSQL), data bridge to Kafka, LoRaWAN support, EMQ monitoring, Kubernates deployment etc.  It supports 1M level concurrent MQTT connections.
+- EMQ X Platform: EMQ X Platform version is based on Enterprise version，and support 10M level concurrent MQTT connections. We can provide consulting service for complex IoT platforms, such as cross data center solutions. All kinds of services building an IoT platform can be provided, such as consulting, training, architect design, customized development, platform implementation, testing and operation. 
 
 
 ## Q: What's the major difference between EMQ X enterprise and broker?
 
 A: EMQ X Enterprise (enterprise version) is based on Broker (open source version), it includes all of features of open source version.  Comparing to open source version, it has following difference:
 
-- Concurrent connection level: the stable concurrent concurrent connection level for open source version is 100k, while enterprise version is 1M. 
-
-- Data persistance: Enterprise version supports to persist data to several kinds of databases, includes the popular relational database, such as MySQL, PostgresSQL; Memory database, such as Redis; Non-SQL DB, such as MongoDB. 
-
-- Kafka brdige: Forward MQTT message to Kafka clusters through internal bridge plugins, application can consome Kafka message to implement the streaming data process.
-
+- Concurrent connection level: the stable concurrent connection level for open source version is 100k, while enterprise version is 1M. 
+- Data persistence : Enterprise version supports to persist data to several kinds of databases, includes the popular relational database, such as MySQL, PostgresSQL; Memory database, such as Redis; Non-SQL DB, such as MongoDB. 
+- Kafka bridge: Forward MQTT message to Kafka clusters through internal bridge plugins, application can consume Kafka message to implement the streaming data process.
 - RabbitMQ bridge: Support to forward MQTT message to RabbitMQ, application can consume RabbitMQ message to integrate the 3rd party system.
-
 - System monitoring (EMQ X Control Center)
 
   - EMQ X cluster monitor: Include statistics of connections, topics, message & sessions.
@@ -35,7 +29,6 @@ A: EMQ X Enterprise (enterprise version) is based on Broker (open source version
   - Erlang VM monitor: Erlang process, threads, memory, distributed database & distributed locks etc. 
 
   - Host monitor: Measurements of CPU, memory, disk, network and operate system.
-
 - Securities: By configuration of TLS, DTLS connections and certifications to get higher secured connections.
 
 
@@ -56,7 +49,7 @@ Also you can use the EMQ X enterprise version through public cloud service.
 
 ## Q: Can EMQ X provide consulting service?
 
-A: Yes. We have rich experience at consulting of building IoT platforms, include practice of helping Internet companies and carriers to build 10M level concurrent connections.  We can help to customize solutions for creating load-balancing, clustering, security policies, data storage and analytics, and to make the solution can satisfy future business evolvment. 
+A: Yes. We have rich experience at consulting of building IoT platforms, include practice of helping Internet companies and carriers to build 10M level concurrent connections.  We can help to customize solutions for creating load-balancing, clustering, security policies, data storage and analytics, and to make the solution can satisfy future business evolvement. 
 
 ## Q: What's EMQ X suggested OS?
 
@@ -66,11 +59,11 @@ A: EMQ X supports to deploy at Linux, Windows, MacOS, ARM system, and suggest to
 
 A: TODO...
 
-## Q: How to estimize reource usage of EMQ X?
+## Q: How to estimate resource usage of EMQ X?
 
 A: Following factors will have an impact on EMQ X resource consumption, mainly for CPU and memory usage. 
 
-- Connection number: EMQ X creates 2 Erlang process for every MQTT connection, and every Erlang process consumes some resource. With more connections, more resoure is required.
+- Connection number: EMQ X creates 2 Erlang process for every MQTT connection, and every Erlang process consumes some resource. With more connections, more resource is required.
 
 - Everage throughput: Throughput means (pub message number + sub message number) per second. With higher throughput number, more resource will be used for handling route and message delivery in EMQ X.
 
@@ -82,7 +75,7 @@ A: Following factors will have an impact on EMQ X resource consumption, mainly f
 
 If client devices connect to EMQ X through TLS, more CPU resource is required for encryption and decryption. Our suggested solution is to add a load balancer before EMQ X nodes, the TLS is offload at load balance node, connections between load balancer and backend EMQ X nodes use non-secured TCP connections. 
 
-You can use our online calculation tool [TODO](https://www.emqx.io) to estimize the resource consumption. 
+You can use our online calculation tool [TODO](https://www.emqx.io) to estimate the resource consumption. 
 
 ## Q: What's EMQ X authentication and it's use scenario?
 
@@ -129,15 +122,15 @@ A:  Hook is the interface provided by EMQ X, which will be triggered when a conn
 - message.acked: MQTT message is acknowledged
 - message.dropped: MQTT message is dropped
 
-## Q: What's webSocket? When to use websocket to connect EMQ X?
+## Q: What's WebSocket? When to use Websocket to connect EMQ X?
 
-A: WebSocket is a full-duplex communication based on HTTP protocol, user can realize dual communications  beween browser and server. Through Websocket, server can push message to web browser. EMQ X provides support of WebSocket, user can realize pub to topics and sub to topic from browsers. 
+A: WebSocket is a full-duplex communication based on HTTP protocol, user can realize dual communications between browser and server. Through Websocket, server can push message to web browser. EMQ X provides support of WebSocket, user can realize pub to topics and sub to topic from browsers. 
 
 ## Q: I want to control topics can be used for specific clients, how to configure it in EMQ X?
 
 A: EMQ X can constrain clients used topics to realize device access controls. To use the feature, ACL (Access Control List) should be enabled, disable anonymous access and close 关闭无ACL命中的访问许可(?) (To debug convenient, the last 2 options are enabled by default, and please close them).
 
-ACL can be configured in config file, or backend databases. Below is one of sample line for ACL control file, the meaning is user 'dashboard' can subscribe '$SYS/#' topic. ACL configuration in backend databases is similar, refer to EMQ X document for more detailed configurations.
+ACL can be configured in configuration file, or backend databases. Below is one of sample line for ACL control file, the meaning is user 'dashboard' can subscribe '$SYS/#' topic. ACL configuration in backend databases is similar, refer to EMQ X document for more detailed configurations.
 
 ```
 {allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
