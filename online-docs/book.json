@@ -8,21 +8,16 @@
     "anchors",
     "copy-code-button"
   ],
-  "pluginsConfig": {
-    "simple-page-toc": {
-      "maxDepth": 3,
-      "skipFirstH1": true
-    },
-    "anchor-navigation-ex": {
-      "isRewritePageTitle": true,
-      "isShowTocTitleIcon": true,
-      "tocLevel1Icon": "fa fa-hand-o-right",
-      "tocLevel2Icon": "fa fa-hand-o-right",
-      "tocLevel3Icon": "fa fa-hand-o-right"
-    }
+  "pluginsConfig": {},
+  "styles": {
+    "website": "styles/website.css",
+    "ebook": "styles/ebook.css",
+    "pdf": "styles/pdf.css",
+    "mobi": "styles/mobi.css",
+    "epub": "styles/epub.css"
   },
   "title": "EMQ X 在线手册",
-  "author" : "EMQX Team",
+  "author": "EMQX Team",
   "language": "zh-hans",
   "links": {
     "sharing": {

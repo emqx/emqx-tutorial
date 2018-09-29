@@ -6,8 +6,8 @@
     * [什么是 EMQ X](quick-start/whats-emqx.md)
 
 * [下载及安装](quick-start/download-install.md)
-    * [安装预置条件](quick-start/precondition.md)
-    * [如何选择并下载 EMQ X](quick-start/choose-download.md)
+    * [Precondition](quick-start/precondition.md)
+    * [Choose and Download EMQ X](quick-start/choose-download.md)
     * [第一次安装 EMQ X](quick-start/install-first.md)
     * [第一次运行 EMQ X](quick-start/run-first.md)
 
