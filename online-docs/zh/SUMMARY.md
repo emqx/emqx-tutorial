@@ -1,9 +1,9 @@
 # Summary
 
 ## 快速开始
-* [EMQ X 简介](README.md)
-    * [什么是 MQTT](quick-start/whats-mqtt.md)
-    * [什么是 EMQ X](quick-start/whats-emqx.md)
+* [准备](README.md)
+    * [MQTT简介](quick-start/whats-mqtt.md)
+    * [EMQ X简介](quick-start/whats-emqx.md)
 
 * [下载及安装](quick-start/download-install.md)
     * [安装预置条件](quick-start/precondition.md)
