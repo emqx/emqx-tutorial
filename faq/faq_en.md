@@ -155,9 +155,9 @@ listener.tcp.external.max_conn_rate = 1000
 listener.tcp.external.rate_limit = 1024,4096
 ```
 
-## Q: What is offf-line message?
+## Q: What is off-line message?
 
-A: Usually an MQTT client receivces messages only when it is connected to an EMQ X, if this client is off-line, it will not receive messages. But if a client has a fixed ClientID, and it connects to the broker with clean_seesion = false, the broker will store particular meesage for it when it is off-line, if the Pub/Sub is done at certain QoS level (broker configuration). These messages will be delivered when this client is conencted again.  
+A: Usually an MQTT client receives messages only when it is connected to an EMQ X, if this client is off-line, it will not receive messages. But if a client has a fixed ClientID, and it connects to the broker with clean_seesion = false, the broker will store particular message for it when it is off-line, if the Pub/Sub is done at certain QoS level (broker configuration). These messages will be delivered when this client is reconnected.  
 
 Off-line message is useful when the connection is not stable, or the application has special requirements on QoS.
 
@@ -165,9 +165,9 @@ Off-line message is useful when the connection is not stable, or the application
 
 ## Q: What is Subscription by Broker? And its use scenario?
 
-A: Usually an MQTT client has to subscribe to the topics expressly by itself, if it want to receive the messages unter these topics. Subscription by Broker means that the broker can subscribe to particular topics for a client without client's interaction. The relation of such clients and their topics to be subscribed to is stored at broker side.
+A: Usually an MQTT client has to subscribe to the topics expressly by itself, if it wants to receive the messages under these topics. Subscription by Broker means that the broker can subscribe to particular topics for a client without client's interaction. The relation of such clients and their topics to be subscribed to is stored at broker side.
 
-Using of Subscription by Broker can ease the management of massive client, and save the computational resource and bandwidth on the client side.
+Using of Subscription by Broker can ease the management of massive client, and save the computational resource and bandwidth on device.
 
 *Note: Currently this feature is available in the EMQ X Enterprise edition. *
 
@@ -175,22 +175,21 @@ Using of Subscription by Broker can ease the management of massive client, and s
 
 ## Q: How does the EMQ X achieve high concurrency and high availability?
 
-A: High concurrency and high availability are design goals of EMQ X. To achieve these goals, multiple technologies are applied:
+A: High concurrency and availability are design goals of EMQ X. To achieve these goals, several technologies are applied:
 
 - Making maximum use of the soft-realtime, high concurrent and fault-tolerant Erlang/OTP platform;
-- Full asynchronous architecture；
+- Full asynchronous architecture;
 - Layered design of connection, session, route and cluster;
-- Separated messaging panel and control panel;
-- Etc.
+- Separated messaging and control panel;
 
-Well designed and implemented, a single EMQ X node can handle million level connections.
+With the well design and implementation, a single EMQ X cluster can handle million level connections.
 
-EMQ X supports clustering. In a cluster with multiple nodes, the performance is multiplied, and the MQTT service will not be interrupted when a single node is down.
+EMQ X supports clustering. The EMQ X performance can be scale-out with the increased number of nodes in cluster, and the MQTT service will not be interrupted when a single node is down.
 
 
 ## Q: Can EMQ X store messages to database?
 
-A: The EMQ X Enterprise edition supports data persistence. Supproted databases are:
+A: The EMQ X Enterprise edition supports data persistence. Supported databases are:
 
 - Redis
 - MongoDB
@@ -232,11 +231,11 @@ A: EMQ X can forward messages to IoT Hub hosted on public cloud, this is a featu
 A: EMQ X can receive messages from other broker, but it depends also on the implementation of other brokers, Mosquitto can forward messages to EMQ X, please refer to [TODO](https://www.emqx.io)。
 
 
-## Q: What is the use of system topics? What system topics are available?
+## Q: What is the usage of system topics? What system topics are available?
 
-A: The system topics have a prefix of `$SYS/`. Periodically, EMQ X publishes system messages under system topics, these messages include system status, statistics of MQTT, client's online/offline status and so on.
+A: The system topics have a prefix of `$SYS/`. Periodically, EMQ X publishes system messages to system topics, these messages include system status, statistics of MQTT, client's online/offline status and so on.
 
-Here are some examples of system topics, for a whole system topic list please refer to EMQ X document:
+Here are some examples of system topics, for a complete list of system topic please refer to EMQ X document:
 
 - $SYS/brokers:  List of nodes in cluster
 - $SYS/brokers/${node}/clients/${clientid}/connected: this message is published when a client connects
@@ -246,25 +245,25 @@ Here are some examples of system topics, for a whole system topic list please re
 
 ## Q: What should I do if I want trace the subscription and publish of some particular message?
 
-A: EMQ X support the tracing of messages from particular client or under particular topic. You can use the command line tool `emqx_ctl` for tracing. The example below shows how to trace messages under 'topic' and save the result in 'trace_topic.log'. For more details please refer to EMQ X document.
+A: EMQ X support the tracing of messages from particular client or under particular topic. You can use the command line tool `emqx_ctl` for tracing. The example below shows how to trace messages under 'topic' and save the result in 'trace_topic.log'. For more details, please refer to EMQ X document.
 
 ```
 ./bin/emqx_ctl trace topic "topic" "trace_topic.log"
 ```
 
 
-## Q: When I was doing stress test, the connection number and throughput are lower than expected. How can I tune the system to make full use of it?
+## Q: When I was executing stress test, the connection number and throughput are lower than expected. How can I tune the system to make full use of it?
 
-A: When doing a stress test, besides ensuring the necessary hardware resource, it is also necessary to tune the OS and the Erlang VM to make the maximum use of the resource. The most common tuning is to modify the global limitation of file handles, the user limitation of file handles, the TCP backlog and buffer, the limitation fo process number of Erlang VM and so on. In some case you will also need to tune the client to ensure it has the ability and resource to handle all the subs and pubs.
+A: When executing a stress test, besides ensuring the necessary hardware resource, it is also necessary to tune the OS and the Erlang VM to make the maximum use of the resource. The most common tuning is to modify the global limitation of file handles, the user limitation of file handles, the TCP backlog and buffer, the limitation fo process number of Erlang VM and so on. You will also need to tune the client machine to ensure it has the ability and resource to handle all the subs and pubs.
 
 Different use scenario requires diferent tuning。 In the EQM X document there is a chapter about tuning the system for general purpose. [TODO](https://www.emqx.io)
 
 
-## Q: My number of connections is small, do I still need to deploy multiple nodes in production?
+## Q: My connections number is small, do I still need to deploy multiple nodes in production?
 
-A: Even when the number of connctions is small message rate is low, to deploy a cluster with multiple nodes in production is still very meaningful. A cluster improves the availability of system, when a single node is down, the rest nodes in cluster ensures the service is not interrupted.  
+A: Even when the connction number is small, or message rate is low, it is still very meaningfulto deploy a cluster with multiple nodes in production. A cluster improves the availability of system, when a single node is down, the rest nodes in cluster ensures the service is not interrupted. 
 
 
-## Q: Dose EMQ X supports encrypted connection? What is the recommended deployment?
+## Q: Does EMQ X support encrypted connection? What is the recommended deployment?
 
-A: EMQ X Support SSL/TLS. In production, we recommend to terminate the TLS connection by Load Balancer.
+A: EMQ X Support SSL/TLS. In production, we recommend to terminate the TLS connection by Load Balancer. By this way, the connection between device and server(load balancer) use secured connection, and connection between load balancer and EMQ X nodes use general TCP connection.
