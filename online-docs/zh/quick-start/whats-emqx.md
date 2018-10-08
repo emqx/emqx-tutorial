@@ -17,7 +17,7 @@ EMQ X 基于Erlang/OTP平台开发的MQTT消息服务器，是开源社区中最
 
 EMQ X 现在有三种版本，用户可以根据自己的需求选择不同的版本，
 
-- EMQ X Broker：EMQ X 开源版，用户可以免费下载和使用，包含了以下功能
+- **EMQ X Broker**：EMQ X 开源版本，用户可以免费下载和使用，包含了以下功能
   - 十万级并发连接能力
   - 常见物联网协议支持
     - MQTT
@@ -31,7 +31,7 @@ EMQ X 现在有三种版本，用户可以根据自己的需求选择不同的�
   - 集群、高可用
   - Docker部署
   - 社区服务支持
-- EMQ X Enterprise：EMQ X 商业化版本，用户可以通过网站来[下载企业评估版](https://www.emqx.io/downloads/emq/enterprise?osType=Linux)进行试用。
+- **EMQ X Enterprise**：EMQ X 商业版本，用户可以通过网站来[下载企业评估版](https://www.emqx.io/downloads/emq/enterprise?osType=Linux)进行试用。
   - 开源版的全部功能
   - 百万级并发连接能力
   - 数据持久化：可以将消息保存到数据库，目前支持的数据库为，
@@ -46,7 +46,7 @@ EMQ X 现在有三种版本，用户可以根据自己的需求选择不同的�
   - 安全 - 提供完整的安全连接方案
   - 监控，提供机器、EMQ X 和Erlang虚拟机级别的监控功能
   - 商业化技术支持
-- EMQ X Platform：EMQ X 平台化版本，提供超大规模的物联网连接解决方案。
+- **EMQ X Platform**：EMQ X 平台版本，提供超大规模的物联网连接解决方案。
   - Enterprise版本的所有功能
   - 千万级并发连接能力
   - 大规模、跨数据中心解决方案咨询与实施

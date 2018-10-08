@@ -12,10 +12,9 @@
     * [第一次运行 EMQ X](quick-start/run-first.md)
 
 * [客户端编程初步](client_dev/client_dev.md)
-    * [WebSocket](client_dev/ws.md)
-    * [Python](client_dev/python.md)
     * [Java](client_dev/java.md)
-
+    * [Python](client_dev/python.md)
+    * [JavaScript](client_dev/ws.md)
 
 ## 集群
 * [EMQ X 的集群概念]()

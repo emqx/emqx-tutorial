@@ -1,8 +1,6 @@
-# WebSocket
+# 使用JavaScript开发MQTT客户端
 
-WebSocke 是一种在单个 TCP 连接上进行全双工通讯的协议。WebSocket 通信协议于2011年被 IETF 定为标准 RFC 6455，并由 RFC 7936 补充规范。WebSocket API 也被 W3C 定为标准。
-
-WebSocket 使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在 WebSocket API 中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。
+作为标准的MQTT协议的一部分，EMQ X 支持通过WebSocket端口与客户端进行通信。WebSocket 是一种在单个 TCP 连接上进行全双工通讯的协议。WebSocket 通信协议于2011年被 IETF 定为标准 RFC 6455，并由 RFC 7936 补充规范。WebSocket API 也被 W3C 定为标准。WebSocket 使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在 WebSocket API 中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。
 
 ## 客户端库比较
 
@@ -15,7 +13,7 @@ WebSocket 使得客户端和服务器之间的数据交换变得更加简单，�
 [MQTT.js](https://www.npmjs.com/package/mqtt) 可用于 Node.js 环境和浏览器环境。在 Node.js 上可以通过全局安装使用命令行连接，同时还支持 MQTT ，MQTT TLS 证书连接；值得一提的是 MQTT.js 对微信小程序有较好的支持。
 
 
-## MQTT.js 使用
+## 安装MQTT.js
 
 npm 安装使用
 
@@ -37,7 +35,11 @@ import mqtt from 'mqtt'
 </script>
 ```
 
-## 建立连接
+## 实现一个简单的客户端（简单的场景描述）
+
+
+
+## 初始化和建立连接
 
 EMQ X 使用 8083 端口用于普通连接，8084 用于 SSL 上的 WebSocket 连接。
 
@@ -46,20 +48,6 @@ EMQ X 使用 8083 端口用于普通连接，8084 用于 SSL 上的 WebSocket �
 上述示范的连接地址可以拆分为： `ws:` // `localhost` : `8083` `/mqtt` 
 
 即 `协议` // `域名` : `端口 ` / `路径`
-
-初学者容易出现以下几个错误：
-
-- 连接地址没有指明协议：WebSocket 作为一种通信协议，其使用 `ws`(非加密)、`wss`(SSL 加密) 作为协议标识。MQTT.js 客户端支持多种协议，连接地址需指明协议类型；
-
-- 连接地址没有指明端口：MQTT 协议并未对 WebSocket 接入端口做出规定，EMQ X 默认使用 `8083` `8084` 分别作为非加密连接、加密连接端口。而 WebSocket 协议默认端口同 HTTP 保持一致 (80/443)，不填写端口则表明使用 WebSocket 的默认端口连接；而使用标准 MQTT 连接时则无需指定端口，如 MQTT.js 在 Node.js 端可以使用 `mqtt://localhost` 连接至标准 MQTT 8083 端口，当连接地址是 `mqtts://localhost` 则连接到 8884 端口；
-
-- 错误的路径：EMQ X 默认使用 `/mqtt` 作为连接路径，连接时需指明；
-
-- 协议与端口不符：使用了 `wss` 连接却连接到 `8083` 端口；
-
-- 在 HTTPS 站点下使用非加密的 WebSocket 连接： Google Chrome 等浏览器在 HTTPS 站点下会自动禁止使用非加密的 `ws` 协议发起连接请求；
-
-- 证书与连接地址不符：服务器端配置了错误的 SSL 证书。
 
 建立连接代码如下:
 
@@ -95,8 +83,16 @@ client.on('error', (error) => {
 
 ```
 
+指定地址的时候请注意以下的内容：
 
-## 发布订阅
+- 连接地址没有指明协议：WebSocket 作为一种通信协议，其使用 `ws`(非加密)、`wss`(SSL 加密) 作为协议标识。MQTT.js 客户端支持多种协议，连接地址需指明协议类型；
+- 连接地址没有指明端口：MQTT 协议并未对 WebSocket 接入端口做出规定，EMQ X 默认使用 `8083` `8084` 分别作为非加密连接、加密连接端口。而 WebSocket 协议默认端口同 HTTP 保持一致 (80/443)，不填写端口则表明使用 WebSocket 的默认端口连接；而使用标准 MQTT 连接时则无需指定端口，如 MQTT.js 在 Node.js 端可以使用 `mqtt://localhost` 连接至标准 MQTT 8083 端口，当连接地址是 `mqtts://localhost` 则连接到 8884 端口；
+- 错误的路径：EMQ X 默认使用 `/mqtt` 作为连接路径，连接时需指明；
+- 协议与端口不符：使用了 `wss` 连接却连接到 `8083` 端口；
+- 在 HTTPS 站点下使用非加密的 WebSocket 连接： Google Chrome 等浏览器在 HTTPS 站点下会自动禁止使用非加密的 `ws` 协议发起连接请求；
+- 证书与连接地址不符：服务器端配置了错误的 SSL 证书。
+
+## 订阅（TODO）
 
 客户端连接成功之后才能订阅主题，订阅的主题必须符合 MQTT 订阅主题规则；
 
@@ -111,7 +107,7 @@ client = mqtt.connect('ws://localhost:8083/mqtt')
 client.on('connect', handleConnect)
 client.subscribe('hello')
 client.publish('hello', 'Hello EMQ X')
-````
+```
 
 **正确示例**
 
@@ -170,6 +166,13 @@ client.publish('hello', 'hello EMQ X', (error) => {
     console.log(error || '消息发布成功')
 })
 ```
+
+## 发布（TODO）
+
+
+
+## 完整代码（TODO）
+
 
 
 更多使用方式请参考 [MQTT.js 文档](https://www.npmjs.com/package/mqtt)。
