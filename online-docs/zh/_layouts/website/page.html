@@ -31,6 +31,11 @@
   </div>
 </nav>
 
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
+      type="text/css"/>
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
+
+
 <style>
 
 .navbar.navbar-default.navbar-fixed-top .container {
@@ -38,37 +43,49 @@
   padding: 0 20px;
 }
 
-.book {
-  margin-top: 32px;
+.navbar-nav > li > a:hover {
+  color: #06b777 !important;
+  background-color: transparent;
+}
+
+.navbar .navbar-nav > li > a {
+  font-size: 16px;
+  font-weight: 300;
+  color: #adafb4;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+body {
+  padding-top: 60px !important;
 }
 </style>
-
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/_static/classic.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/_static/pygments.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
-      type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/base.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/docs.css" type="text/css"/>
-<link rel="index" title="Index" href="https://developer.emqx.io/docs/emq/v3/en/genindex.html"/>
-<link rel="search" title="Search" href="https://developer.emqx.io/docs/emq/v3/en/search.html"/>
-<link rel="next" title="Get Started" href="https://developer.emqx.io/docs/emq/v3/en/getstarted.html"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/_static/classic.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/_static/pygments.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
-      type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/base.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/docs.css" type="text/css"/>
-<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic' rel='stylesheet' type='text/css'>
-
 
 
 {{ super() }}
 
 
 <script>
+var version = ['3.0']
+var doc = document.querySelector('#book-search-input input')
+if (doc.placeholder === '輸入並搜尋') {
+  doc.placeholder = '请输入并搜索'
+}
+
+function $docsChangeLang(lang) {
+  lang = lang || 'zh'
+  var href = location.href
+  if (!['zh', 'en'].includes(lang) || href.includes('/' + lang)) {
+    return$docsChangeLang
+  }
+  location.href = href.replace(/\/zh|\/en/, '/' + lang)
+  console.log(href)
+}
 </script>
+
+<script src="https://www.emqx.io/static/lib/jquery-3.2.1.min.js"></script>
+<script src="https://www.emqx.io/static/lib/toolkit.min.js"></script>
+
 
 {% endblock %}
 
