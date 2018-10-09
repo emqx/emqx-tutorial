@@ -1,61 +1,65 @@
 # Summary
 
-## 快速开始
-* [EMQ X 简介](README.md)
-    * [什么是 MQTT](quick-start/whats-mqtt.md)
-    * [什么是 EMQ X](quick-start/whats-emqx.md)
+## Quick start
+* [Preparation](README.md)
+    * [MQTT introduction](quick-start/whats-mqtt.md)
+    * [EMQ X introduction](quick-start/whats-emqx.md)
 
-* [下载及安装](quick-start/download-install.md)
-    * [Precondition](quick-start/precondition.md)
-    * [Choose and Download EMQ X](quick-start/choose-download.md)
-    * [第一次安装 EMQ X](quick-start/install-first.md)
-    * [第一次运行 EMQ X](quick-start/run-first.md)
+* [Download and install](quick-start/download-install.md)
+    * [Preconditions](quick-start/precondition.md)
+    * [Install EMQ X for the 1st time](quick-start/install-first.md)
+        * [How to choose and download EMQ X](quick-start/choose-download.md)
+    * [Run EMQ X for the 1st time](quick-start/run-first.md)
+
+* [MQTT client programming](client_dev/client_dev.md)
+    * [Java](client_dev/java.md)
+    * [Python](client_dev/python.md)
+    * [JavaScript](client_dev/javascript.md)
+
+## Cluster
+* [EMQ X clusters]()
+* [How to setup EMQ X cluster]()
+    * [Manual]()
+    * [Static]()
+    * [Auto-cluster by DNS]()
+    * [Auto-cluster by ETCD]()
+    * [Cluster on K8s]()
+    * [Configure load balancer for cluster]()
 
 
-## 集群
-* [EMQ X 的集群概念]()
-* [如何组建 EMQ X 集群]()
-    * [手动集群]()
-    * [静态集群]()
-    * [使用 DNS 的自动集群]()
-    * [使用 ETCD 的自动集群]()
-    * [在 K8S 上集群 EMQ X]()
-    * [为 EMQ X 集群配置负载均衡]()
-
-
-## 配置 EMQ X
-* [EMQ X 的配置原则](part2/README.md)
-* [EMQ X 的配置](part2/feedback_please.md)
-    * [配置 MQTT 协议](part2/better_tools.md)
-    * [连接/Listener](part2/better_tools.md)
+## EMQ X configuration
+* [EMQ X configruation princinple](part2/README.md)
+* [EMQ X configuration](part2/feedback_please.md)
+    * [MQTT protocol](part2/better_tools.md)
+    * [Connection/Listener](part2/better_tools.md)
     * [Zone]()
-    * [节点]()
-    * [会话]()
-    * [消息队列]()
-* [配置 EMQ X 插件]()    
+    * [Nodes]()
+    * [Session]()
+    * [Message queue]()
+* [EMQ X Plug-ins]()    
 
-## 桥接
-* [其他消息中间件桥接至 EMQ X]()
+## Bridge
+* [Bridge other message middleware to EMQ X]()
    * [Mosquitto]()
    * [HiveMQ]()
    * [RabbitMQ]()
    * [VerneMQ]()
-* [EMQ X 桥接至其他消息中间件]()
+* [Brige EMQ X to other message middleware]()
    * [Mosquitto]()
    * [HiveMQ]()
    * [RabbitMQ]()
    * [VerneMQ]()
-*[EMQ X 桥接至流式服务]()
-   * [Kafka 桥接]()
+*[Bridge EMQ X to streaminng service]()
+   * [Kafka bridge]()
 
-## 安全
-* [认证]()
-* [ACL 访问控制]()
-* [安全链接]()
-    * [证书配置]()
+## Security
+* [Authentication]()
+* [ACL - Access Control List]()
+* [Secured connections]()
+    * [Certification configuration]()
     * [PSK]()
 
-## 进阶功能
-* [代理订阅]()
-* [流控]()
-* [离线消息]()
+## Advanced
+* [代理订阅Proxy subscription]()
+* [流控 Flow control ]()
+* [离线消息 Offline message]()
