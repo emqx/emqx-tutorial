@@ -6,7 +6,7 @@ Python是一种简单易学而又功能强大的解释性语言，它语法简�
 
 ## 安装paho-mqtt
 
-如果在您的系统中已经有了Python环境（大多数linux发布和MacOS中已经包含Python环境，在Windows下需要单独安装），使用一下命令即可安装paho-mqtt：
+如果在您的系统中已经有了Python环境（大多数linux发布和MacOS中已经包含Python环境，在Windows下需要单独安装），使用以下命令即可安装paho-mqtt：
 
 ```bash
 pip install paho-mqtt
@@ -22,13 +22,14 @@ pip install paho-mqtt
 
 ## 实现一个简单的客户端
 
-paho-mqtt提供了3个类，Client、Publish和Subscribe。后两者仅提供了简单的方法用于一次性的发送和接受消息，但并不保持连接。Client包含了连接、订阅、发送和回调函数。编写一个MQTT客户端，一般会使用Client类，用Client的实例来建立并维持和Broker的连接、订阅和发送消息，并在需要时断开连接：
+paho-mqtt提供了3个类，Client、Publish和Subscribe。后两者仅提供了简单的方法用于一次性的发布和订阅消息，但并不保持连接。Client包含了连接、订阅、发布和回调函数。编写一个MQTT客户端，一般会使用Client类，用Client的实例来建立并维持和Broker的连接、订阅和发送消息，并在需要时断开连接：
  - 建立一个Client实例
  - 使用Client实例的connect*()函数进行连接
- - 用loop*()函数保持和处理客户端和borker之间连接和数据流
+ - 用loop*()函数保持和处理客户端和broker之间连接和数据流
  - 使用subscribe()函数订阅主题
  - 使用publish()函数发布消息
- - 使用disconnect()函数连断开和broker的连接
+ - 使用disconnect()函数连断开和broker的连接  
+
 在应用程序需要处理事件的时候，回调函数会被调用。
 
 _这里我们只对Paho客户端的Python实现做简单的介绍，关于该客户端的更详尽的说明请参阅[官方文档](https://www.eclipse.org/paho/clients/python/docs/)。_
@@ -195,6 +196,7 @@ time.sleep(5) #等待消息处理结束
 client.loop_stop()
 client.disconnect()
 ```
+
 运行结果：
 ```bash
 Connection returned with result code: 0
