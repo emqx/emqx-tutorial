@@ -21,18 +21,18 @@
 
 @media (min-width: 1200px) {
     .page-inner {
-        max-width: 800px;
+        max-width: 80%;
     }
 }
 
 @media (min-width: 1920px) {
     .page-inner {
-        max-width: 1200px;
+        max-width: 78%;
     }
 }
 
 @media (min-width: 2560px) {
     .page-inner {
-        max-width: 1920px;
+        max-width: 76%;
     }
 }
