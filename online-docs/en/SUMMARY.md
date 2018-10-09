@@ -49,7 +49,7 @@
    * [HiveMQ]()
    * [RabbitMQ]()
    * [VerneMQ]()
-*[Bridge EMQ X to streaminng service]()
+* [Bridge EMQ X to streaminng service]()
    * [Kafka bridge]()
 
 ## Security
@@ -63,3 +63,6 @@
 * [代理订阅Proxy subscription]()
 * [流控 Flow control ]()
 * [离线消息 Offline message]()
+
+## FAQ
+* [FAQ](faq/faq_en.md)
