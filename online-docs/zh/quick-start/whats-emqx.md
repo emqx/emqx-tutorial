@@ -15,39 +15,50 @@ EMQ X 基于Erlang/OTP平台开发的MQTT消息服务器，是开源社区中最
 
 # EMQ X 版本
 
-EMQ X 现在有三种版本，用户可以根据自己的需求选择不同的版本，
+EMQ X 现在有三种版本，用户可以根据自己的需求选择不同的版本。
 
-- **EMQ X Broker**：EMQ X 开源版本，用户可以免费下载和使用，包含了以下功能
-  - 十万级并发连接能力
-  - 常见物联网协议支持
-    - MQTT
-    - MQTT-SN
-    - CoAP
-    - LwM2M
-    - WebSocket
-    - STOMP
-    - TCP
-  - 认证鉴权
-  - 集群、高可用
-  - Docker部署
-  - 社区服务支持
-- **EMQ X Enterprise**：EMQ X 商业版本，用户可以通过网站来[下载企业评估版](https://www.emqx.io/downloads/emq/enterprise?osType=Linux)进行试用。
-  - 开源版的全部功能
-  - 百万级并发连接能力
-  - 数据持久化：可以将消息保存到数据库，目前支持的数据库为，
-    - Redis
-    - MongoDB
-    - MySQL
-    - PostgreSQL
-    - Cassandra
-  - 数据桥接，支持将消息转发到Kafka、RabbitMQ或者别的EMQ节点
-  - LoRaWAN支持
-  - Kubernates部署
-  - 安全 - 提供完整的安全连接方案
-  - 监控，提供机器、EMQ X 和Erlang虚拟机级别的监控功能
-  - 商业化技术支持
-- **EMQ X Platform**：EMQ X 平台版本，提供超大规模的物联网连接解决方案。
-  - Enterprise版本的所有功能
-  - 千万级并发连接能力
-  - 大规模、跨数据中心解决方案咨询与实施
-  - 提供物联网平台全生命周期中需要的各种服务（咨询、培训、架构设计、定制开发、平台建设、功能测试与运维服务）
+## EMQ X Broker
+
+EMQ X 开源版本，用户可以免费下载和使用，包含了以下功能。
+
+- 十万级并发连接能力
+- 常见物联网协议支持
+  - MQTT
+  - MQTT-SN
+  - CoAP
+  - LwM2M
+  - WebSocket
+  - STOMP
+  - TCP
+- 认证鉴权
+- 集群、高可用
+- Docker部署
+- 社区服务支持
+
+## EMQ X Enterprise
+
+EMQ X 商业版本，用户可以通过网站来[下载企业评估版](https://www.emqx.io/downloads/emq/enterprise?osType=Linux)进行试用。
+
+- 开源版的全部功能
+- 百万级并发连接能力
+- 数据持久化：可以将消息保存到数据库，目前支持的数据库为，
+  - Redis
+  - MongoDB
+  - MySQL
+  - PostgreSQL
+  - Cassandra
+- 数据桥接，支持将消息转发到Kafka、RabbitMQ或者别的EMQ节点
+- LoRaWAN支持
+- Kubernates部署
+- 安全 - 提供完整的安全连接方案
+- 监控，提供机器、EMQ X 和Erlang虚拟机级别的监控功能
+- 商业化技术支持
+
+## EMQ X Platform
+
+EMQ X 平台版本，提供超大规模的物联网连接解决方案。
+
+- Enterprise版本的所有功能
+- 千万级并发连接能力
+- 大规模、跨数据中心解决方案咨询与实施
+- 提供物联网平台全生命周期中需要的各种服务（咨询、培训、架构设计、定制开发、平台建设、功能测试与运维服务）

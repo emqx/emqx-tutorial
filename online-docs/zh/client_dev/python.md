@@ -2,19 +2,19 @@
 
 Python是一种简单易学而又功能强大的解释性语言，它语法简介，拥有丰富的标准库和第三方库，使用户能够专注于解决问题而非语言本身，非常适合快速开发。
 
-本章节以简单的例子讲解如何建立一个初步的python MQTT客户端。在这里，我们会用到paho-mqtt库。[Paho](https://www.eclipse.org/paho/)是eclipse的一个开源MQTT项目，包含多种语言实现，python是其中之一。
+本章节以简单的例子讲解如何建立一个初步的Python MQTT客户端。在这里，我们会用到paho-mqtt库。[Paho](https://www.eclipse.org/paho/)是Eclipse的一个开源MQTT项目，包含多种语言实现，Python是其中之一。
 
 ## 安装paho-mqtt
 
 如果在您的系统中已经有了Python环境（大多数linux发布和MacOS中已经包含Python环境，在Windows下需要单独安装），使用一下命令即可安装paho-mqtt：
 
-```
+```bash
 pip install paho-mqtt
 ```
 
 或者使用python虚拟环境`virtualenv`建立一个和其他项目隔离的mqtt客户端项目环境，然后在此环境中安装paho-mqtt：
 
-```
+```bash
 virtualenv mqtt-client
 source mqtt-client/bin/active
 pip install paho-mqtt
