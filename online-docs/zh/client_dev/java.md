@@ -9,7 +9,7 @@
 
 ## 安装java-paho
 
-本例中使用Maven来管理，打开`pom.xml`，加入以下的JAR依赖，等待完成相关JAR包的下载。
+本例中使用Maven来管理依赖的库文件，打开`pom.xml`，加入以下的JAR依赖，等待完成相关JAR包的下载。
 
 ```xml
 <dependency>
@@ -105,7 +105,7 @@ sampleClient.subscribe(topic);
 
 sampleClient.setCallback(new MqttCallback() {
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		String theMsg = MessageFormat.format("{0} is arriaved for topic {1}.", new String(message.getPayload()), topic);
+		String theMsg = MessageFormat.format("{0} is arrived for topic {1}.", new String(message.getPayload()), topic);
 		System.out.println(theMsg);
 	}
 
@@ -188,7 +188,7 @@ public class Demo {
 			sampleClient.subscribe(topic);
 			sampleClient.setCallback(new MqttCallback() {
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					String theMsg = MessageFormat.format("{0} is arriaved for topic {1}.", new String(message.getPayload()), topic);
+					String theMsg = MessageFormat.format("{0} is arrived for topic {1}.", new String(message.getPayload()), topic);
 					System.out.println(theMsg);
 				}
 				
@@ -227,9 +227,9 @@ public class Demo {
 ```bash
 Connecting to broker: tcp://localhost:1883
 Connected
-Subscribe to topic: demp/topics
+Subscribe to topic: demo/topics
 Publishing message: Message from MqttPublishSample
 Message published
-Message from MqttPublishSample is arriaved for topic demp/topics.
+Message from MqttPublishSample is arrived for topic demp/topics.
 ```
 
