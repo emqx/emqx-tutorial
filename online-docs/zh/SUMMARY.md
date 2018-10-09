@@ -14,7 +14,7 @@
 * [客户端编程初步](client_dev/client_dev.md)
     * [Java](client_dev/java.md)
     * [Python](client_dev/python.md)
-    * [JavaScript](client_dev/ws.md)
+    * [JavaScript](client_dev/javascript.md)
 
 ## 集群
 * [EMQ X 的集群概念]()
