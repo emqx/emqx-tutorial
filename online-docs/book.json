@@ -6,9 +6,14 @@
     "expandable-chapters-small",
     "simple-page-toc",
     "anchors",
-    "copy-code-button"
+    "copy-code-button",
+    "anchor-navigation-ex"
   ],
-  "pluginsConfig": {},
+  "pluginsConfig": {
+    "anchor-navigation-ex": {
+      "showLevel": false
+    }
+  },
   "styles": {
     "website": "styles/website.css",
     "ebook": "styles/ebook.css",

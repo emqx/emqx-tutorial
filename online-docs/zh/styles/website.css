@@ -10,6 +10,10 @@
     border-left-color: #07ae79;
 }
 
+#anchor-navigation-ex-navbar {
+    top: 128px;
+}
+
 .book-summary ul.summary li a:hover {
     text-decoration: none;
     color: #07ae79;
