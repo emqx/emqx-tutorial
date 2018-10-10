@@ -19,6 +19,10 @@
     color: #07ae79;
 }
 
+#anchor-navigation-ex-navbar {
+    top: 128px;
+}
+
 @media (min-width: 1200px) {
     .page-inner {
         max-width: 80%;
