@@ -9,7 +9,8 @@
   "scripts": {
     "docs": "gitbook install && gitbook serve",
     "html": "gitbook install && gitbook build . _book",
-    "pdf": "gitbook install && gitbook pdf . _book.pdf"
+    "pdf": "gitbook install && gitbook pdf . _book.pdf",
+    "mkdir": "node ./_tools/generate_summary.js"
   },
   "dependencies": {
     "gitbook-cli": "^2.3.2"
