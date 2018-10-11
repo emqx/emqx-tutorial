@@ -26,17 +26,8 @@
     * [Cluster on K8s]()
     * [Configure load balancer for cluster]()
 
-
-## EMQ X configuration
-* [EMQ X configruation princinple](part2/README.md)
-* [EMQ X configuration](part2/feedback_please.md)
-    * [MQTT protocol](part2/better_tools.md)
-    * [Connection/Listener](part2/better_tools.md)
-    * [Zone]()
-    * [Nodes]()
-    * [Session]()
-    * [Message queue]()
-* [EMQ X Plug-ins]()    
+## Backends for Data Persistence (EMQ X Enterprise)
+* [Backends for Data Persistence]()  
 
 ## Bridge
 * [Bridge other message middleware to EMQ X]()
@@ -63,6 +54,17 @@
 * [代理订阅Proxy subscription]()
 * [流控 Flow control ]()
 * [离线消息 Offline message]()
+
+## EMQ X configuration
+* [EMQ X configruation princinple](part2/README.md)
+* [EMQ X configuration](part2/feedback_please.md)
+    * [MQTT protocol](part2/better_tools.md)
+    * [Connection/Listener](part2/better_tools.md)
+    * [Zone]()
+    * [Nodes]()
+    * [Session]()
+    * [Message queue]()
+* [EMQ X Plug-ins]()  
 
 ## FAQ
 * [FAQ](faq/faq_en.md)

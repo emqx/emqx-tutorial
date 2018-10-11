@@ -26,17 +26,8 @@
     * [在 K8S 上集群 EMQ X]()
     * [为 EMQ X 集群配置负载均衡]()
 
-
-## 配置 EMQ X
-* [EMQ X 的配置原则](part2/README.md)
-* [EMQ X 的配置](part2/feedback_please.md)
-    * [配置 MQTT 协议](part2/better_tools.md)
-    * [连接/Listener](part2/better_tools.md)
-    * [Zone]()
-    * [节点]()
-    * [会话]()
-    * [消息队列]()
-* [配置 EMQ X 插件]()    
+## 数据持久化后台（企业版）
+* [数据持久化后台]()    
 
 ## 桥接
 * [其他消息中间件桥接至 EMQ X]()
@@ -63,6 +54,17 @@
 * [代理订阅]()
 * [流控]()
 * [离线消息]()
+
+## 配置 EMQ X
+* [EMQ X 的配置原则](part2/README.md)
+* [EMQ X 的配置](part2/feedback_please.md)
+    * [配置 MQTT 协议](part2/better_tools.md)
+    * [连接/Listener](part2/better_tools.md)
+    * [Zone]()
+    * [节点]()
+    * [会话]()
+    * [消息队列]()
+* [配置 EMQ X 插件]()
 
 ## 常见问题解答
 * [常见问题解答](faq/faq_cn.md)
