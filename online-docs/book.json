@@ -3,11 +3,11 @@
     "prism",
     "-highlight",
     "-sharing",
-    "expandable-chapters-small",
     "simple-page-toc",
     "anchors",
     "copy-code-button",
-    "anchor-navigation-ex"
+    "anchor-navigation-ex",
+    "cuav-chapters"
   ],
   "pluginsConfig": {
     "anchor-navigation-ex": {
