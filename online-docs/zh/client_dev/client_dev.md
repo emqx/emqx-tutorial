@@ -11,5 +11,5 @@
 
 - [Java](java.md)
 - [Python](python.md)
-- [JavaScript](ws.md)
+- [JavaScript](javascript.md)
 
