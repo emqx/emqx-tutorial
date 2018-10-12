@@ -270,7 +270,7 @@ client.on('message', (topic, message) => {
 
 ```
 
-Running result：
+## Running result:
 ```bash
 Connected to mqtt://localhost:1883
 Publish Success
