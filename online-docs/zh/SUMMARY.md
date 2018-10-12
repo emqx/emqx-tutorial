@@ -17,13 +17,13 @@
 
 ## 集群
 * [EMQ X 的集群概念](cluster/whats_cluster.md)
-* [如何组建 EMQ X 集群](cluster/setup_start.md)
-  * [手动集群](cluster/manual.md)
-  * [静态集群](cluster/static.md)
-  * [使用 DNS 的自动集群](cluster/dns.md)
-  * [使用 ETCD 的自动集群](cluster/etcd.md)
-  * [在 K8S 上集群 EMQ X](cluster/k8s.md)
-  * [为 EMQ X 集群配置负载均衡](cluster/balancer.md)
+  * [如何组建 EMQ X 集群](cluster/setup_start.md)
+    * [手动集群](cluster/manual.md)
+    * [静态集群](cluster/static.md)
+    * [使用 DNS 的自动集群](cluster/dns.md)
+    * [使用 ETCD 的自动集群](cluster/etcd.md)
+    * [在 K8S 上集群 EMQ X](cluster/k8s.md)
+    * [为 EMQ X 集群配置负载均衡](cluster/balancer.md)
 
 ## 数据持久化后台（企业版）
 * [EMQ X 数据持久化概念](backend/whats_backend.md)
