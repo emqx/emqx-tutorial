@@ -256,7 +256,7 @@ select * from mqtt_msg where sender = 'test';
 
 *mqtt.retain* 存储 Retain 消息:
 
-```retain
+```bash
 CREATE TABLE mqtt.retain (
         topic text,
         msgid text,
