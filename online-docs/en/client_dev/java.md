@@ -2,7 +2,7 @@
 
 This section provides a simple example of how to code a Java MQTT client with several Java MQTT libraries in the community, including
 
-- Paho： [Paho](https://www.eclipse.org/paho/) is an open source MQTT project of Eclipse, including multi language implementation, the Java is one of them.
+- Paho： [Paho](https://www.eclipse.org/paho/) is an open source MQTT project of Eclipse, including multi-language implementation, Java is one of them.
 - Fusesource：[Fusesource](https://github.com/fusesource/mqtt-client) is another open source Java MQTT library, but the project is not active and has not been updated for about two years.
 
 This article takes the more populate [java-paho](https://www.eclipse.org/paho/clients/java/) in the community as an example to illustrate the process of developing MQTT client using Java.
@@ -31,7 +31,7 @@ The example of this part is relatively simple, and the following functions are r
 
 
 
-## QuickStart
+## Quick Start
 
 The constructor for `MqttClient`:
 
@@ -90,7 +90,7 @@ Connected
 
 ## Subscribe
 
-Subscriptions can only be made after successful connection establishment. `MqttClient` provides multiple `subscribe` methods that enable different ways of subscribing to topics. The theme can be a clear single topic or a wildcard character.
+Subscriptions can only be made after a successful connection establishment. `MqttClient` provides multiple `subscribe` methods that enable different ways of subscribing to topics. The theme can be a clear single topic or a wildcard character.
 
 ```java
 subscribe(java.lang.String topicFilter)
@@ -111,7 +111,7 @@ sampleClient.setCallback(new MqttCallback() {
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
 	}
-				
+
 	public void connectionLost(Throwable throwable) {
 	}
 });
@@ -183,7 +183,7 @@ public class Demo {
 			System.out.println("Connecting to broker: " + broker);
 			sampleClient.connect(connOpts);
 			System.out.println("Connected");
-			
+
 			String topic = "demp/topics";
 			System.out.println("Subscribe to topic: " + topic);
 			sampleClient.subscribe(topic);
@@ -192,15 +192,15 @@ public class Demo {
 					String theMsg = MessageFormat.format("{0} is arrived for topic {1}.", new String(message.getPayload()), topic);
 					System.out.println(theMsg);
 				}
-				
+
 				public void deliveryComplete(IMqttDeliveryToken token) {
 				}
-				
+
 				public void connectionLost(Throwable throwable) {
 				}
 			});
 
-			
+
 			String content = "Message from MqttPublishSample";
 			int qos = 2;
 			System.out.println("Publishing message: " + content);
@@ -233,4 +233,3 @@ Publishing message: Message from MqttPublishSample
 Message published
 Message from MqttPublishSample is arrived for topic demp/topics.
 ```
-

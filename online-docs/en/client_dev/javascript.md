@@ -1,13 +1,11 @@
 # Using JavaScript
 
-EMQ X Broker supports communication with clients through WebSocket protocol. 
-WebSocket is a protocol for full duplex communication on a single TCP connection. 
+EMQ X Broker supports communication with clients through WebSocket protocol.
+WebSocket is a protocol for full duplex communication on a single TCP connection.
 The WebSocket communication protocol was established by IETF as standard RFC 6455 in 2011 and supplemented by RFC 7936.
-WebSocket API is also set standard by W3C. WebSocket makes data exchange between client and server easier, allowing the server to push data to the client on its own initiative. In the WebSocket API, 
-browsers and servers only need to shake hands once, and a persistent connection can be created between the two directly, 
-and two-way data transmission can be carried out.
+WebSocket API is also set standard by W3C. WebSocket makes data exchange between client and server easier, allowing the server to push data to the client on its own initiative. In the WebSocket API, browsers and servers only need to shake hands once, and a persistent connection can be created between the two directly, and two-way data transmission can be carried out.
 
-## library comparison
+## Library comparison
 
 **Paho.mqtt.js**
 
@@ -15,7 +13,7 @@ and two-way data transmission can be carried out.
 
 **MQTT.js**
 
-[MQTT.js](https://www.npmjs.com/package/mqtt) can be used in Node.js environment and browser environment. On Node.js, you can use console connection through global installation, and also support MQTT, MQTT TLS certificate connection. MQTT.js can be used in WeChat mini program.
+[MQTT.js](https://www.npmjs.com/package/mqtt) can be used in Node.js environment and browser environment. On Node.js, you can use console connection through global installation, and MQTT.js also supports MQTT, MQTT TLS certificate connection. MQTT.js can be used in WeChat mini program.
 
 
 ## Installation
@@ -54,16 +52,16 @@ MQTT.js supports WebSocket protocol connections in browser environments and TCP 
    - publish(): Publish a message to a topic
    - end(): Close the client
 
-_Here we'll just give a brief introduction to the MQTT.js client, which you can see for more details by [MQTT.js](https://www.npmjs.com/package/mqtt)_
+_Here we'll just give a brief introduction to the MQTT.js client, you can see for more details by [MQTT.js](https://www.npmjs.com/package/mqtt)_
 
 
-## QuickStart
+## Quick Start
 
 EMQ X uses 8083 ports for WebSocket connections, and 8084 for WebSocket with SSL.
 
 Local connect url is: `ws://localhost:8083/mqtt`
 
-The connect url can be split like： `ws:` // `localhost` : `8083` `/mqtt` 
+The connect url can be split like： `ws:` // `localhost` : `8083` `/mqtt`
 
 `protocol` // `domain` : `port ` / `path`
 
@@ -77,12 +75,12 @@ import mqtt from 'mqtt'
 // connect options
 const options = {
       connectTimeout: 4000,
-      
+
       // Authentication
       clientId: 'emqx',
       // username: 'emqx',
       // password: 'emqx',
-      
+
       keepalive: 60,
       clean: true,
 }
@@ -110,10 +108,10 @@ client.on('error', (error) => {
 
 ```
 
-You may have the following mistakes：
+You may have the following errors:
 
 - Connection url does not specify protocol：WebSocket use `ws`(normal)、`wss`(with SSL) as protocol identifier. MQTT.js supports multiple protocols. Connection url need to specify protocol types;
-- Connection url not specified port：The MQTT protocol does not specify WebSocket access ports. EMQ X defaults to `8083`、`8084' as non-encrypted and encrypted connection ports, respectively. The default port of the WebSocket protocol is the same as HTTP (80/443), if you not filling in the port indicates that the default port connection of the WebSocket is used; while the standard MQTT connection is used without specifying the port. For example, MQTT.js can connect to the standard MQTT 8083 port using `mqtt://localhost`, when the connection url is `mqtts://localhost` is connected to the 8884 port;
+- Connection url not specified port：The MQTT protocol does not specify WebSocket access ports. EMQ X defaults to `8083`、`8084` as non-encrypted and encrypted connection ports, respectively. The default port of the WebSocket protocol is the same as HTTP (80/443), if you not filling in the port indicates that the default port connection of the WebSocket is used; while the standard MQTT connection is used without specifying the port. For example, MQTT.js can connect to the standard MQTT 8083 port using `mqtt://localhost`, when the connection url is `mqtts://localhost` is connected to the 8884 port;
 - Wrong path：EMQ X uses `/mqtt` as the WebSocket connection path by default, and it needs to be specified when connecting;
 - The protocol does not match the port: the `wss` protocol is used to connect to the `8083` port;
 - Use unencrypted WebSocket connections over HTTPS sites: Browsers such as Google Chrome automatically prohibit the use of unencrypted `ws` protocols to initiate connection requests under HTTPS sites;
@@ -122,7 +120,7 @@ You may have the following mistakes：
 
 ## Publish
 
-Publish a message to a topic using the `publish ()` function. The published topic must conform to the MQTT publishing topic rule, otherwise the client will disconnect. 
+Publish a message to a topic using the `publish ()` function. The published topic must conform to the MQTT publishing topic rule, otherwise, the client will disconnect.
 
 There is no need to subscribe to the topic before publish, but make sure that the client has successfully connected:
 
@@ -151,9 +149,9 @@ Subscribe topic only after a successful client connection. Subscribed topics mus
 
 
 
-Because of JavaScript's asynchronous and non-blocking nature, it is only after the connect event that the client is successfully connected. The `client.connected'property determines whether the connection is successful:
+Because of JavaScript's asynchronous and non-blocking nature, it is only after the connect event that the client is successfully connected. The `client.connected` property determines whether the connection is successful:
 
-**Error examples**
+**Wrong examples**
 
 ```js
 import mqtt from 'mqtt'
@@ -177,23 +175,23 @@ client.on('connect', () => {
             })
         }
     })
-    
+
     // Multiple subscriptions
     client.subscribe(
-        ['hello', 'one/two/three/#', '#'], 
+        ['hello', 'one/two/three/#', '#'],
         { qos: 1 },  
         (err) => {
           console.log(err || 'Subscribe Success')
         },
     )
-    
+
     // Multiple subscriptions
     client.subscribe(
         [
-            { hello: 1 }, 
-            { 'one/two/three': 2 }, 
+            { hello: 1 },
+            { 'one/two/three': 2 },
             { '#': 0 }
-        ], 
+        ],
         (err) => {
           console.log(err || 'Subscribe Success')
         },
@@ -202,7 +200,7 @@ client.on('connect', () => {
 
 ```
 
-## Unubscribe
+## Unsubscribe
 
 ```js
 client.unubscribe(
@@ -234,12 +232,12 @@ const TCP_TLS_URL = 'mqtts://localhost:8883'
 
 const options = {
       connectTimeout: 4000,
-      
+
       // Authentication
       clientId: 'emqx',
       // username: 'emqx',
       // password: 'emqx',
-      
+
       keepalive: 60,
       clean: true,
 }
@@ -249,21 +247,21 @@ const client = mqtt.connect(TCP_URL, options)
 // after connect
 client.on('connect', () => {
   console.log('Connected to', TCP_URL)
-  
+
   client.subscribe('hello', (err) => {
     console.log(err || 'Subscribe Success')
   })
-  
+
   client.publish('hello', 'Hello EMQ X', (err) => {
     console.log(err || 'Publish Success')
   })
-  
+
 })
 
 // handle message event
 client.on('message', (topic, message) => {
   console.log('Received form', topic, ':', message.toString())
-  
+
   // disconnect
   client.end()
 })
