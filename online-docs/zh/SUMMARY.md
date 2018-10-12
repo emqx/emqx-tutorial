@@ -26,11 +26,12 @@
   * [为 EMQ X 集群配置负载均衡](cluster/balancer.md)
 
 ## 数据持久化后台（企业版）
-* [Cassandra](backend/cassandra.md)
-* [MongoDB](backend/mongo.md)
+* [EMQ X 数据持久化概念](backend/whats_backend.md)
+* [Redis](backend/redis.md)
 * [MySQL](backend/mysql.md)
 * [PostgreSQL](backend/postgres.md)
-* [Redis](backend/redis.md)
+* [MongoDB](backend/mongo.md)
+* [Cassandra](backend/cassandra.md)
 
 ## 桥接
 * [其他消息中间件桥接至 EMQ X](bridge/bridge_to_emqx.md)

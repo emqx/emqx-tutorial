@@ -26,12 +26,13 @@
   * [Configure load balancer for cluster](cluster/balancer.md)
 
 
-## Backend
-* [Cassandra](backend/cassandra.md)
-* [MongoDB](backend/mongo.md)
+## Backends for Data Persistence (EMQ X Enterprise)
+* [EMQ X Backends for Data Persistence](backend/whats_backend.md)
+* [Redis](backend/redis.md)
 * [MySQL](backend/mysql.md)
 * [PostgreSQL](backend/postgres.md)
-* [Redis](backend/redis.md)
+* [MongoDB](backend/mongo.md)
+* [Cassandra](backend/cassandra.md)
 
 
 ## Bridge
