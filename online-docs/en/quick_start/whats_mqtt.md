@@ -1,53 +1,53 @@
-# TODO: 翻译 什么是 MQTT
+# What is MQTT
 
-MQTT 是 Message Queuing Telemetry Transport（消息队列遥测传输）的缩写，是 IBM 开发的一个即时通讯协议，它比较适合于在低带宽、不可靠的网络的进行远程传感器和控制设备通讯等，正在日益成为物联网通信协议的重要组成部分。
+MQTT stands for Message Queuing Telemetry Transport. Initially it is a instant message exchange protocol developed by IBM to serve on low-bandwith and unstable links for Telemetry applications, now it is more and more popular in IoT applications for different use cases and became an important of the IoT world.
 
-- 基于发布 / 订阅范式的 “轻量级” 消息协议（头部 2 字节）
-- 专为资源受限的设备、低带宽占用高延时或者不可靠的网络设计，适用于 IoT 与 M2M
-- 基于 TCP/IP 协议栈
-- 事实的 IoT 通讯的标准协议
+- Low weight message transmitting protocol based on Publish-Subscribe Pattern, only two bytes in message head.
+- Designed for resource limited low bandwith or unstable networks, suitable for IoT and M2M scenarios.
+- Based on TCP/IP protocal stack.
+- De facto standard in IoT applications.
 
-该协议于 1999 年由 IBM 的 Dr Andy Stanford-Clark 和 Arcom(现为 Eurotech)的 Arlen Nipper 提出，协议版本经历了多次升级和改进，于 2013 年成立 OASIS MQTT 技术规范委员会，并持续发布协议的新版本，
+The protocal is initialed by Dr Andy Stanford-Clark from IBM and Arlen Nipper from Arcom (now Eurotech), after several upgrade and improvement, it bacame a standard of OASIS in 2013.
 
-- 2015 年，MQTT3.1.1 协议发布
-- 2018 年，MQTT5.0 协议发布
+- In 2015, MQTT3.1.1 is released
+- In 2018, MQTT5.0 is released
 
-目前主流的支持协议版本为 3.1.1，但是比较活跃的 MQTT 服务器推出了支持 MQTT 5.0 协议的版本，EMQ X 今年 9 月份推出了 3.0 版本，是开源社区中最早支持 MQTT 5.0 协议的服务器。
+Currently the widely used protocol version is 3.1.1. Some active broker providers introduced their MQTT 5.0 products into the market, EMQ released the EMQ X Version 3.0 in September 2018, it is the first open source MQTT broker in the open source community.
 
-## MQTT 协议的主要特性
+## Main characters of MQTT Protocol
 
-- MQTT 协议使用发布 / 订阅消息范式来做到一对多的消息分发以及应用程序的解耦 
-- MQTT 协议提供了 3 种（QoS）服务质量用于消息传输，适应不同的物联网数据传输场景
-  - QoS 0：最多一次传送 (只负责传送，发送过后就不管数据的传送情况) 
-  - QoS 1：至少一次传送 (确认数据交付) 
-  - QoS 2：正好一次传送 (保证数据交付成功) 
-- 通过很小的传输开销，以及最小化的协议交换来减少网络流量 
-- 发生异常断线时通知各方的机制 
+- MQTT Protocol uses Publish-Subscribe Pattern to do one-to-many message delivery and decouple the data transmit and the application program.
+- QoS, MQTT Protocol provides three levels of QoS
+  - QoS 0: deliver message at most once
+  - QoS 1: deliver message at least once(ensure the message is delivered)
+  - QoS 2: deliver message exactly once(ensure the message is delivered without duplication)
+- Small transmitting overhead, less messages exchanged in protocol  
+- Communication parties are aware of error/disconnection on network occurred
 
-## MQTT 发布 / 订阅
+## MQTT Pub/Sub
 
 ![订阅与发布](../assets/image-20180927222728201.png)
 
-如上图所示，
+As showed in the figure above,
 
-- 发布者：温度传感器，通过主题 "sensor/1/temperature" 发布一条温度为 37.5 度的消息
-- 3 个自上而下的订阅者分别通过订阅不同的主题得到发布者发出的消息
-  - 移动设备：通过订阅主题 "sensor/1/#"
-  - 电脑：通过订阅主题 "sensor/+/temperature"
-  - 服务器：通过订阅主题 "sensor/1/temperature"
+- Publisher: A temperature sensor publishes a message about the temperature (37.5) using the topic 'sensor/1/temperature'
+- 3 different Subscribers subscribe in different ways and receive this message
+  - Mobile device: subscribe to 'sensor/1/#''
+  - Destop App: subscribe to 'sensor/+/temperature'
+  - Server: subscribe to 'sensor/1/temperature'
 
-## MQTT 服务器
+## MQTT Broker
 
-MQTT 服务器是发布者和订阅者之间通信的代理（因此中文也有将 MQTT 服务器翻译为 MQTT 代理），主要提供了以下的功能，
+MQTT Broker brokers the message exchage between the publishers and the subscribers, it provides services in following way:
 
-- 基于主题的 Pub/Sub 模式，将发布者和订阅着解耦
-- 对于服务器来说，发布者和订阅者都是“客户端”
-- 客户端与服务器连接都通过 TCP、TLS 或者 WebSocket
-- 客户端（发布者）发送一条消息到服务器
-- 一个或者多个客户端（订阅者）从服务器接收消息
+- Decouple the subscribers and publishers using Pub-Sub pattern.
+- To the broker, both publishers and subscribers are clients.
+- Broker maintains the connections from clients using TCP, TLS or WebSocket.
+- Client (publisher) publishes message to broker.
+- One or more clients (subscribers) receive message from broker.
 
-按照 MQTT 协议标准，服务器提供三种连接方式，
+According to the QMTT standard, three connection protocols are supported:
 
-- TCP：默认端口为 1883
-- TLS：默认端口为 8883
-- WebSocket：默认端口为 8083
+- TCP: default port 1883
+- TLS: default port 8883
+- WebSocket: default port 8083
