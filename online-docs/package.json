@@ -8,10 +8,11 @@
   "private": true,
   "scripts": {
     "docs": "gitbook install && gitbook serve",
-    "html": "gitbook install && gitbook build . _book",
+    "html": "gitbook install && gitbook build . _book && npm run clear",
     "pdf": "gitbook install && gitbook pdf . _book.pdf",
     "mkdir": "node ./_tools/generate_summary.js",
-    "lint": "node ./_tools/style_lint.js"
+    "lint": "node ./_tools/style_lint.js",
+    "clear": "node ./_tools/clear.js"
   },
   "dependencies": {
     "gitbook-cli": "^2.3.2",

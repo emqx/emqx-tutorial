@@ -19,6 +19,10 @@
     color: #07ae79;
 }
 
+p img {
+    margin-top: .85em;
+}
+
 #anchor-navigation-ex-navbar {
     top: 128px;
 }

@@ -3,6 +3,17 @@
 EMQ X 支持 MQTT 消息直接存储 Redis、MySQL、PostgreSQL、MongoDB、Cassandra 数据库。
 
 
+## 数据持久化的应用场景
+
+
+## 数据持久化的原理
+
+
+## 可以供配置的类型
+
+
+## 介绍一下配置文件的格式
+
 
 ## 持久化存储插件对照表
 

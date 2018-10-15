@@ -1,9 +1,9 @@
 /*.book-summary ul.summary li ul {*/
-    /*padding-left: 0;*/
+/*padding-left: 0;*/
 /*}*/
 
 /*.book-summary ul.summary .articles li {*/
-    /*border-left: 4px solid transparent;*/
+/*border-left: 4px solid transparent;*/
 /*}*/
 
 .book-summary ul.summary li.active {
@@ -21,6 +21,10 @@
 
 .book-summary ul.summary li.active > a {
     color: #07ae79;
+}
+
+p img {
+    margin-top: .85em;
 }
 
 @media (min-width: 1200px) {
