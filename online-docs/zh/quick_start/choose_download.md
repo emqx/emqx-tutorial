@@ -1,10 +1,10 @@
 # 如何选择并下载 EMQ X
 
-[EMQ 官网](https://www.emqx.io/downloads)提供各个操作系统与平台全部历史版本的 EMQ X 下载。
+[EMQ 官网](https://www.emqx.io/downloads) 提供各个操作系统与平台全部历史版本的 EMQ X 下载。
 
 ## 开源版与企业版
 
-EMQ 提供 EMQ X Broker (开源版)与 EMQ X Enterprise (企业版)两种 Broker 下载：
+EMQ 提供 EMQ X Broker (开源版) 与 EMQ X Enterprise (企业版) 两种 Broker 下载：
 
 - EMQ X 开源版可直接下载使用；
 - EMQ X 企业版需要购买授权并导入授权许可证才能启动运行，现可在官网注册免费用户并试用 30 天。
@@ -28,7 +28,7 @@ EMQ 提供 EMQ X Broker (开源版)与 EMQ X Enterprise (企业版)两种 Broker
 - 7X24 技术支持
 
 
-**开源版与企业版详细对比详见[版本比较](https://www.emqx.io/products/enterprise), EMQ 服务支持详见[服务与支持](https://www.emqx.io/services/support)。**
+** 开源版与企业版详细对比详见 [版本比较](https://www.emqx.io/products/enterprise), EMQ 服务支持详见 [服务与支持](https://www.emqx.io/services/support)。**
 
 
 ## 版本选择
@@ -40,4 +40,4 @@ EMQ X 通常发布三个版本级别的包：
 - Final：正式版，版本号为 v-xx 。
 
 
-**请根据版本级别与使用场景合理选择版本，通常类来说同一版本类型版本号越大则新特性越多、性能与稳定性越好。新增特性与兼容性变更详见 [changelogs](https://www.emqx.io/changelogs/6)。**
+** 请根据版本级别与使用场景合理选择版本，通常类来说同一版本类型版本号越大则新特性越多、性能与稳定性越好。新增特性与兼容性变更详见 [changelogs](https://www.emqx.io/changelogs/6)。**

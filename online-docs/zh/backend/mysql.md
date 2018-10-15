@@ -4,7 +4,7 @@
 
 
 
-## 配置MySQL服务器
+## 配置 MySQL 服务器
 
 支持配置多台 MySQL 服务器连接池:
 
@@ -87,17 +87,17 @@ backend.mysql.hook.message.acked.1 = {"topic": "#", "action": {"function": "on_m
 | client.connected    |       | on_subscribe_lookup    | 订阅主题           |
 | client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
 | session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取retain消息     |
+| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息     |
 | message.publish     | #     | on_message_publish     | 存储发布消息       |
-| message.publish     | #     | on_message_retain      | 存储retain消息     |
-| message.publish     | #     | on_retain_delete       | 删除retain消息     |
-| message.acked       | #     | on_message_acked       | 消息ACK处理        |
+| message.publish     | #     | on_message_retain      | 存储 retain 消息     |
+| message.publish     | #     | on_retain_delete       | 删除 retain 消息     |
+| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |
 
 
 
 ##  SQL 语句参数说明
 
-| hook                         | 可用参数                                          | 示例(sql语句中${name} 表示可获取的参数)                      |
+| hook                         | 可用参数                                          | 示例 (sql 语句中 ${name} 表示可获取的参数)                      |
 | ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
 | client.connected             | clientid                                          | insert into conn(clientid) values(${clientid})               |
 | client.disconnected clientid | insert into disconn(clientid) values(${clientid}) |                                                              |
@@ -110,14 +110,14 @@ backend.mysql.hook.message.acked.1 = {"topic": "#", "action": {"function": "on_m
 
 
 
-## SQL语句配置 Action
+## SQL 语句配置 Action
 
 
 MySQL 存储支持用户采用 SQL 语句配置 Action:
 
 
 
-    ## 在客户端连接到EMQ服务器后，执行一条sql语句(支持多条sql语句)
+    ## 在客户端连接到 EMQ 服务器后，执行一条 sql 语句 (支持多条 sql 语句)
     backend.mysql.hook.client.connected.3 = {"action": {"sql": ["insert into conn(clientid) values(${clientid})"]}, "pool": "pool1"}
 
 ## 创建 MySQL 数据库表
@@ -175,7 +175,7 @@ select * from mqtt_client where clientid = "test";
     +----+----------+-------+----------------+---------------------+---------------------+---------------------+
     1 rows in set (0.00 sec)
 
-例如 ClientId为 test 客户端下线:
+例如 ClientId 为 test 客户端下线:
 
 ```sql
 select * from mqtt_client where clientid = "test";

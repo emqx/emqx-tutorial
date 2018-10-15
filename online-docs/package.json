@@ -10,9 +10,12 @@
     "docs": "gitbook install && gitbook serve",
     "html": "gitbook install && gitbook build . _book",
     "pdf": "gitbook install && gitbook pdf . _book.pdf",
-    "mkdir": "node ./_tools/generate_summary.js"
+    "mkdir": "node ./_tools/generate_summary.js",
+    "lint": "node ./_tools/style_lint.js"
   },
   "dependencies": {
-    "gitbook-cli": "^2.3.2"
+    "gitbook-cli": "^2.3.2",
+    "pangu": "^3.3.0",
+    "glob": "^7.1.3"
   }
 }

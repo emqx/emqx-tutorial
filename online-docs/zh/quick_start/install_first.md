@@ -1,22 +1,22 @@
-# 首次安装EMQ X
-在安装EMQ X前，请确认安装的[前置条件](./precondition.md)都已经满足。
+# 首次安装 EMQ X
+在安装 EMQ X 前，请确认安装的 [前置条件](./precondition.md) 都已经满足。
 
 ## 版本选择
-EMQ X支持多种操作系统，请选择合适您的版本[下载](./choose-download.md)。
+EMQ X 支持多种操作系统，请选择合适您的版本[下载](./choose-download.md)。
 
-## 在Linux下安装
-对于Linux发布，EMQ X提供两种方式的安装。一是基于各linux发布的安装包。用安装包安装EMQ X以后，可以方便的使用系统管理工具来启停EMQ X服务。二是使用zip压缩打包的通用包。安装zip包只需解压zip文件即可。使用zip包可以实现在同一个系统下安装多套EMQ X。在开发/实验室环境下使用zip包安装EMQ X非常实用。
+## 在 Linux 下安装
+对于 Linux 发布，EMQ X 提供两种方式的安装。一是基于各 linux 发布的安装包。用安装包安装 EMQ X 以后，可以方便的使用系统管理工具来启停 EMQ X 服务。二是使用 zip 压缩打包的通用包。安装 zip 包只需解压 zip 文件即可。使用 zip 包可以实现在同一个系统下安装多套 EMQ X。在开发 / 实验室环境下使用 zip 包安装 EMQ X 非常实用。
 
 ### CentOS/RHEL
-目前EMQ X支持CentOS/RHEL 6和7，在这两个版本上的安装过程一致。以下安装过程以CentOS 7为例。
+目前 EMQ X 支持 CentOS/RHEL 6 和 7，在这两个版本上的安装过程一致。以下安装过程以 CentOS 7 为例。
 
-#### 使用zip包安装
-解压zip文件
+#### 使用 zip 包安装
+解压 zip 文件
 ```bash
 unzip emqx-centos7-v3.0.zip
 ```
 
-启动以控制台调试模式emqx，检查EMQ X是否可以正常启动：
+启动以控制台调试模式 emqx，检查 EMQ X 是否可以正常启动：
 ```bash
 cd emqx && ./bin/emqx console
 ```
@@ -52,31 +52,31 @@ CTRL+C 关闭控制台。守护进程模式启动:
 ```bash
 ./bin/emqx start
 ```
-#### 使用rpm包安装
-在CentOS下使用rpm工具安装EMQ X：
+#### 使用 rpm 包安装
+在 CentOS 下使用 rpm 工具安装 EMQ X：
 ```bash
 rpm -ivh emqx-centos7-v3.0-beta.4.rpm
 ```
-在安装完成之后，EMQ X的配置文件、日志文件和数据文件分别在以下目录：
+在安装完成之后，EMQ X 的配置文件、日志文件和数据文件分别在以下目录：
 系统配置文件：/etc/emqx/emqx.conf
 插件配置文件： /etc/emqx/plugins/\*.conf
 日志文件： /var/log/emqx
 数据文件： /var/lib/emqx/
 
-在命令行启停EMQ X：
+在命令行启停 EMQ X：
 ```bash
 systemctl start|stop|restart emqx.service
 ```
 
 ### Ubuntu
-目前EMQ X支持Ubuntu 12.04、14.04、16.04和18.04，在这些版本上的安装过程一致。以下安装过程以Ubuntu 18.04为例。
-#### 使用zip包安装
-解压zip文件
+目前 EMQ X 支持 Ubuntu 12.04、14.04、16.04 和 18.04，在这些版本上的安装过程一致。以下安装过程以 Ubuntu 18.04 为例。
+#### 使用 zip 包安装
+解压 zip 文件
 ```bash
 unzip emqx-ubuntu18.04-v3.0.zip
 ```
 
-启动以控制台调试模式emqx，检查EMQ X是否可以正常启动：
+启动以控制台调试模式 emqx，检查 EMQ X 是否可以正常启动：
 ```bash
 cd emqx && ./bin/emqx console
 ```
@@ -112,32 +112,32 @@ CTRL+C 关闭控制台。守护进程模式启动:
 ```bash
 ./bin/emqx start
 ```
-#### 使用deb包安装
+#### 使用 deb 包安装
 
 ```bash
 sudo dpkg -i emqx-ubuntu18.04-v3.0_amd64.deb
 ```
 
-在安装完成之后，EMQ X的配置文件、日志文件和数据文件分别在以下目录：
+在安装完成之后，EMQ X 的配置文件、日志文件和数据文件分别在以下目录：
 系统配置文件：/etc/emqx/emqx.conf
 插件配置文件： /etc/emqx/plugins/\*.conf
 日志文件： /var/log/emqx
 数据文件： /var/lib/emqx/
 
-在命令行启停EMQ X：
+在命令行启停 EMQ X：
 ```bash
 service emqx start|stop|restart
 ```
 ### Debian
-目前EMQ X支持Debian 7、8和9，在这些版本上的安装过程一致。以下安装过程以Debian 9为例。
-#### 使用zip包安装
+目前 EMQ X 支持 Debian 7、8 和 9，在这些版本上的安装过程一致。以下安装过程以 Debian 9 为例。
+#### 使用 zip 包安装
 
-解压zip文件
+解压 zip 文件
 ```bash
 unzip emqx-debian9-v3.0.zip
 ```
 
-启动以控制台调试模式emqx，检查EMQ X是否可以正常启动：
+启动以控制台调试模式 emqx，检查 EMQ X 是否可以正常启动：
 ```bash
 cd emqx && ./bin/emqx console
 ```
@@ -173,29 +173,29 @@ CTRL+C 关闭控制台。守护进程模式启动:
 ```bash
 ./bin/emqx start
 ```
-#### 使用deb包安装
+#### 使用 deb 包安装
 ```bash
 sudo dpkg -i emqx-debian9-v3.0_amd64.deb
 ```
 
-在安装完成之后，EMQ X的配置文件、日志文件和数据文件分别在以下目录：
+在安装完成之后，EMQ X 的配置文件、日志文件和数据文件分别在以下目录：
 系统配置文件：/etc/emqx/emqx.conf
 插件配置文件： /etc/emqx/plugins/\*.conf
 日志文件： /var/log/emqx
 数据文件： /var/lib/emqx/
 
-在命令行启停EMQ X：
+在命令行启停 EMQ X：
 ```bash
 service emqx start|stop|restart
 ```
-## 在MacOS下安装
-目前EMQ X在MacOS下提供zip包安装：
-解压zip文件
+## 在 MacOS 下安装
+目前 EMQ X 在 MacOS 下提供 zip 包安装：
+解压 zip 文件
 ```bash
 unzip emqx-macos-v3.0.zip
 ```
 
-启动以控制台调试模式emqx，检查EMQ X是否可以正常启动：
+启动以控制台调试模式 emqx，检查 EMQ X 是否可以正常启动：
 ```bash
 cd emqx && ./bin/emqx console
 ```
@@ -231,15 +231,15 @@ CTRL+C 关闭控制台。守护进程模式启动:
 ```bash
 ./bin/emqx start
 ```
-## 在Microsoft Windows下安装
-目前EMQ X在Windows下提供zip包安装。程序包下载解压后，打开 Windows 命令行窗口，cd 到程序目录。
+## 在 Microsoft Windows 下安装
+目前 EMQ X 在 Windows 下提供 zip 包安装。程序包下载解压后，打开 Windows 命令行窗口，cd 到程序目录。
 
 控制台模式启动:
 ```bash
 bin\emqx console
 ```
-## 在Docker中安装
-解压emqx docker镜像包：
+## 在 Docker 中安装
+解压 emqx docker 镜像包：
 ```bash
 unzip emqx-docker-v3.0.zip
 ```
@@ -260,7 +260,7 @@ docker stop emq30
 ```bash
 docker start emq30
 ```
-进入Docker控制台：
+进入 Docker 控制台：
 ```bash
 docker exec -it emq30 /bin/sh
 ```
@@ -268,14 +268,14 @@ docker exec -it emq30 /bin/sh
 ## 使用源代码安装
 EMQ X 消息服务器基于 Erlang/OTP 平台开发，项目托管的 GitHub 管理维护，源码编译依赖 Erlang 环境和 git 客户端。
 
-本文以下说明适合Linux环境。
+本文以下说明适合 Linux 环境。
 
-*注意：*  
-*EMQ X 3.0依赖Erlang R21+版本*  
-*如何安装Erlang请参考[Erlang官方网站](http://www.erlang.org/)*  
-*如何安装和使用git客户端请参考[git-scm](http://www.git-scm.com/)*
+* 注意：*  
+*EMQ X 3.0 依赖 Erlang R21 + 版本 *  
+* 如何安装 Erlang 请参考[Erlang 官方网站](http://www.erlang.org/)*  
+* 如何安装和使用 git 客户端请参考[git-scm](http://www.git-scm.com/)*
 
-在准备好编译环境之后，clone代码边并使编译：
+在准备好编译环境之后，clone 代码边并使编译：
 ```bash
 git clone -b win30 https://github.com/emqx/emqx-rel.git
 

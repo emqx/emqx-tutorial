@@ -1,8 +1,8 @@
-# MongoDB数据存储
+# MongoDB 数据存储
 
 配置文件: emqx_backend_mongo.conf
 
-## 配置MongoDB服务器
+## 配置 MongoDB 服务器
 
 支持配置多台 MongoDB 数据库连接池:
 
@@ -135,14 +135,14 @@
 | client.connected    |       | on_subscribe_lookup    | 订阅主题           |
 | client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
 | session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取retain消息     |
+| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息     |
 | message.publish     | #     | on_message_publish     | 存储发布消息       |
-| message.publish     | #     | on_message_retain      | 存储retain消息     |
-| message.publish     | #     | on_retain_delete       | 删除retain消息     |
-| message.acked       | #     | on_message_acked       | 消息ACK处理        |
+| message.publish     | #     | on_message_retain      | 存储 retain 消息     |
+| message.publish     | #     | on_retain_delete       | 删除 retain 消息     |
+| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |
 
 
-## 创建MongoDB数据库集合
+## 创建 MongoDB 数据库集合
 ```javascript
 
     use mqtt
@@ -167,7 +167,7 @@
 ```js
 {
    clientid: string,
-   state: 0,1, //0离线 1在线
+   state: 0,1, //0 离线 1 在线
    node: string,
    online_at: timestamp,
    offline_at: timestamp
@@ -306,7 +306,7 @@ db.mqtt_retain.findOne({topic: ${topic}})
 ```
     
 
-查询 topi c为 "retain" 的 retai n消息:
+查询 topic 为 "retain" 的 retain 消息:
 
 ```js
 db.mqtt_retain.findOne({topic: "/World"})

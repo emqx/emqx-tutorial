@@ -70,7 +70,7 @@ backend.redis.hook.message.acked.1 = {"topic": "queue/#", "action": {"function":
 backend.redis.hook.message.acked.2 = {"topic": "pubsub/#", "action": {"function": "on_message_acked_for_pubsub"}, "pool": "pool1"}
 ```
 
-## Redis存储规则说明
+## Redis 存储规则说明
 
 | hook                | topic    | action/function             | 说明               |
 | ------------------- | -------- | --------------------------- | ------------------ |
@@ -79,12 +79,12 @@ backend.redis.hook.message.acked.2 = {"topic": "pubsub/#", "action": {"function"
 | client.disconnected |          | on_client_disconnected      | 存储客户端离线状态 |
 | session.subscribed  | queue/#  | on_message_fetch_for_queue  | 获取一对一离线消息 |
 | session.subscribed  | pubsub/# | on_message_fetch_for_pubsub | 获取一对多离线消息 |
-| session.subscribed  | #        | on_retain_lookup            | 获取retain消息     |
+| session.subscribed  | #        | on_retain_lookup            | 获取 retain 消息     |
 | message.publish     | #        | on_message_publish          | 存储发布消息       |
-| message.publish     | #        | on_message_retain           | 存储retain消息     |
-| message.publish     | #        | on_retain_delete            | 删除retain消息     |
-| message.acked       | queue/#  | on_message_acked_for_queue  | 一对一消息ACK处理  |
-| message.acked       | pubsub/# | on_message_acked_for_pubsub | 一对多消息ACK处理  |
+| message.publish     | #        | on_message_retain           | 存储 retain 消息     |
+| message.publish     | #        | on_retain_delete            | 删除 retain 消息     |
+| message.acked       | queue/#  | on_message_acked_for_queue  | 一对一消息 ACK 处理  |
+| message.acked       | pubsub/# | on_message_acked_for_pubsub | 一对多消息 ACK 处理  |
 
 
 
@@ -94,7 +94,7 @@ backend.redis.hook.message.acked.2 = {"topic": "pubsub/#", "action": {"function"
 
 
 
-| hook                   | 可用参数                                      | 示例(每个字段分隔，必须是一个空 格)          |
+| hook                   | 可用参数                                      | 示例 (每个字段分隔，必须是一个空 格)          |
 | ---------------------- | --------------------------------------------- | -------------------------------------------- |
 | client.connected       | clientid                                      | SET conn:${clientid} ${clientid}             |
 | client.disconnected    | clientid                                      | SET disconn:${clientid} ${clientid}          |
@@ -274,7 +274,7 @@ HGETALL mqtt:sub:test
 
 ## Redis SUB/UNSUB 事件发布
 
-设备需要订阅/取消订阅主题时，业务服务器向 Redis 发布事件消息:
+设备需要订阅 / 取消订阅主题时，业务服务器向 Redis 发布事件消息:
 
 ```bash
 PUBLISH

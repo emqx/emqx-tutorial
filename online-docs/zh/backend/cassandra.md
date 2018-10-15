@@ -4,7 +4,7 @@
 
 ## 配置 Cassandra 集群地址
 
-支持配置多台Cassandra服务器连接池:
+支持配置多台 Cassandra 服务器连接池:
 
 ```properties
     ## Cassandra Node
@@ -75,7 +75,7 @@
     backend.cassa.hook.message.publish.1     = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1"}
 
     ## Delete Acked Record
-    backend.cassa.hook.session.unsubscribed.1= {"topic": "#", action": {"cql": ["delete from acked where client_id = ${clientid} and topic = ${topic}"]}, "pool": "pool1"}
+    backend.cassa.hook.session.unsubscribed.1= {"topic": "#", action": {"cql": ["delete from acked where client_id = ${clientid} and topic = ${topic}"]},"pool":"pool1"}
 
     ## Store Retain Message
     backend.cassa.hook.message.publish.2     = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1"}
@@ -95,18 +95,18 @@
 | client.connected    |       | on_subscribe_lookup    | 订阅主题           |
 | client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
 | session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取retain消息     |
+| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息     |
 | message.publish     | #     | on_message_publish     | 存储发布消息       |
-| message.publish     | #     | on_message_retain      | 存储retain消息     |
-| message.publish     | #     | on_retain_delete       | 删除retain消息     |
-| message.acked       | #     | on_message_acked       | 消息ACK处理        |
+| message.publish     | #     | on_message_retain      | 存储 retain 消息     |
+| message.publish     | #     | on_retain_delete       | 删除 retain 消息     |
+| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |
 
 
 
 
 ## CQL 语句参数说明
 
-| hook                         | 可用参数                                          | 示例(cql语句中${name} 表示可获取的参数)                      |
+| hook                         | 可用参数                                          | 示例 (cql 语句中 ${name} 表示可获取的参数)                      |
 | ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
 | client.connected             | clientid                                          | insert into conn(clientid) values(${clientid})               |
 | client.disconnected clientid | insert into disconn(clientid) values(${clientid}) |                                                              |
@@ -118,11 +118,11 @@
 
 ## CQL 语句方式配置 Action
 
-Cassandra 存储支持用户采用 CQL 语句配置规则Action，例如:
+Cassandra 存储支持用户采用 CQL 语句配置规则 Action，例如:
 
 ```properties
 
-    ## 在客户端连接到 EMQ X 服务器后，执行一条cql语句(支持多条cql语句)
+    ## 在客户端连接到 EMQ X 服务器后，执行一条 cql 语句 (支持多条 cql 语句)
     backend.cassa.hook.client.connected.3 = {"action": {"cql": ["insert into conn(clientid) values(${clientid})"]}, "pool": "pool1"}
 ```
 
@@ -139,7 +139,7 @@ USR mqtt;
 导入 Cassandra 表:
 
 ```js
-cqlsh -e "SOURCE 'emqx_backend_cassa.cql'"
+cqlsh -e "SOURCE'emqx_backend_cassa.cql'"
 ```
     
 
@@ -195,7 +195,7 @@ CREATE TABLE mqtt.sub (
 );
 ```
 
-例如为 ClientId 为 "test "订阅主题 test_topic1, test_topic2:
+例如为 ClientId 为 "test" 订阅主题 test_topic1, test_topic2:
 
 ```sql
 insert into mqtt.sub(client_id, topic, qos) values('test', 'test_topic1', 1);
@@ -207,7 +207,7 @@ insert into mqtt.sub(client_id, topic, qos) values('test', 'test_topic2', 2);
     select * from mqtt_sub where clientid = ${clientid};
 
 
-查询 ClientI d为 'test' 的客户端已订阅主题::
+查询 ClientId 为'test' 的客户端已订阅主题:
 
  ```bash
  select * from mqtt_sub where clientid = 'test';
@@ -270,7 +270,7 @@ CREATE TABLE mqtt.retain (
 select * from mqtt_retain where topic = ${topic};
 ```
 
-查询 topic 为 'retain' 的 retain 消息:
+查询 topic 为'retain' 的 retain 消息:
 
 ```bash
 select * from mqtt_retain where topic = 'retain';

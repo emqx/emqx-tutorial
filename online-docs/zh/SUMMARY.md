@@ -2,8 +2,8 @@
 
 ## 快速开始
 * [准备](README.md)
-  * [MQTT简介](quick_start/whats_mqtt.md)
-  * [EMQ X简介](quick_start/whats_emqx.md)
+  * [MQTT 简介](quick_start/whats_mqtt.md)
+  * [EMQ X 简介](quick_start/whats_emqx.md)
 
 * [下载及安装](quick_start/download_install.md)
   * [安装预置条件](quick_start/precondition.md)
@@ -64,7 +64,7 @@
 * [EMQ X 的配置原则](config/README.md)
 * [EMQ X 的配置](config/feedback_please.md)
   * [配置 MQTT 协议](config/better_tools.md)
-  * [连接/Listener](config/better_tools.md)
+  * [连接 / Listener](config/better_tools.md)
   * [Zone](config/zone.md)
   * [节点](config/nodes.md)
   * [会话](config/session.md)

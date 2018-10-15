@@ -2,7 +2,7 @@
 
 EMQ X is a MQTT broker based on Erlang/OTP platform, which is the most popular MQTT broker in open source community. EMQ X has following characteristic. 
 
-- Based on Apache 2.0 license, totally open source. All of EMQ X source code is maintained in [github](https://github.com/emqx/emqx), and anybody can access the code. 
+- Based on Apache 2.0 license, totally open source. All of EMQ X source code is maintained in [Github](https://github.com/emqx/emqx), and anybody can access the code. 
 - EMQ X 3.0 support MQTT 5.0 protocol, and it's the *first MQTT broker supports MQTT 5.0  in open source community*, it's also compatible to MQTT V3.1 and 3.1.1 protocol. Besides MQTT protocol, EMQ X also support other IoT protocols (Refer to below EMQ X Broker product introduction for more detailed information) .
 - Support million level MQTT connections for single node, and up to 10 million level connection for a cluster. EMQ X leverages several technologies to realize such big scale connections. 
   - Making maximum use of the soft-realtime, high concurrent and fault-tolerant Erlang/OTP platform;

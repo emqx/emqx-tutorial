@@ -30,8 +30,8 @@ EMQ X 特定事件响应时相关插件可获得对应的参数，通过配置�
 | client.connected    |       | on_subscribe_lookup    | 订阅主题           |
 | client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
 | session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取 retain消息    |
+| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息    |
 | message.publish     | #     | on_message_publish     | 存储发布消息       |
 | message.publish     | #     | on_message_retain      | 存储 retain 消息   |
 | message.publish     | #     | on_retain_delete       | 删除 retain 消息   |
-| message.acked       | #     | on_message_acked       | 消息ACK处理        |
+| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |

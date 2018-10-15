@@ -1,6 +1,6 @@
 # 使用 JavaScript 开发 MQTT 客户端
 
-作为标准的MQTT协议的一部分，EMQ X 支持通过 WebSocket 端口与客户端进行通信。WebSocket 是一种在单个 TCP 连接上进行全双工通讯的协议。WebSocket 通信协议于 2011 年被 IETF 定为标准 RFC 6455，并由 RFC 7936 补充规范。WebSocket API 也被 W3C 定为标准。WebSocket 使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在 WebSocket API 中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。
+作为标准的 MQTT 协议的一部分，EMQ X 支持通过 WebSocket 端口与客户端进行通信。WebSocket 是一种在单个 TCP 连接上进行全双工通讯的协议。WebSocket 通信协议于 2011 年被 IETF 定为标准 RFC 6455，并由 RFC 7936 补充规范。WebSocket API 也被 W3C 定为标准。WebSocket 使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在 WebSocket API 中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。
 
 ## 客户端库比较
 
@@ -62,7 +62,7 @@ EMQ X 使用 8083 端口用于 WebSocket 普通连接，8084 用于 SSL 上的 W
 
 上述示范的连接地址可以拆分为： `ws:` // `localhost` : `8083` `/mqtt` 
 
-即 `协议` // `域名` : `端口 ` / `路径`
+即 ` 协议 ` // ` 域名 ` : ` 端口 ` / ` 路径 `
 
 建立连接代码如下:
 
@@ -148,7 +148,7 @@ client.publish('hello', 'hello EMQ X', (error) => {
 
 由于 JavaScript 异步非阻塞特性，只有在 connect 事件后才能确保客户端已成功连接，可通过 `client.connected` 属性判断是否连接成功：
 
-**错误示例**
+** 错误示例 **
 
 ```js
 import mqtt from 'mqtt'
@@ -159,7 +159,7 @@ client.subscribe('hello')
 client.publish('hello', 'Hello EMQ X')
 ```
 
-**正确示例**
+** 正确示例 **
 
 ```js
 client.on('connect', () => {
