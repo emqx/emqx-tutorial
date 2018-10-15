@@ -90,15 +90,15 @@
 | client.connected    |       | on_subscribe_lookup    | 订阅主题           |
 | client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
 | session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取retain消息     |
+| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息     |
 | message.publish     | #     | on_message_publish     | 存储发布消息       |
-| message.publish     | #     | on_message_retain      | 存储retain消息     |
-| message.publish     | #     | on_retain_delete       | 删除retain消息     |
-| message.acked       | #     | on_message_acked       | 消息ACK处理        |
+| message.publish     | #     | on_message_retain      | 存储 retain 消息     |
+| message.publish     | #     | on_retain_delete       | 删除 retain 消息     |
+| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |
 
 ## SQL 语句参数说明
 
-| hook                         | 可用参数                                          | 示例(sql语句中${name} 表示可获取的参数)                      |
+| hook                         | 可用参数                                          | 示例 (sql 语句中 ${name} 表示可获取的参数)                      |
 | ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
 | client.connected             | clientid                                          | insert into conn(clientid) values(${clientid})               |
 | client.disconnected clientid | insert into disconn(clientid) values(${clientid}) |                                                              |
@@ -115,7 +115,7 @@
 PostgreSQL 存储支持用户采用 SQL 语句配置 Action，例如:
 
 ```properties
-    ## 在客户端连接到EMQ服务器后，执行一条sql语句(支持多条sql语句)
+    ## 在客户端连接到 EMQ 服务器后，执行一条 sql 语句 (支持多条 sql 语句)
     backend.pgsql.hook.client.connected.3 = {"action": {"sql": ["insert into conn(clientid) values(${clientid})"]}, "pool": "pool1"}
 ```
 
@@ -126,7 +126,7 @@ createdb mqtt -E UTF8 -e
 ```
 
 
-## 导入PostgreSQL库表结构
+## 导入 PostgreSQL 库表结构
 
 ​```bash
 \i etc/sql/emqx_backend_pgsql.sql
@@ -167,7 +167,7 @@ select * from mqtt_client where clientid = ${clientid};
     (1 rows)
 ```
 
-例如ClientId为test客户端下线::
+例如 ClientId 为 test 客户端下线::
 ```bash
     select * from mqtt_client where clientid = 'test';
 
@@ -192,7 +192,7 @@ select * from mqtt_client where clientid = ${clientid};
     );
 ```
 
-例如 ClientId 为 'test' 客户端订阅主题 test_topic1 test_topic2:
+例如 ClientId 为'test' 客户端订阅主题 test_topic1 test_topic2:
 
 ```bash
 insert into mqtt_sub(clientid, topic, qos) values('test', 'test_topic1', 1);

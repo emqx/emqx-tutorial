@@ -6,7 +6,7 @@ EMQ X 可以跨平台运行在 Linux、FreeBSD、MacOS 或 Windows 服务器甚�
 
 ## 二进制包安装
 
-[EMQ 官网](https://www.emqx.io/downloads/emq/broker?osType=Linux)提供热门 Linux 发行版、MacOS、Windows 操作系统以及 Docker 镜像的二进制包下载，当前支持的操作系统及平台请到官网下载页查阅。
+[EMQ 官网](https://www.emqx.io/downloads/emq/broker?osType=Linux) 提供热门 Linux 发行版、MacOS、Windows 操作系统以及 Docker 镜像的二进制包下载，当前支持的操作系统及平台请到官网下载页查阅。
 
 
 ## 源码编译安装

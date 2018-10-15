@@ -64,15 +64,15 @@ public class Demo {
 			MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
 			MqttConnectOptions connOpts = new MqttConnectOptions();
 			connOpts.setCleanSession(true);
-			System.out.println("Connecting to broker: " + broker);
+			System.out.println("Connecting to broker:" + broker);
 			sampleClient.connect(connOpts);
 			System.out.println("Connected");
 		} catch (MqttException me) {
-			System.out.println("reason " + me.getReasonCode());
-			System.out.println("msg " + me.getMessage());
-			System.out.println("loc " + me.getLocalizedMessage());
-			System.out.println("cause " + me.getCause());
-			System.out.println("excep " + me);
+			System.out.println("reason" + me.getReasonCode());
+			System.out.println("msg" + me.getMessage());
+			System.out.println("loc" + me.getLocalizedMessage());
+			System.out.println("cause" + me.getCause());
+			System.out.println("excep" + me);
 			me.printStackTrace();
 		}
 	}
@@ -100,7 +100,7 @@ Set up a callback instance `MqttCallback` on subscribe success. The function of 
 
 ```java
 String topic = "demo/topics";
-System.out.println("Subscribe to topic: " + topic);
+System.out.println("Subscribe to topic:" + topic);
 sampleClient.subscribe(topic);
 
 sampleClient.setCallback(new MqttCallback() {
@@ -143,7 +143,7 @@ Code for publish:
 String topic = "demo/topics";
 String content = "Message from MqttPublishSample";
 int qos = 2;
-System.out.println("Publishing message: " + content);
+System.out.println("Publishing message:" + content);
 MqttMessage message = new MqttMessage(content.getBytes());
 message.setQos(qos);
 sampleClient.publish(topic, message);
@@ -180,12 +180,12 @@ public class Demo {
 			MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
 			MqttConnectOptions connOpts = new MqttConnectOptions();
 			connOpts.setCleanSession(true);
-			System.out.println("Connecting to broker: " + broker);
+			System.out.println("Connecting to broker:" + broker);
 			sampleClient.connect(connOpts);
 			System.out.println("Connected");
 
 			String topic = "demp/topics";
-			System.out.println("Subscribe to topic: " + topic);
+			System.out.println("Subscribe to topic:" + topic);
 			sampleClient.subscribe(topic);
 			sampleClient.setCallback(new MqttCallback() {
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -203,18 +203,18 @@ public class Demo {
 
 			String content = "Message from MqttPublishSample";
 			int qos = 2;
-			System.out.println("Publishing message: " + content);
+			System.out.println("Publishing message:" + content);
 			MqttMessage message = new MqttMessage(content.getBytes());
 			message.setQos(qos);
 			sampleClient.publish(topic, message);
 			System.out.println("Message published");
 
 		} catch (MqttException me) {
-			System.out.println("reason " + me.getReasonCode());
-			System.out.println("msg " + me.getMessage());
-			System.out.println("loc " + me.getLocalizedMessage());
-			System.out.println("cause " + me.getCause());
-			System.out.println("excep " + me);
+			System.out.println("reason" + me.getReasonCode());
+			System.out.println("msg" + me.getMessage());
+			System.out.println("loc" + me.getLocalizedMessage());
+			System.out.println("cause" + me.getCause());
+			System.out.println("excep" + me);
 			me.printStackTrace();
 		}
 	}
