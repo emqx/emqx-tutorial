@@ -25,13 +25,13 @@
     * [在 K8S 上集群 EMQ X](cluster/k8s.md)
     * [为 EMQ X 集群配置负载均衡](cluster/balancer.md)
 
-## 数据持久化后台（企业版）
-* [EMQ X 数据持久化概念](backend/whats_backend.md)
-* [Redis](backend/redis.md)
-* [MySQL](backend/mysql.md)
-* [PostgreSQL](backend/postgres.md)
-* [MongoDB](backend/mongo.md)
-* [Cassandra](backend/cassandra.md)
+## 数据持久化（企业版）
+* [数据持久化概览](backend/whats_backend.md)
+  * [Redis](backend/redis.md)
+  * [MySQL](backend/mysql.md)
+  * [PostgreSQL](backend/postgres.md)
+  * [MongoDB](backend/mongo.md)
+  * [Cassandra](backend/cassandra.md)
 
 ## 桥接
 * [其他消息中间件桥接至 EMQ X](bridge/bridge_to_emqx.md)
