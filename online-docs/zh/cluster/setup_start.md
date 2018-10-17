@@ -34,6 +34,6 @@ export EMQ_NODE_NAME=emq@s1.emqx.io && ./bin/emqx start
 _注意：在节点加入集群后，节点名不能变更。_
 
 ### 加入集群
-使用随 EMQ X 安装附带的命令行工具`emqx_ctl`可以方便的管理集群。使用
+使用随 EMQ X 安装附带的命令行工具`emqx_ctl`可以方便的管理集群。
 
 ## 节点的自动发现与自动集群
