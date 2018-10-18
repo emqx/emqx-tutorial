@@ -183,7 +183,7 @@ public class Demo {
 			sampleClient.connect(connOpts);
 			System.out.println("Connected");
 			
-			String topic = "demp/topics";
+			String topic = "demo/topics";
 			System.out.println("Subscribe to topic:" + topic);
 			sampleClient.subscribe(topic);
 			sampleClient.setCallback(new MqttCallback() {
@@ -230,6 +230,6 @@ Connected
 Subscribe to topic: demo/topics
 Publishing message: Message from MqttPublishSample
 Message published
-Message from MqttPublishSample is arrived for topic demp/topics.
+Message from MqttPublishSample is arrived for topic demo/topics.
 ```
 
