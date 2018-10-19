@@ -151,7 +151,7 @@ createdb mqtt -E UTF8 -e
     );
 ```
 
-## 查询设备在线状态:
+## 查询设备在线状态
 
 ```bash
 select * from mqtt_client where clientid = ${clientid};

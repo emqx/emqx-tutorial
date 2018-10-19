@@ -138,7 +138,7 @@ value = ${ts}
 
 
 
-## 查询设备在线状态:
+## 查询设备在线状态
 
 ```bash
 HGETALL "mqtt:client:${clientId}"
@@ -260,7 +260,7 @@ HSET "mqtt:sub:test" "topic2" 2
 
 
 
-## 查询 ClientId 为 "test" 的客户端已订阅主题:
+## 查询 ClientId 为 "test" 的客户端已订阅主题
 
 ```bash
 HGETALL mqtt:sub:test
