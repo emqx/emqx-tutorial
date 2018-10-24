@@ -7,7 +7,7 @@ We call a smallest set of hardware/software which can provide service alone in t
 
 EMQ X supports clustering, multiple EMQ X broker can work under cluster mode and provide service as a whole, they are connected through TCP network. Here each EMQ X broker is a node.
 
-Comparing to a single-server broker, clutering of EMQ X brings following advantages:
+Comparing to a single-server broker, clustering of EMQ X brings following advantages:
 - High availability: when EMQ X works in a single node mode, if this node is down, the service is gone too. This may break the how application behind it. A cluster provides redundancy, when a node in cluster is down, the other nodes are still working and thus the service will not break.
 
 - Load balancing: by introducing load balancing mechanism, each node in cluster can be loaded according to its ability, there will be no server is overloaded while the others are still not busy.
@@ -50,7 +50,7 @@ The cluster internal connection can be TCPv4 or TCPv6, TLS is supported.
 
 
 ## Processing MQTT Messages in Cluster
-Each MQTT client connecets to one node in the cluster. The principle of EMQ X cluster processing MQTT messages can be summed up in two points:
+Each MQTT client connects to one node in the cluster. The principle of EMQ X cluster processing MQTT messages can be summed up in two points:
 - When an MQTT client successfully subscribed to a topic on a node, all other nodes will be notified about this subscription.
 - When an MQTT client published a message to a certain topic, this message will be routed to all nodes which have subscription to this topic.
 
