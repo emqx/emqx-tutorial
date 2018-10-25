@@ -18,8 +18,8 @@
 ## Cluster
 * [EMQ X clusters](cluster/whats_cluster.md)
   * [How to setup EMQ X cluster](cluster/setup_start.md)
-    * [Manual](cluster/manual.md)
     * [Static](cluster/static.md)
+    * [Multicast](cluster/mcast.md)
     * [Auto_cluster by DNS](cluster/dns.md)
     * [Auto_cluster by ETCD](cluster/etcd.md)
     * [Cluster on K8s](cluster/k8s.md)
