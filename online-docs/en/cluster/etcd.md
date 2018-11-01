@@ -7,7 +7,7 @@ How to install and configure etcd server is beyond the scope of this document, w
 ## Configure EMQ X nodes
 On each EMQ X node, edit the 'etc/emqx.conf' file and modify the 'cluster' and 'node' sections in it.
 
-### Change the Cluster Auto-discovery to etcd
+### Configure Auto-Cluster
 You will need to name the address of the etcd server (If there are multiple etcd servers in use, you can list them by separating them with "," ).  
  You will also need to define the path prefix of nodes and the TTL of path.
 
