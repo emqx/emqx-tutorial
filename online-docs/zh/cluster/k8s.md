@@ -10,9 +10,9 @@ k8s的功能非常强大，关于它的部署和配置的详细说明超过了�
 ```
 cluster.discovery = k8s
 ##--------------------------------------------------------------------
-## Cluster using Kubernates
+## Cluster using Kubernetes
 
-## Kubernates API server list, seperated by ','.
+## Kubernetes API server list, seperated by ','.
 ##
 ## Value: String
 cluster.k8s.apiserver = http://192.168.1.162:8081
@@ -32,7 +32,7 @@ cluster.k8s.address_type = ip
 ## Value: String
 cluster.k8s.app_name = emqx
 
-## Kubernates Namespace
+## Kubernetes Namespace
 ##
 ## Value: String
 cluster.k8s.namespace = default
