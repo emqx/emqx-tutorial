@@ -48,8 +48,8 @@
  * [Kafka 桥接](bridge/bridge_to_kafka.md)
 
 ## 安全
-* [认证](security/auth.md)
-* [ACL 访问控制](security/acl.md)
+* [认证与 ACL 访问控制](security/auth.md)
+<!-- * [ACL 访问控制](security/acl.md) -->
 * [安全链接](security/security.md)
   * [证书配置](security/certificate.md)
   * [PSK](security/psk.md)

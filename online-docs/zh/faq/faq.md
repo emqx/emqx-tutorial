@@ -230,10 +230,51 @@ A: EMQ X 企业版支持消息持久化，可以将消息保存到数据库，�
 - PostgreSQL
 - Cassandra
 
+## Q: 在服务器端能够直接断开一个 MQTT 连接吗？
+
+A: 可以的。通过 EMQ X 提供的 REST API 请求就可以实现，在EMQ X 2.x和3.0的实现方式有所不同：
+
+- 在2.x版本中是由 EMQ X 自定义扩展协议实现的
+- 在 3.0 版本之后按照 MQTT 5.0 协议对从服务器端断开连接的规范要求实现的
+
+调用的 API 如下所示：
+
+```html
+HTTP 方法：DELETE 
+URL：api/[v2|v3]/clients/{clientid} 
+<!--请注意区分 URL 中第二部分的版本号，请根据使用的版本号来决定 -->
+
+返回内容：
+{
+    "code": 0,
+    "result": []
+}
+```
+
+
 
 ## Q: EMQ X 能把接入的消息转发到 Kafka 吗？
 
 A: 能。目前 EMQ X 企业版提供了内置的 Kafka 桥接方式，支持把消息桥接至 Kafka 进行流式处理。
+
+## Q: EMQ X 企业版中桥接 Kafka，一条 MQTT 消息到达 EMQ X 集群之后就回 MQTT Ack 报文还是写入 Kafka 之后才回 MQTT Ack 报文? 
+
+A: 取决于 Kafka 桥接的配置，配置文件位于`/etc/emqx/plugins/emqx_bridge_kafka.conf`
+
+```bash
+## Pick a partition producer and sync/async.
+bridge.kafka.produce = sync
+```
+
+- 同步：EMQ X 在收到 Kafka 返回的 Ack 之后才会给前端返回 MQTT Ack 报文
+- 异步：MQTT 消息到达 EMQ X 集群之后就回 MQTT Ack 报文，而不会等待 Kafka 返回给 EMQ X 的 Ack
+
+如果运行期间，后端的 Kafka 服务不可用，则消息会被累积在 EMQ X 服务器中，
+
+- EMQ X 2.4.3 之前的版本会将未发送至 Kafka 的消息在内存中进行缓存，直至内存使用完毕，并且会导致 EMQ X 服务不可用。
+- EMQ X 2.4.3 版本开始会将未发送至 Kafka 的消息在磁盘中进行缓存，如果磁盘用完可能会导致数据丢失。
+
+因此建议做好 Kafka 服务的监控，在发现 Kafka 服务有异常情况的时候尽快恢复 Kafka 服务。
 
 ## Q: EMQ X 支持集群自动发现吗？有哪些实现方式？
 

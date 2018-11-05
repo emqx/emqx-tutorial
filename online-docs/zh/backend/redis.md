@@ -1,74 +1,180 @@
 # Redis 数据存储
 
-配置文件: emqx_backend_redis.conf
+本章节以在 `CentOS 7.2` 中的实际例子来说明如何通过 Redis 来存储相关的信息。
 
+## 安装与验证 Redis 服务器
 
-## 配置 Redis 服务器
+读者可以参考 Redis 官方的 [Quick Start](https://redis.io/topics/quickstart) 来安装 Redis（写本文的时候，Redis 版本为5.0），通过 `redis-server` 命令来启动 Redis 服务器。
 
-EMQ X Backend Redis 支持配置多台 Redis 服务器连接池：
+```bash
+# redis-server
+20433:C 01 Nov 2018 11:36:30.773 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+20433:C 01 Nov 2018 11:36:30.773 # Redis version=5.0.0, bits=64, commit=00000000, modified=0, pid=20433, just started
+... more logs ...
+```
+
+在另外的窗口打开 `redis-cli` 命令，在 `redis-cli` 的交互式命令行窗口中可以通过 `ping` 测试一下 Redis 是否安装成功（返回 'PONG' 表示成功）；通过 `keys *` 命令来查看一下现在 Redis 中有多少存储的值，由于 Redis 首次安装使用，因此返回的是一个空的列表。
+
+```bash
+# redis-cli
+127.0.0.1:6379> ping
+PONG
+127.0.0.1:6379> keys *
+(empty list or set)
+127.0.0.1:6379>
+```
+
+## 配置 EMQ X 服务器
+
+通过 RPM 方式安装的 EMQ X，Redis 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_redis.conf`，如果只是测试 Redis 持久化的功能，大部分配置不需要做更改。唯一需要更改的地方可能是 Redis 服务器的地址：如果读者安装的 Redis 不与 EMQ X 在同一服务器上，请指定正确的 Redis 服务器的地址与端口。如下所示，
 
 ```bash
 ## Redis Server 127.0.0.1:6379, Redis Sentinel: 127.0.0.1:26379
 backend.redis.pool1.server = 127.0.0.1:6379
-
-## Redis Sentinel
-## backend.redis.pool1.server = 127.0.0.1:26379
-
-## redis sentinel cluster name
-## backend.redis.pool1.sentinel = mymaster
-
-## Redis Pool Size
-backend.redis.pool1.pool_size = 8 
-
-## Redis database
-backend.redis.pool1.database = 1
-
-## Redis subscribe channel
-backend.redis.pool1.channel = mqtt_channel
 ```
 
-## 配置 Redis 存储规则
+保持剩下部分的配置文件不变，然后需要启动该插件。启动插件的方式有 `命令行`和 `控制台`两种方式，读者可以任选其一。
+
+### 通过命令行启动
+
+TODO：
 
 ```bash
-## Expired after seconds, if =< 0 take the default value
-backend.redis.msg.expired_after = 3600
-
-## Client Connected Record
-backend.redis.hook.client.connected.1 = {"action": {"function": "on_client_connected"}, "pool": "pool1"}
-
-## Subscribe Lookup Record
-backend.redis.hook.client.connected.2 = {"action": {"function": "on_subscribe_lookup"}, "pool": "pool1"}
-
-## Client DisConnected Record
-backend.redis.hook.client.disconnected.1 = {"action": {"function": "on_client_disconnected"}, "pool": "pool1"}
-
-## Lookup Unread Message for one QOS > 0
-backend.redis.hook.session.subscribed.1 = {"topic": "queue/#", "action": {"function": "on_message_fetch_for_queue"}, "pool": "pool1"}
-
-## Lookup Unread Message for many QOS > 0
-backend.redis.hook.session.subscribed.2 = {"topic": "pubsub/#", "action": {"function": "on_message_fetch_for_pubsub"}, "pool": "pool1"}
-
-## Lookup Retain Message
-backend.redis.hook.session.subscribed.3 = {"action": {"function": "on_retain_lookup"}, "pool": "pool1"}
-
-## Delete Ack
-backend.redis.hook.session.unsubscribed.1= {"topic": "#", "action": {"commands": ["DEL mqtt:acked:${clientid}:${topic}"]}, "pool": "pool1"}
-
-## Store Publish Message  QOS > 0
-backend.redis.hook.message.publish.1 = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1"}
-
-## Store Retain Message
-backend.redis.hook.message.publish.2 = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1"}
-
-## Delete Retain Message
-backend.redis.hook.message.publish.3 = {"topic": "#", "action": {"function": "on_retain_delete"}, "pool": "pool1"}
-
-## Store Ack for one
-backend.redis.hook.message.acked.1 = {"topic": "queue/#", "action": {"function": "on_message_acked_for_queue"}, "pool": "pool1"}
-
-## Store Ack for many
-backend.redis.hook.message.acked.2 = {"topic": "pubsub/#", "action": {"function": "on_message_acked_for_pubsub"}, "pool": "pool1"}
+emqx_ctl plugins ...
 ```
+
+
+
+### 通过管理控制台启动
+
+TODO：截图等
+
+
+
+## 连接存储
+
+通过任意客户端建立一个 `MQTT` 连接，本文通过 [Eclipse mosquitto](https://mosquitto.org/) 提供的命令行工具。命令如下所示，与 EMQ X 服务器10.211.55.10建立了一个连接，clientId 为 sub_client1，订阅的主题为 /devices/001/temp。
+
+```bash
+mosquitto_sub -h 10.211.55.10 -i sub_client1 -t /devices/001/temp
+```
+
+切换至 `redis-cli` 命令行窗口，执行命令 `keys *`，结果如下所示，读者可以看到在 Redis 中存储了两个列表。
+
+```bash
+127.0.0.1:6379> keys *
+1) "mqtt:node:emqx@127.0.0.1"
+2) "mqtt:client:sub_client1"
+```
+
+TODO：解释一下上述存储的内容是通过配置文件中哪个配置项起作用的，其代表的含义是什么？
+
+
+
+### 连接列表
+
+//TODO 详细解释该处的数据结构的含义
+
+```bash
+127.0.0.1:6379> hgetall mqtt:node:emqx@127.0.0.1
+1) "sub_client1"
+2) "1541055363"
+```
+
+
+
+### 连接详细信息
+
+//TODO 详细解释该处的数据结构的含义
+
+```bash
+127.0.0.1:6379> hgetall mqtt:client:sub_client1
+1) "state"
+2) "1"
+3) "online_at"
+4) "1541055363"
+5) "offline_at"
+6) "undefined"
+```
+
+
+
+## 消息相关存储
+
+保持以上的订阅连接，接下来通过 `mosquitto_pub` 来发布一条消息，如下所示。
+
+```bash
+mosquitto_pub -h 10.211.55.10 -i pub_client1  -q 2 -t /devices/001/temp -m "hello message"
+```
+
+
+
+```bash
+127.0.0.1:6379> keys *
+1) "mqtt:msg:2V7sw5t4nUJn4gsvqT7h"
+2) "mqtt:node:emqx@127.0.0.1"
+3) "mqtt:client:sub_client1"
+4) "mqtt:msg:/devices/001/temp"
+5) "mqtt:client:pub_client1"
+```
+
+
+
+//TODO 挨个说明各个列表及其每个字段所表达的意思
+
+```bash
+127.0.0.1:6379> hgetall mqtt:client:pub_client1
+1) "state"
+2) "0"
+3) "online_at"
+4) "1541056870"
+5) "offline_at"
+6) "1541056870"
+```
+
+
+
+```bash
+127.0.0.1:6379> zrange mqtt:msg:/devices/001/temp 0 -1
+1) "2V7sw5t4nUJn4gsvqT7h"
+2) "2V7szMYcJMndAzRPUbez"
+```
+
+
+
+```bash
+127.0.0.1:6379> hgetall mqtt:msg:2V7sw5t4nUJn4gsvqT7h
+ 1) "id"
+ 2) "2V7sw5t4nUJn4gsvqT7h"
+ 3) "from"
+ 4) "pub_client1"
+ 5) "qos"
+ 6) "2"
+ 7) "topic"
+ 8) "/devices/001/temp"
+ 9) "payload"
+10) "hello message"
+11) "ts"
+12) "1541056734"
+13) "retain"
+14) "false"
+```
+
+
+
+TODO：再加一下 一对多、retain 等的例子。
+
+
+
+TODO：如果上述都描述的比较清楚了，那么可能下面大部分内容都不需要了，只需要留一些总结性的内容即可。
+
+
+
+## 总结
+
+读者在理解了 Redis 中所存储的数据结构之后，可以利用各种 [Redis 客户端](https://redis.io/clients)来实现对相关信息的读取，
+
+
 
 ## Redis 存储规则说明
 
