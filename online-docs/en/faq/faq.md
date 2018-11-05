@@ -197,10 +197,51 @@ A: The EMQ X Enterprise edition supports data persistence. Supported databases a
 - PostgreSQL
 - Cassandra
 
+## Q: Can I disconnect an MQTT connection from EMQ X server?
+
+A: Yes. You can do it by invoking REST API provied by EMQ X, but the implementation is different in EMQ X 2.x and 3.x: 
+
+- EMQ X customized protocol in 2.x versions.
+- Follow the process defined in MQTT 5.0 protocol after version 3.0. 
+
+Refer to below for API invocation: 
+
+```html
+HTTP Method: DELETE 
+URL：api/[v2|v3]/clients/{clientid} 
+<!--Please notice the 2nd section in URL, and use the correct version number according to your EMQ X version. -->
+
+Returned response: 
+{
+    "code": 0,
+    "result": []
+}
+```
+
+
 
 ## Q: Can EMQ X forward messages to Kafka?
 
 A: The EMQ X Enterprise edition integrates a Kafka bridge, it can bridge data to Kafka.
+
+## Q: I use Kafka bridge in EMQ X enterprise, when will the MQTT Ack packet sent back to client?  Is the time when message arriving EMQ X or after getting Ack message from Kafka? 
+
+A: It's up to Kafka bridge configuration, the configuration file is at `/etc/emqx/plugins/emqx_bridge_kafka.conf`
+
+```bash
+## Pick a partition producer and sync/async.
+bridge.kafka.produce = sync
+```
+
+- Sync: MQTT Ack packet will be sent back to client after receiving Ack from Kafka.
+- Async: MQTT Ack packet will be sent back to client right after EMQ X receiving the message, and EMQ X will not wait the Ack returned from Kafka.
+
+If the backend Kafka server is not available, then the message will be accumulated in EMQ X broker.
+
+- The message will be cached in memory before EMQ X 2.4.3 version, if the memeory is exhausted, then the EMQ X server will be down. 
+- The message will be cached in disk after EMQ X 2.4.3 version, message will probably lost if the disk is full. 
+
+So we suggest you to closely monitor Kafka server, and recover Kafka service as soon as possible when it has any questions. 
 
 ## Q: Does EMQ X support cluster auto discovery? What clustering methods are supported?
 
