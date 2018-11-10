@@ -1,72 +1,69 @@
-# 认证与 ACL 访问控制
-
-[TOC]
-
-认证是 MQTT 传输层和应用层安全性的一部分。
-
-在传输层上，TLS 可以保证使用客户端证书的客户端到服务器的身份验证，并确保服务器向客户端验证服务器证书。
-在应用层上，MQTT 协议本身在 CONNECT 消息中提供用户名和密码字段。
-因此，客户端可以在连接到 MQTT Broker 时发送用户名和密码进行认证，有效阻止非法客户端的连接。
-
-同时 EMQ X 支持客户端发布 (PUBLISH) 或订阅 (SUBSCRIBE) 的 ACL 访问控制规则，以插件形式支持文件系统、HTTP API、JWT、LDAP 及各类数据库如 MongoDB、MySQL、PostgreSQL、Redis 等多种认证、ACL 数据源的访问控制。
+# 认证（认证鉴权）
 
 
+
+认证（认证鉴权）指的是当一个客户端连接到 MQTT 服务器的时候，通过服务器端的配置来控制客户端连接服务器的权限。EMQ X 的认证支持包括多个层面，分别有 MQTT 传输层，应用层和 EMQ X 本身以插件的方式来支持各种增强的认证方式。
+
+- 在传输层上，TLS 可以保证使用客户端证书的客户端到服务器的身份验证，并确保服务器向客户端验证服务器证书
+- 在应用层上，MQTT 协议本身在 CONNECT 报文中指定用户名和密码。客户端可以在连接到 MQTT 服务器时发送用户名和密码进行认证，有效阻止非法客户端的连接
+- EMQ X 层面上，以插件形式支持文件系统、HTTP API、JWT、LDAP 及各类数据库如 MongoDB、MySQL、PostgreSQL、Redis 等多种认证
 
 ## 认证与认证链
 
-EMQ X 默认开启匿名认证，允许任意客户端登录，具体配置在 `etc/emqx.conf` 中：
+EMQ X 默认开启匿名认证，即允许任意客户端登录，具体配置在 `etc/emqx.conf` 中：
 
 ```bash
 ## Allow Anonymous authentication
 mqtt.allow_anonymous = true
 ```
 
-EMQ X 认证相关插件名称以 `emqx_auth` 开头，成功开启任意插件后将自动关闭匿名认证。
+EMQ X 认证相关插件名称以 `emqx_auth` 开头。当启用认证插件之前，请在配置文件 `etc/emqx.conf` 中把允许匿名认证的方式给去掉:``mqtt.allow_anonymous = false``。当共同启用多个认证插件时，EMQ X 将按照插件开启先后顺序进行链式认证，一旦认证成功就终止认证链并允许客户端接入，最后一个认证源仍未通过时将终止客户端连接，认证链的认证过程示意图如下所示。
 
-共同启用多个认证插件时，EMQ X 将按照插件开启先后顺序进行链式认证，一旦认证成功就终止认证链并允许客户端接入，最后一个认证源仍未通过时将终止客户端连接。
+![auth chain](../assets/auth_chain.png)
 
+## 用户名密码认证
 
+用户名密码认证使用配置文件存储用户名与密码，通过 username 与 password 进行连接认证。
 
-## ACL 访问控制
-
-EMQ X 默认开启 ACL 白名单，允许不在 ACL 列表中的发布订阅行为，具体配置在 `etc/emqx.conf` 中：
-
-```bash
-## ACL nomatch
-mqtt.acl_nomatch = allow
-
-## Default ACL File
-## etc/acl.conf 文件中配置了基础的 ACL 规则
-mqtt.acl_file = etc/acl.conf
-```
-
-ACL 访问控制规则定义:
+打开并配置 `etc/plugins/emqx_auth_username.conf` 文件，按照如下所示创建认证信息：
 
 ```bash
-允许 (Allow)|拒绝 (Deny)  谁(Who)  订阅 (Subscribe)|发布 (Publish)   主题列表 (Topics)
+# 第一组认证信息
+auth.user.1.username = username
+auth.user.1.password = passwd
+
+# 第二组认证信息
+auth.user.2.username = default_user
+auth.user.2.password = passwd2
 ```
 
-EMQ X  接收到 MQTT 客户端发布 (PUBLISH) 或订阅 (SUBSCRIBE) 请求时，会逐条匹配 ACL 访问控制规则，直到匹配成功返回 allow 或 deny。
+在 EMQ X Dashboard 或控制台启用插件：
 
-- 部分 `auth` 插件中可以进行 ACL 规则配置；
+```./bin/emqx_ctl plugins load emqx_auth_username```
 
-- ACL 中的 **Super**：通过了 `Super` 认证的客户端可以进行任意发布 / 订阅操作不受 ACL 限制。
+然后重启 ``emqx`` 服务，如果配置成功正确，可以直接连接成功；如果配置不正确，通过 mosquitto 提供的命令行会报以下的错误。读者在修改了配置文件后，**需要重新启动 ``emqx`` 服务才可以生效**。
 
+```bash
+# mosquitto_sub -h $your_host -u username -P passwd1 -t /devices/001/temp
+Connection Refused: bad user name or password.
+```
 
+EMQ X 的 ``/var/log/emqx/error.log`` 会有类似于以下的错误信息。
+
+```
+ [error] <0.1981.0>@emqx_protocol:process:241 Client(mosqsub/10166-master@10.211.55.6:40177): Username 'username' login failed for "No auth module to check!"
+```
 
 ## ClientID 认证
 
 ClientID 认证使用配置文件存储客户端 ID 与密码，连接时通过 clientid 与 password 进行认证。
 
-配置 `etc/plugins/emqx_auth_clientid.conf` 文件，按照如下个数创建认证信息：
+配置 `etc/plugins/emqx_auth_clientid.conf` 文件，按照如下所示创建认证信息：
 
 ```bash
-
 # 第一组认证信息
-
 auth.client.1.clientid = id
 auth.client.1.password = passwd
-
 
 # 第二组认证信息
 auth.client.2.clientid = dev:devid
@@ -77,51 +74,26 @@ auth.client.2.password = passwd2
 
 ```./bin/emqx_ctl plugins load emqx_auth_clientid```
 
-此时可通过 MQTT clientid `dev:devid` 与 密码 `passwd2` 连接至 EMQ。
-
-
-
-
-## 用户名密码认证
-
-用户名密码认证使用配置文件存储用户名与密码，通过 username 与 password 进行连接认证。
-
-打开并配置 `etc/plugins/emqx_auth_username.conf` 文件，按照如下个数创建认证信息：
+重启 ``emqx`` 服务后，可通过 MQTT 客户端通过在上述配置文件中配置的客户端 id 和密码连接至 EMQ，如果指定了错误的客户端 ID 和密码，使用 ``mosquitto_sub`` 的时候会出现如下错误。。
 
 ```bash
-
-# 第一组认证信息
-
-auth.client.1.username = username
-auth.client.1.password = passwd
-
-
-# 第二组认证信息
-auth.client.2.username = default_user
-auth.client.2.password = passwd2
+# mosquitto_sub -h $your_host -u id -i id1 -P passwd -t /devices/001/temp
+Connection Refused: bad user name or password.
 ```
 
-在 EMQ X Dashboard 或控制台启用插件：
 
-```./bin/emqx_ctl plugins load emqx_auth_username```
+## HTTP 认证
 
-此时可通过 MQTT 用户名 `default_user` 与 密码 `passwd2` 连接至 EMQ X。
-
-
-
-
-## HTTP 认证/访问控制
-
-HTTP 认证/访问控制使用 HTTP API 实现认证鉴权与 ACL 控制。
+HTTP 认证调用自定义的 HTTP API 实现认证鉴权。
 
 
 ### 实现原理
 
-EMQ X 在设备连接、发布/订阅事件中使用当前客户端相关信息作为参数，发起请求查询设备权限，通过 HTTP 响应状态码 (HTTP Status) 来处理事件。
+EMQ X 在设备连接、发布/订阅事件中使用当前客户端相关信息作为参数，向用户自定义的认证服务发起请求查询权限，通过返回的 HTTP **响应状态码** (HTTP Response Code) 来处理事件。
 
- - 认证 / ACL 成功，API 返回 200 状态码
+ - 认证成功，API 返回 200 状态码
 
- - 认证 / ACL 失败，API 返回 4xx 状态码
+ - 认证失败，API 返回 4xx 状态码
 
 
 ### 使用方式
@@ -129,30 +101,91 @@ EMQ X 在设备连接、发布/订阅事件中使用当前客户端相关信息�
 打开 `etc/plugins/emqx_auth_http.conf` 文件，配置相关规则：
 
 ```bash
-## 配置一个认证请求 URL
-auth.http.auth_req = http://127.0.0.1:8080/mqtt/auth
+## 配置一个认证请求 URL，地址的路径部分“/auth/AuthServlet”，用户可以自己随便定义
+auth.http.auth_req = http://$SERVER:8080/auth/AuthServlet
 
 ## HTTP 请求方法
 auth.http.auth_req.method = post
 
 ## 使用占位符传递请求参数
 auth.http.auth_req.params = clientid=%c,username=%u,password=%P
-
-
-## 配置 Super URL
-auth.http.super_req = http://127.0.0.1:8080/mqtt/superuser
-auth.http.super_req.method = post
-auth.http.super_req.params = clientid=%c,username=%u
-
-## 配置 ACL URL
-auth.http.acl_req = http://127.0.0.1:8080/mqtt/acl
-auth.http.acl_req.method = get
-auth.http.acl_req.params = access=%A,username=%u,clientid=%c,ipaddr=%a,topic=%t
 ```
 
-启用插件后，EMQ X 将通过 `http://127.0.0.1:8080/mqtt/auth` URL 进行认证，Web 服务器获取到参数并执行相关逻辑后返回响应的 HTTP 响应状态码即可，ACL 配置同理。
+启用插件并且**重启 EMQ X 服务器**之后，所有的连接将通过 ``http://$SERVER:8080/auth/AuthServlet`` 进行认证，该服务获取到参数并执行相关验证逻辑后返回**相应的 HTTP 响应状态码。**但是具体返回内容视你自己需求而定，EMQ X 不作要求。
 
-> 配置中的详细占位符定义请见页底。
+以下为一段 Java Servlet 代码示例：
+
+- 当连接的 clientId，username，password 中任意一个为空的时候，返回状态码 ``SC_BAD_REQUEST (400)`` ，表示参数有问题
+- 当 clientId 为 id1，username 为 user1，password 为 passwd 的时候，返回状态码 ``OK(200)`` ，表示认证通过；否则返回 ``SC_UNAUTHORIZED(401)``，表示认证失败
+
+```java
+package io.emqx;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/AuthServlet")
+public class AuthServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public AuthServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String clientId = request.getParameter("clientid");
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		System.out.println(MessageFormat.format("clientid: {0}, username: {1}, password:{2}", clientId, username, password));
+		
+		if(clientId == null || "".equals(clientId.trim()) || username == null || "".equals(username) || password == null || "".equals(password.trim())) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Invalid request contents.");
+			return;
+		}
+		
+		if("id1".equals(clientId) && "user1".equals(username) && "passwd".equals(password)) {
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getWriter().println("OK");
+		} else {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().println("Invalid user credentials.");
+			return;
+		}
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
+```
+
+命令行中输入以下内容，连接成功。
+
+```bash
+# mosquitto_sub -h 10.211.55.10 -u user1 -i id1  -P passwd -t /devices/001/temp
+```
+
+在 web 服务器中输出以下内容，表明验证信息成功传入。
+
+```bash
+clientid: id1, username: user1, password:passwd
+```
+
+如果指定了错误的信息，认证将失败。如下所示，指定错误的用户名 ``user``
+
+```bash
+# mosquitto_sub -h 10.211.55.10 -u user -i id1  -P passwd -t /devices/001/temp
+Connection Refused: bad user name or password.
+```
 
 
 
@@ -592,18 +625,4 @@ auth.mongo.database = mqtt
 
 > 数据源连接地址、认证信息等配置错误将无法启动插件，请为 MongoDB 开启防火墙策略或配置连接认证以保障数据安全。
 
-
-
-
-
-## 附录：认证/访问控制占位符对照表
-
-| 占位符 | 对照参数                                        |
-| :----- | :---------------------------------------------- |
-| %c     | MQTT clientid                                   |
-| %u     | MQTT username                                   |
-| %p     | MQTT password                                   |
-| %a     | ACL IP 地址                                     |
-| %A     | ACL access 方式，1: 发布  2：订阅  3：发布/订阅 |
-| %t     | ACL 中 MQTT topic                               |
 

@@ -105,6 +105,7 @@ TODO：解释一下上述存储的内容是通过配置文件中哪个配置项�
 
 ```bash
 mosquitto_pub -h 10.211.55.10 -i pub_client1  -q 2 -t /devices/001/temp -m "hello message"
+mosquitto_pub -h 10.211.55.10 -i pub_client1  -q 2 -t /devices/001/temp -m "hello message"
 ```
 
 
