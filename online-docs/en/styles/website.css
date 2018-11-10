@@ -19,6 +19,14 @@
     color: #07ae79;
 }
 
+.developer-center a:hover {
+    color: #28D390 !important;
+}
+
+.developer-center a {
+    color: #28D390;
+}
+
 p img {
     margin-top: .85em;
 }
