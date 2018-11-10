@@ -27,6 +27,15 @@ p img {
     margin-top: .85em;
 }
 
+
+.developer-center a:hover {
+    color: #28D390 !important;
+}
+
+.developer-center a {
+    color: #28D390;
+}
+
 @media (min-width: 1200px) {
     .page-inner {
         max-width: 80%;
