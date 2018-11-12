@@ -34,12 +34,12 @@
   * [Cassandra](backend/cassandra.md)
 
 ## 桥接
+* [桥接的概念](bridge/bridge.md)
+* [EMQ X 之间的桥接](bridge/emqx_to_emqx.md)
 * [其他消息中间件桥接至 EMQ X](bridge/bridge_to_emqx.md)
  * [Mosquitto](bridge/mosquitto_to_emqx.md)
- * [HiveMQ](bridge/hivemq_to_emqx.md)
- * [RabbitMQ](bridge/rabbitmq_to_emqx.md)
  * [VerneMQ](bridge/vernemq_to_emqx.md)
-* [EMQ X 桥接至其他消息中间件](bridge/bridge_form_emqx.md)
+* [EMQ X 桥接至其他消息中间件](bridge/bridge_from_emqx.md)
  * [Mosquitto](bridge/emqx_to_mosquitto.md)
  * [HiveMQ](bridge/emqx_to_hivemq.md)
  * [RabbitMQ](bridge/emqx_to_rabbitmq.md)
