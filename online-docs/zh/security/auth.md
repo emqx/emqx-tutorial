@@ -469,14 +469,27 @@ Subscribed (mid: 1): 0
 
 
 
-## MongoDB 认证/访问控制
-
-MongoDB 认证/访问控制插件连接至 MongoDB ，执行带有客户端信息的 Query 进行认证操作。
-
-
-
+## MongoDB 认证
 
 ### Auth 配置
+
+客户端上线后，MongoDB 认证插件连接至 MongoDB ，通过查询和比对 MongoDB 中预先存储的认证信息来判断该客户端是否有权限连接该服务器。
+
+#### MongoDB 安装
+
+读者请按照 [MongoDB 安装文档](https://docs.mongodb.com/manual/administration/install-community/)安装好数据库，然后使用客户端 ``mongo`` 连接到数据库。
+
+```bash
+# mongo
+MongoDB shell version v4.0.4
+connecting to: mongodb://127.0.0.1:27017
+Implicit session: session { "id" : UUID("373cf3b1-d72d-4292-95cc-a76cfd607fa7") }
+MongoDB server version: 4.0.4
+Welcome to the MongoDB shell.
+......
+```
+
+#### 准备数据
 
 emqx_auth_mongo 插件根据配置的存储客户端信息的集合（collection）、password 字段名（password_field）、过滤查询的 selector 进行认证操作：
 
@@ -486,26 +499,29 @@ MongoDB mqtt 数据库中有如下信息：
 ## 插入数据
 > use mqtt
 switched to db mqtt 
-> db.mqtt_user.insert({ username: 'emqx', password: 'public', is_superuser: false })
+> db.mqtt_user.insert({ username: 'userid_001', password: 'public', is_superuser: false })
 WriteResult({ "nInserted" : 1 })
 
 ## 查看数据
 > db.mqtt_user.find({})
-{ "_id" : ObjectId("5bdfbb8ab988e43692ca93b1"), "username" : "emqx", "password" : "public", "is_superuser" : false }
+{ "_id" : ObjectId("5be795f7744a3bac99a6fd02"), "username" : "userid_001", "password" : "public", "is_superuser" : false }
 ```
 
-
+#### 修改配置文件
 
 打开 `etc/plugins/emqx_auth_mongo.conf`，配置以下信息：
 
 ```bash
+## Mongo 认证数据库名称
+auth.mongo.database = mqtt
+
 ## 认证信息所在集合
 auth.mongo.auth_query.collection = mqtt_user
 
 ## 密码字段
 auth.mongo.auth_query.password_field = password
 
-## 密码处理
+## 使用明文密码存储
 auth.mongo.auth_query.password_hash = plain
 
 ## 查询指令
@@ -513,16 +529,86 @@ auth.mongo.auth_query.selector = username=%u
 ```
 
 
-至此，`username` 为 `emqx` 的客户端连接时，EMQ X 将执行下列查询：
+配置完毕后执行  ``emqx_ctl plugins load emqx_auth_mongo`` 并重启 emqx 服务。`username` 为 `userid_001` 的客户端连接时，EMQ X 将执行下列查询：
 
 ```bash
-> db.mqtt_user.findOne({ username: 'emqx' })
+> db.mqtt_user.findOne({ username: 'userid_001' })
 {
-	"_id" : ObjectId("5bdfbb8ab988e43692ca93b1"),
-	"username" : "emqx",
+	"_id" : ObjectId("5be795f7744a3bac99a6fd02"),
+	"username" : "userid_001",
 	"password" : "public",
 	"is_superuser" : false
 }
 ```
 
-当查询结果中的 `password`（password_field 字段）与当前客户端 `password` 相等时，认证成功。
+当查询结果中的 `password`（password_field 字段）与当前客户端 `password` 相等时，认证成功。在客户端使用 ``mosquitto_sub`` 命令来连接。
+
+```shell
+## 使用错误的用户名和密码
+# mosquitto_sub -h 10.211.55.10 -u userid_001 -P password -t /devices/001/temp
+Connection Refused: bad user name or password.
+
+## 使用正确的用户名和密码，加入 -d 参数，打印交互的 MQTT 报文
+#  mosquitto_sub -h 10.211.55.10 -u userid_001 -P public -t /devices/001/temp -d
+Client mosqsub/18771-master sending CONNECT
+Client mosqsub/18771-master received CONNACK
+Client mosqsub/18771-master sending SUBSCRIBE (Mid: 1, Topic: /devices/001/temp, QoS: 0)
+Client mosqsub/18771-master received SUBACK
+Subscribed (mid: 1): 0
+```
+
+#### 密码加密、加盐
+
+上文描述的是在 MongoDB 中采用明文的方式保存密码，EMQ X 还支持用加密算法对密码进行加密和加盐处理。
+
+- 修改配置文件：打开配置文件 ``emqx_auth_mongo.conf`` ，
+  - 更改配置 ``auth.mongo.password_hash = salt,sha256`` ，采用 sha256 加密算法，加入的 salt 在密码之前；如果该配置是 ``sha256,salt`` 则表示加入的 salt 在密码之后；**注意：salt 只是一个标识符，不代表使用该字符进行加盐处理**
+  - 更改完成后重启 EMQ X 服务。
+
+```bash
+
+auth.mongo.auth_query.password_field = password,salt
+
+## sha512 with salt prefix
+auth.mongo.password_hash = salt,sha256
+```
+
+- 在 MongoDB 中存入数据，根据上一步的配置，假设该客户端设置的 salt 为 ``mysalt``，那么加盐后的密码原文为 ``mysaltpublic`` ，读者可以通过[在线的 sha512工具](https://www.liavaag.org/English/SHA-Generator/)将密码转换为密文，并存入 MongoDB。
+
+```java
+sha512("mysaltpublic") -> c3acb78da1592319f47d15c5230071f22a9d3b23671a29c8f7b4ab92d66f39aa
+```
+
+打开 mongo 命令行工具。
+
+```bash
+## 先删除之前保存的认证数据
+> db.mqtt_user.deleteOne({ username: 'userid_001'})
+{ "acknowledged" : true, "deletedCount" : 1 }
+
+## 保存认证数据
+> db.mqtt_user.insert({ username: 'userid_001', password: 'c3acb78da1592319f47d15c5230071f22a9d3b23671a29c8f7b4ab92d66f39aa', is_superuser: false, salt: 'mysalt' })
+WriteResult({ "nInserted" : 1 })
+
+## 取出相关的密码和盐
+> db.mqtt_user.findOne({ username: 'userid_001' })
+{
+	"_id" : ObjectId("5be7aad8744a3bac99a6fd0c"),
+	"username" : "userid_001",
+	"password" : "c3acb78da1592319f47d15c5230071f22a9d3b23671a29c8f7b4ab92d66f39aa",
+	"is_superuser" : false,
+	"salt" : "mysalt"
+}
+```
+
+- 在客户端使用 ``mosquitto_sub`` 命令来连接。
+
+```shell
+# mosquitto_sub -h 10.211.55.10 -u userid_001 -P public -t /devices/001/temp -d
+Client mosqsub/9936-master sending CONNECT
+Client mosqsub/9936-master received CONNACK
+Client mosqsub/9936-master sending SUBSCRIBE (Mid: 1, Topic: /devices/001/temp, QoS: 0)
+Client mosqsub/9936-master received SUBACK
+Subscribed (mid: 1): 0
+```
+
