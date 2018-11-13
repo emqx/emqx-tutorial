@@ -224,267 +224,248 @@ auth.ldap.ssl = false
 
 ## MySQL/PostgreSQL 认证/访问控制
 
-emqx_auth_mysql / emqx_auth_pgsql 分别为基于 MySQL、PostgreSQL 数据库的认证 / 访问控制插件。
-
-
-EMQ X 将根据插件配置，使用当前客户端信息生成预定 SQL 语句，查询数据库进行认证操作。
-
+emqx_auth_mysql / emqx_auth_pgsql 分别为基于 MySQL、PostgreSQL 数据库的认证 / 访问控制插件。EMQ X 将根据插件配置，使用当前客户端信息生成预定 SQL 语句，查询数据库进行认证操作。
 
 ### Auth 配置
 
-比较查询结果中的 `password` 字段是否与当前客户端 password / 加盐加密后的 password (取决于配置) 是否相等，验证流程如下：
+MySQL 的安装过程请读者参考网上相关文章，此处不再赘述。
 
-- 1. 查询结果集中必须有 `password` 字段；
+#### 创建数据库
 
-- 2. EMQ X 根据加盐 (salt) / 加密算法配置处理当前客户端密码；
+读者可以使用任何自己喜欢的 mysql 客户端，创建好相应的数据库。这里用的是 MySQL 自带的命令行客户端，打开 MySQL 的控制台，如下所示，创建一个名为 ``emqx`` 的认证数据库，并切换到  ``emqx``  数据库。
 
-- 3. 结果集为空或两个字段不等，认证失败。
+```mysql
+mysql> create database emqx;
+Query OK, 1 row affected (0.00 sec)
 
-设计设备表表结构如下：
+mysql> use emqx;
+Database changed
+```
+
+#### 创建表
+
+建议的表结构如下，其中，
+
+- username 为客户端连接的时候指定的用户名
+- password_hash 为使用 salt 加密后的密文
+- salt 为加密串
+- is_superuser 为控制 ACL 的时候用，这里先跳过
+
+注：读者在生成的表格中，字段可以不用完全跟下面的一致，用户可以通过配置  ``emqx_auth_mysql.conf `` 文件中的 ``authquery `` 的 SQL 语句来适配）。
 
 ```sql
 CREATE TABLE `mqtt_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` varchar(100) DEFAULT NULL,
   `username` varchar(100) DEFAULT NULL,
   `password_hash` varchar(255) DEFAULT NULL,
+  `salt` varchar(40) DEFAULT NULL,
   `is_superuser` tinyint(1) DEFAULT 0,
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `mqtt_username` (`username`)
-)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ```
 
-插入示例数据：
+创建成功后，查看一下表结构如下，
 
-示例数据中密码为 test_password，加密 salt 为 'secret'，使用 MD5 算法对 password + salt 字符串加密：
+```mysql
+mysql> desc mqtt_user;
++---------------+------------------+------+-----+---------+----------------+
+| Field         | Type             | Null | Key | Default | Extra          |
++---------------+------------------+------+-----+---------+----------------+
+| id            | int(11) unsigned | NO   | PRI | NULL    | auto_increment |
+| username      | varchar(100)     | YES  | UNI | NULL    |                |
+| password_hash | varchar(255)     | YES  |     | NULL    |                |
+| salt          | varchar(40)      | YES  |     | NULL    |                |
+| is_superuser  | tinyint(1)       | YES  |     | 0       |                |
+| created       | datetime         | YES  |     | NULL    |                |
++---------------+------------------+------+-----+---------+----------------+
+6 rows in set (0.01 sec)
+```
+
+#### 准备认证数据
+
+比较查询结果中的 `password` 字段的值是否与当前客户端的密码进行加盐加密后的值是否相等，验证流程如下：
+
+- 查询结果集中必须有 `password` 字段；
+- 在数据库中可以为每个客户端都指定一个 salt，EMQ X 根据客户端传入的密码和通过 SQL 返回的 salt 信息生成密文；
+- 结果集为空或两个字段不等，认证失败。
+
+插入示例数据，示例数据中密码为 ``test_password``，加密 salt 为 ``secret``，在 EMQ X 的配置文件的 ``auth.mysql.password_hash`` 中，**salt 只是一个标识符，不代表使用该字符进行加盐处理**。
+
+- 如果采用``auth.mysql.password_hash = md5,salt`` ，那么 EMQ X 使用 MD5 算法对 ``test_passwordsecret`` 字符串加密；
+- 如果采用``auth.mysql.password_hash = salt,md5`` ，那么 EMQ X 使用 MD5 算法对 ``secrettest_password`` 字符串加密；
+
+本文采用第一种配置方式，将得到的 MD5 密文插入表 ``mqtt_user``。读者可以通过[在线的 MD5 工具](https://www.md5hashgenerator.com/)或者自己写程序对密码进行编码。
 
 ```java
-String password_hash = md5(password + 'secret')
+MD5("test_passwordsecret") -> a904b2d1d2b2f73de384955022964595
 ```
 
 ```sql
-INSERT INTO mqtt_user (client_id, username, password_hash) VALUES ('test_client', 'test_username', '7BA799D1D5C66C4E3607D3AF92455ABC')
+mysql> INSERT INTO mqtt_user(username,password_hash,salt) VALUES('test_username', 'a904b2d1d2b2f73de384955022964595', 'secret');
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from mqtt_user;
++----+----------------+----------------------------------+--------+--------------+---------+
+| id | username       | password_hash                    | salt   | is_superuser | created |
++----+----------------+----------------------------------+--------+--------------+---------+
+|  3 | test_username1 | a904b2d1d2b2f73de384955022964595 | secret |            0 | NULL    |
++----+----------------+----------------------------------+--------+--------------+---------+
+1 row in set (0.00 sec)
 ```
+
+#### 修改 EMQ X 配置文件
 
 由于表中没有 `password` 字段，查询 SQL 应该使用 `AS` 语法来转换处理：
 
 ```sql
-SELECT password_hash AS password where client_id = '%c' and username = '%u'
+SELECT password_hash AS password, ...
 ```
 
-因为使用了 MD5 算法且在 salt 后置加密，需要更改插件中以下配置：
+修改后的主要配置如下所示，其它相关配置，请参考配置文件中相应的描述进行修改。
 
 ```bash
+## 修改为实际 mysql 所在的服务器地址
+auth.mysql.server = $mysql_host:3306
+
+## 修改为上面创建成功的 emqx 数据库
+auth.mysql.database = emqx
+
+auth.mysql.auth_query = SELECT password_hash AS password, salt FROM mqtt_user WHERE username = '%u'
+
 ## 加密算法 plain | md5 | sha | sha256 | bcrypt
-## 对应 md5(password + salt)
-auth.pgsql.password_hash = MD5,secret
+## 加盐加密算法
+auth.mysql.password_hash = md5,salt
 
-## 对应 md5(salt + password)
-## auth.pgsql.password_hash = secret,MD5
-
-## bu加盐
-## auth.pgsql.password_hash = MD5
+## 不加盐加密算法，直接写算法名称即可
+# auth.mysql.password_hash = md5
 ```
 
-配置文件中相应的配置如下：
-
-```sql
-## PostgreSQL 认证 SQL
-auth.pgsql.auth_query = SELECT password_hash AS password where client_id = '%c' and username = '%u'
-
-## PostgreSQL 密码预处理
-auth.pgsql.password_hash = MD5,secret
-```
-
-> 将对应配置 key 的 pgsql 换为 mysql 即为 MySQL 的配置如：auth.mysql.password_hash
+PostgreSQL 的用法与 MySQL 类似，读者可以参考本章的配置，此处不再赘述。
 
 
 
-### Super 配置
-
-比较查询结果中的 `is_superuser` 字段是否为 `true`，"true"、true、'1'、'2'、'3'... 等程序意义上的为真值均可：
-
-```bash
-auth.pgsql.super_query = select is_superuser from mqtt_user where username = '%u' limit 1
-```
-
-
-### ACL 配置
-
-通过条件查询出 allow, ipaddr, username, clientid, access, topic 字段进行比较。
-
-设计 ACL 表表结构如下：
-
-```sql
-CREATE TABLE `mqtt_acl` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `allow` int(1) DEFAULT NULL COMMENT '0: deny, 1: allow',
-  `ipaddr` varchar(60) DEFAULT NULL COMMENT 'IpAddress',
-  `username` varchar(100) DEFAULT NULL COMMENT 'Username',
-  `clientid` varchar(100) DEFAULT NULL COMMENT 'ClientId',
-  `access` int(2) NOT NULL COMMENT '1: subscribe, 2: publish, 3: pubsub',
-  `topic` varchar(100) NOT NULL DEFAULT '' COMMENT 'Topic Filter',
-  PRIMARY KEY (`id`)
-)
-```
-
-
-插入多行示例数据：
-
-```sql
-INSERT INTO mqtt_acl (allow, ipaddr, username, clientid, access, topic)
-VALUES
-    (1,NULL,'$all',NULL,2,'#'), -- 允许任意 IP 地址任意用户名任意客户端 ID 在 # 主题发布消息
-    
-    (0,NULL,'$all',NULL,1,'$SYS/#'), -- 禁止任意设备订阅 $SYS/# 主题
-  
-    (0,NULL,'$all',NULL,1,'eq #'), -- 禁止任意设备订阅 # 主题
-  
-    (1,'127.0.0.1',NULL,NULL,2,'$SYS/#'), -- 允许来自 127.0.0.1 的客户端在 $SYS/# 主题发布消息
-  
-    (1,'127.0.0.1',NULL,NULL,2,'#'), -- 允许来自 127.0.0.1 的客户端在 # 主题发布消息
-  
-    (1,NULL,'dashboard',NULL,1,'$SYS/#'); -- 允许 dashboard 客户端订阅 $SYS/# 主题
-```
-
-
-配置设计 SQL 语句能兼顾到所需 ACL：
-
-```bash
-auth.pgsql.acl_query = select allow, ipaddr, username, clientid, access, topic from mqtt_acl where ipaddr = '%a' or username = '%u' or username = '$all' or clientid = '%c'
-```
-
-
-### 使用方式
-
-打开 `etc/plugins/emqx_auth_pgsql.conf` 文件，配置数据源与查询规则：
-
-```bash
-## 连接地址
-auth.pgsql.server = 127.0.0.1:5432
-
-## 连接池
-auth.pgsql.pool = 8
-
-auth.pgsql.username = root
-
-## auth.pgsql.password =
-
-auth.pgsql.database = mqtt
-
-auth.pgsql.encoding = utf8
-
-auth.pgsql.ssl = false
-
-## ... 其他 Auth ACL  Super 配置
-```
-
-> 数据源连接地址、认证信息等配置错误将无法启动插件。
-
-
-
-## Redis 认证/访问控制
-
-
-Redis 认证/访问控制插件连接至 Redis ，执行带有客户端信息的 Redis command 进行认证操作。
-
-推荐使用 `:` 作为 Redis key 的分隔符将客户端信息放入 Redis key 中，为避免 key 与其他业务重复，格式可以为：
-
-```bash
-# 业务标识符:username 或 clientid
-prefix:[username|clientid]
-```
-
-如 `mqtt_user:emqx`
-
-
-
+## Redis 认证
 
 ### Auth 配置
 
-emqx_auth_redis 插件将根据插件配置，使用当前客户端信息生成预定 Redis command，查询结果进行比较。
+客户端上线后，Redis 认证插件连接至 Redis ，通过查询和比对 Redis 中预先存储的认证信息来判断该客户端是否有权限连接该服务器。
 
-使用 Redis Hash 存储客户端信息：
+#### Redis 安装
+
+读者可以参考数据持久化部分中的[安装与验证 redis 服务器](../backend/redis.html#安装与验证-redis-服务器)章节来完成 Redis 的安装，此处不再赘述。
+
+#### 准备数据
+
+需要先将认证数据存入 Redis 数据库中，推荐使用 `:` 作为 Redis key 的分隔符，为避免 key 与其他业务重复，建议可以加入一个业务标识符前缀，key 的格式如下。
 
 ```bash
-127.0.0.1:6379[2]> HMSET mqtt_user:emqx password public is_superuser false
-OK
-127.0.0.1:6379[2]>
+# 业务标识符前缀:username 或 clientid
+prefix:[username|clientid]
 ```
+
+如 `mqtt_user:userid_001` 。
+
+通过 Redis 提供的命令行工具 ``redis-cli`` 来将认证数据导入到 Redis Hash 数据结构中，读者可以参考 [hmset](https://redis.io/commands/hmset) 和 [hget](https://redis.io/commands/hget)  获取更加详细的介绍。
+
+```bash
+## 将 key 为 mqtt_user:userid_001；设置密码字段为 public，设置is_superuser字段为 false
+127.0.0.1:6379[2]> HMSET mqtt_user:userid_001 password "public" is_superuser false
+OK
+
+## 列出所有的 key，刚存入的被列出
+127.0.0.1:6379[2]> keys *
+1) "mqtt_user:userid_001"
+
+## 展示客户端的 key 为 mqtt_user:userid_001 的 password 字段值
+127.0.0.1:6379> hget mqtt_user:userid_001 password
+"public"
+
+## 展示客户端的 key 为 mqtt_user:userid_001 的 is_superuser 字段值
+127.0.0.1:6379> hget mqtt_user:userid_001 is_superuser
+"false"
+```
+
+#### 修改配置文件
+
+emqx_auth_redis 插件将根据插件配置，根据传入的客户端信息生成相应的 Redis 命令，查询结果进行比较。
 
 打开 `etc/plugins/emqx_auth_redis.conf`，配置以下信息：
 
 ```bash
-## 认证时 Redis command
+## 认证时执行的 Redis 命令
 auth.redis.auth_cmd = HMGET mqtt_user:%u password
 
 ## Password hash
 auth.redis.password_hash = plain
 ```
 
+配置完毕后执行  ``emqx_ctl plugins load emqx_auth_redis`` 并重启 emqx 服务。在客户端使用 ``mosquitto_sub`` 命令来连接。
 
-至此，`username` 为 `emqx` 的客户端连接时，EMQ X 将执行下列查询：
+```shell
+## 使用错误的用户名和密码
+# mosquitto_sub -h 10.211.55.10 -u userid_001 -P password -t /devices/001/temp
+Connection Refused: bad user name or password.
 
-```bash
-127.0.0.1:6379[2]> HMGET mqtt_user:emqx password
-1) "public"
+## 使用正确的用户名和密码，加入 -d 参数，打印交互的 MQTT 报文
+#  mosquitto_sub -h 10.211.55.10 -u userid_001 -P public -t /devices/001/temp -d
+Client mosqsub/18771-master sending CONNECT
+Client mosqsub/18771-master received CONNACK
+Client mosqsub/18771-master sending SUBSCRIBE (Mid: 1, Topic: /devices/001/temp, QoS: 0)
+Client mosqsub/18771-master received SUBACK
+Subscribed (mid: 1): 0
 ```
 
-当查询结果与当前客户端 `password` 相等时，认证成功。
+#### 密码加密、加盐
 
+上文描述的是在 Redis 中采用明文的方式保存密码，EMQ X 还支持用加密算法对密码进行加密和加盐处理。
 
-
-
-### Super 配置
-
-打开 `etc/plugins/emqx_auth_redis.conf`，配置 super 查询：
+- 修改配置文件：打开配置文件 ``emqx_auth_redis.conf`` ，
+  - 更改配置 ``auth.redis.password_hash = salt,sha256`` ，采用 sha256 加密算法，加入的 salt 在密码之前；如果该配置是 ``sha256,salt`` 则表示加入的 salt 在密码之后；**注意：salt 只是一个标识符，不代表使用该字符进行加盐处理**
+  - 更改读取命令 ``auth.redis.auth_cmd`` ，需要取出 salt；
+  - 更改完成后重启 EMQ X 服务。
 
 ```bash
-## Super Redis command
-auth.redis.super_cmd = HGET mqtt_user:%u is_superuser
+## 更改认证时执行的 Redis 命令，取出 salt
+auth.redis.auth_cmd = HMGET mqtt_user:%u password salt
+
+## sha256 with salt prefix
+auth.redis.password_hash = salt,sha256
 ```
 
+- 在 Redis 中存入数据，根据上一步的配置，假设该客户端设置的 salt 为 ``mysalt``，那么加盐后的密码原文为 ``mysaltpublic`` ，读者可以通过[在线的 sha256工具](https://hash.online-convert.com/sha256-generator)将密码转换为密文，并存入 Redis。
 
-
-### ACL 配置
-
-打开 `etc/plugins/emqx_auth_redis.conf`，配置 ACL 查询：
-
-```bash
-## ACL Redis command
-auth.redis.acl_cmd = HGETALL mqtt_acl:%u
+```java
+sha256("mysaltpublic") -> 129735f3af16d9a3a6784752d034542642ec96728b6f1dd47ec2b6fe46137130
 ```
 
-按照 ACL 数据元，使用 Redis Hash 存储 ACL 信息：
+打开 Redis 命令行工具。
 
 ```bash
-127.0.0.1:6379[2]> HMSET mqtt_user:emqx allow 0 username emqx access 3 topic not_allowed_topic
+## 先删除之前保存的认证数据
+127.0.0.1:6379> del mqtt_user:userid_001
+(integer) 1
+## 保存认证数据
+127.0.0.1:6379> HMSET mqtt_user:userid_001 password "129735f3af16d9a3a6784752d034542642ec96728b6f1dd47ec2b6fe46137130" is_superuser false salt "mysalt"
 OK
-127.0.0.1:6379[2]>
+## 取出相关的密码和盐
+127.0.0.1:6379> HMGET mqtt_user:userid_001 password salt
+1) "129735f3af16d9a3a6784752d034542642ec96728b6f1dd47ec2b6fe46137130"
+2) "mysalt"
 ```
 
+- 在客户端使用 ``mosquitto_sub`` 命令来连接。
 
-
-### 使用方式
-
-打开 `etc/plugins/emqx_auth_redis.conf` 文件，配置数据源与查询规则：
-
-```bash
-## 连接地址
-auth.redis.server = 127.0.0.1:6379
-
-## 连接池
-auth.redis.pool = 8
-
-## auth.redis.password = 
-
-auth.redis.database = 0
-
-## ... 其他 Auth ACL Super 配置
+```shell
+# mosquitto_sub -h 10.211.55.10 -u userid_001 -P public -t /devices/001/temp -d
+Client mosqsub/9936-master sending CONNECT
+Client mosqsub/9936-master received CONNACK
+Client mosqsub/9936-master sending SUBSCRIBE (Mid: 1, Topic: /devices/001/temp, QoS: 0)
+Client mosqsub/9936-master received SUBACK
+Subscribed (mid: 1): 0
 ```
-
-> 数据源连接地址、认证信息等配置错误将无法启动插件，请为 Redis 开启防火墙策略或配置连接认证保障数据安全。
 
 
 
@@ -545,84 +526,3 @@ auth.mongo.auth_query.selector = username=%u
 ```
 
 当查询结果中的 `password`（password_field 字段）与当前客户端 `password` 相等时，认证成功。
-
-
-
-
-### Super 配置
-
-打开 `etc/plugins/emqx_auth_mongo.conf`，配置 super 查询：
-
-```bash
-## 是否开启
-auth.mongo.super_query = on
-
-## super 信息所在集合
-auth.mongo.super_query.collection = mqtt_user
-
-## super 字段
-auth.mongo.super_query.super_field = is_superuser
-
-## 查询指令
-auth.mongo.super_query.selector = username=%u
-```
-
-当查询结果中的 `is_superuser`（super_field 字段）为 `true` 时，认证成功。
-
-
-
-### ACL 配置
-
-打开 `etc/plugins/emqx_auth_mongo.conf`，配置 ACL 查询：
-
-```bash
-## 是否开启 ACL 控制
-auth.mongo.acl_query = on
-
-## ACL 信息所在集合
-auth.mongo.acl_query.collection = mqtt_acl
-
-## 查询指令
-auth.mongo.acl_query.selector = username=%u
-```
-
-按照 ACL 数据元，插入以下 ACL 信息：
-
-```bash
-> use mqtt
-switched to db mqtt
-> db.mqtt_acl.insert({ allow: 0, username: 'emqx', access: 3, topic: 'not_allowed_topic' })
-WriteResult({ "nInserted" : 1 })
-```
-
-
-
-### 使用方式
-
-打开 `etc/plugins/emqx_auth_mongo.conf` 文件，配置数据源与查询规则：
-
-```bash
-## MongoDB 拓扑模式
-auth.mongo.type = single
-
-## MongoDB 地址
-auth.mongo.server = 127.0.0.1:27017
-
-## MongoDB 连接池大小
-auth.mongo.pool = 8
-
-## MongoDB 用户名
-## auth.mongo.login =
-
-## MongoDB 密码
-## auth.mongo.password =
-
-## MongoDB 数据库名
-auth.mongo.database = mqtt
-
-## ... 其他 Auth ACL Super 配置
-```
-
-> 数据源连接地址、认证信息等配置错误将无法启动插件，请为 MongoDB 开启防火墙策略或配置连接认证以保障数据安全。
-
-
