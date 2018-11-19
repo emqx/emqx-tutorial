@@ -202,6 +202,15 @@ emqx_auth_jwt
 
 emqx_auth_ldap 使用 LDAP 协议进行认证。
 
+```
+conn=1012 op=3 SRCH base=“uid=user1,ou=auth,dc=emqx,dc=io” scope=2 deref=3 filter=“(?username=user1)”
+
+```
+
+
+
+
+
 打开 `etc/plugins/emqx_auth_ldap.conf` 文件，配置相关规则：
 
 ```bash
@@ -222,7 +231,7 @@ auth.ldap.ssl = false
 
 
 
-## MySQL/PostgreSQL 认证/访问控制
+## MySQL/PostgreSQL 认证
 
 emqx_auth_mysql / emqx_auth_pgsql 分别为基于 MySQL、PostgreSQL 数据库的认证 / 访问控制插件。EMQ X 将根据插件配置，使用当前客户端信息生成预定 SQL 语句，查询数据库进行认证操作。
 
