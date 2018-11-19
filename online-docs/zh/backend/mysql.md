@@ -282,7 +282,7 @@ backend.mysql.hook.message.publish.3     = {"topic": "#", "action": {"function":
 
 非空的 retain 消息发布时，EMQ X 将以 topic 为唯一键，持久化该条消息至 `mqtt_retain` 表中，相同主题下发从不同的 retain 消息，只有最后一条消息会被持久化：
 
-![image-20181119112306703](../assets/image-20181119112306703.png)
+![image-20181119164153931](../assets/image-20181119164153931.png)
 
 
 
@@ -350,9 +350,9 @@ backend.mysql.hook.session.unsubscribed.1= {"topic": "#", "action": {"sql": ["de
 | client.disconnected  | clientid                             | insert into disconn(clientid) values(${clientid})            |
 | session.subscribed   | clientid, topic, qos                 | insert into sub(topic, qos) values(${topic}, ${qos})         |
 | session.unsubscribed | clientid, topic                      | delete from sub where topic = ${topic}                       |
-| message.publish      | msgid, topic, payload, qos, clientid | insert into msg(msgid, topic) values(\${msgid}, ${topic})    |
-| message.acked        | msgid, topic, clientid               | insert into ack(msgid, topic) values(\${msgid}, ${topic})    |
-| message.delivered    | msgid, topic, clientid               | insert into delivered(msgid, topic) values(\${msgid}, ${topic}) |
+| message.publish      | msgid, topic, payload, qos, clientid | insert into msg(msgid, topic) values({msgid}, ${topic})    |
+| message.acked        | msgid, topic, clientid               | insert into ack(msgid, topic) values({msgid}, ${topic})    |
+| message.delivered    | msgid, topic, clientid               | insert into delivered(msgid, topic) values({msgid}, ${topic}) |
 
 
 
