@@ -23,6 +23,15 @@
     color: #07ae79;
 }
 
+.markdown-section h2 {
+    margin-top: 3rem !important;
+}
+
+.markdown-section h3 {
+    margin-top: 2rem !important;
+}
+
+
 p img {
     margin-top: .85em;
 }

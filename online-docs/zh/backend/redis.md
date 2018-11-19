@@ -24,6 +24,8 @@ PONG
 127.0.0.1:6379>
 ```
 
+
+
 ## 配置 EMQ X 服务器
 
 通过 RPM 方式安装的 EMQ X，Redis 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_redis.conf`，如果只是测试 Redis 持久化的功能，大部分配置不需要做更改。唯一需要更改的地方可能是 Redis 服务器的地址：如果读者安装的 Redis 不与 EMQ X 在同一服务器上，请指定正确的 Redis 服务器的地址与端口。如下所示，
@@ -37,380 +39,307 @@ backend.redis.pool1.server = 127.0.0.1:6379
 
 ### 通过命令行启动
 
-TODO：
-
 ```bash
-emqx_ctl plugins ...
+emqx_ctl plugins load emqx_backend_redis
 ```
 
 
 
 ### 通过管理控制台启动
 
-TODO：截图等
+管理控制台 **插件** 菜单中，找到 **emqx_backend_redis** 插件，点击 **启动**:
+
+![emqx_backend_redis](../assets/image-20181115152143484.png) 
 
 
 
-## 连接存储
 
-通过任意客户端建立一个 `MQTT` 连接，本文通过 [Eclipse mosquitto](https://mosquitto.org/) 提供的命令行工具。命令如下所示，与 EMQ X 服务器10.211.55.10建立了一个连接，clientId 为 sub_client1，订阅的主题为 /devices/001/temp。
+
+## 客户端在线状态存储
+
+客户端上下线时，更新在线状态、上下线时间、节点客户端列表至 Redis 数据库。
+
+尽管 EMQ X 本身提供了设备在线状态 API，但在需要频繁获取客户端在线状态、上下线时间的场景下，直接从数据库获取该记录比调用 EMQ X  API 更高效。
+
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
 
 ```bash
-mosquitto_sub -h 10.211.55.10 -i sub_client1 -t /devices/001/temp
+## hook: client.connected、client.disconnected
+## action/function: on_client_connected、on_client_disconnected
+
+## 上线
+backend.redis.hook.client.connected.1    =  { "action": { "function": "on_client_connected" }, "pool": "pool1"}
+
+## 下线
+backend.redis.hook.client.disconnected.1 = {"action": {"function": "on_client_disconnected"}, "pool": "pool1"}
 ```
 
-切换至 `redis-cli` 命令行窗口，执行命令 `keys *`，结果如下所示，读者可以看到在 Redis 中存储了两个列表。
+### 使用示例
+
+浏览器打开 `http://127.0.0.1:18083` EMQ X 管理控制台，在 **工具** -> **Websocket** 中新建一个客户端连接，指定 clientid 为 sub_client:
+
+![image-20181116105333637](../assets/image-20181116105333637.png)
+
+
+
+打开 `redis-cli` 命令行窗口，执行命令 `keys *`，结果如下所示，读者可以看到在 Redis 中存储了两个 key：
 
 ```bash
 127.0.0.1:6379> keys *
 1) "mqtt:node:emqx@127.0.0.1"
-2) "mqtt:client:sub_client1"
+2) "mqtt:client:sub_client"
 ```
-
-TODO：解释一下上述存储的内容是通过配置文件中哪个配置项起作用的，其代表的含义是什么？
 
 
 
 ### 连接列表
 
-//TODO 详细解释该处的数据结构的含义
+以 `mqtt:node:{node_name}` 格式的 key 记录节点下客户端列表及连接时间戳信息，等效操作：
 
 ```bash
-127.0.0.1:6379> hgetall mqtt:node:emqx@127.0.0.1
-1) "sub_client1"
-2) "1541055363"
+## redis key 为 mqtt:node:{node_name}
+HMSET mqtt:node:emqx@127.0.0.1 sub_client 1542272836
+```
+
+字段说明：
+```bash
+## 节点下在线设备信息
+127.0.0.1:6379> HGETALL mqtt:node:emqx@127.0.0.1
+1) "sub_client1" # clientid
+2) "1542272836" # 上线时间
+3) "sub_client"
+4) "1542272836"
 ```
 
 
 
 ### 连接详细信息
 
-//TODO 详细解释该处的数据结构的含义
+以 `mqtt:client:{client_id}` 格式的 key 记录客户端在线状态、上线时间，等效操作：
 
 ```bash
-127.0.0.1:6379> hgetall mqtt:client:sub_client1
+## redis key 为 mqtt:client:{client_id}
+HMSET mqtt:client:sub_client state 1 online_at 1542272854
+```
+
+字段说明：
+
+```bash
+## 客户端在线状态
+127.0.0.1:6379> HGETALL mqtt:client:sub_client
 1) "state"
-2) "1"
+2) "0" # 0 离线 1 在线
 3) "online_at"
-4) "1541055363"
+4) "1542272854" # 上线时间戳
 5) "offline_at"
-6) "undefined"
+6) "undefined" # 离线时间戳
 ```
 
 
 
-## 消息相关存储
+## 客户端代理订阅
 
-保持以上的订阅连接，接下来通过 `mosquitto_pub` 来发布一条消息，如下所示。
+客户端上线时，存储模块直接从数据库读取预设待订阅列表，代理加载订阅主题。在客户端需要通过预定主题通信（接收消息）场景下，应用能从数据层面设定 / 改变代理订阅列表。
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
 
 ```bash
-mosquitto_pub -h 10.211.55.10 -i pub_client1  -q 2 -t /devices/001/temp -m "hello message"
-mosquitto_pub -h 10.211.55.10 -i pub_client1  -q 2 -t /devices/001/temp -m "hello message"
+## hook: client.connected
+## action/function: on_subscribe_lookup
+backend.redis.hook.client.connected.2    = {"action": {"function": "on_subscribe_lookup"}, "pool": "pool1"}
 ```
 
 
 
+### 使用示例
+
+当 `sub_client` 设备上线时，需要为其订阅 `sub_client/upstream` 与 `sub_client/downlink` 两个 QoS 1 的主题：
+
+1. 以 `mqtt:sub:{client_id}` 格式 key 在 Redis 中初始化代理订阅 Hash：
+
 ```bash
-127.0.0.1:6379> keys *
-1) "mqtt:msg:2V7sw5t4nUJn4gsvqT7h"
-2) "mqtt:node:emqx@127.0.0.1"
-3) "mqtt:client:sub_client1"
-4) "mqtt:msg:/devices/001/temp"
-5) "mqtt:client:pub_client1"
+## redis key 为 mqtt:sub:{client_id}
+## HSET key {topic} {qos}
+127.0.0.1:6379> HSET mqtt:sub:sub_client sub_client/upstream 1
+(integer) 0
+
+127.0.0.1:6379> HSET mqtt:sub:sub_client sub_client/downlink 1
+(integer) 0
+```
+
+2. EMQ X  管理控制台 **WebSocket** 页面，以 clientid `sub_client`  新建一个客户端连接，切换至**订阅**页面，可见当前客户端自动订阅了 `sub_client/upstream` 与 `sub_client/downlink` 两个 QoS 1 的主题：
+
+![image-20181116110036523](../assets/image-20181116110036523.png)
+
+
+
+
+3. 切换回管理控制台 **WebSocket** 页面，向 `sub_client/downlink` 主题发布消息，可在消息订阅列表收到发布的消息。
+
+
+
+
+
+## 持久化发布消息
+
+### 配置项
+
+打开配置文件，配置 Backend 规则，支持使用 `topic` 参数进行消息过滤，此处使用 `#` 通配符存储任意主题消息：
+
+```bash
+## hook: message.publish
+## action/function: on_message_publish
+
+backend.redis.hook.message.publish.1 = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1"}
 ```
 
 
 
-//TODO 挨个说明各个列表及其每个字段所表达的意思
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中，使用 clientdi `sub_client` 建立连接，向主题 `upstream_topic` 发布多条消息。针对每条消息， EMQ X 将持久化消息列表、消息详情两条记录。
+
+
+
+### 消息列表
+
+EMQ X 将消息列表以 message id 持久化至 `mqtt:msg:{topic}` Redis 集合中：
 
 ```bash
-127.0.0.1:6379> hgetall mqtt:client:pub_client1
-1) "state"
-2) "0"
-3) "online_at"
-4) "1541056870"
-5) "offline_at"
-6) "1541056870"
+## 获取 upstream_topic 主题集合中所有 message id
+127.0.0.1:6379> ZRANGE mqtt:msg:upstream_topic 0 -1
+1) "2VFsyhDm0cPIQvnY9osj"
+2) "2VFszTClyjpVtLDLrn1u"
+3) "2VFszozkwkYOcbEy8QN9"
+4) "2VFszpEc7DfbEqC97I3g"
+5) "2VFszpSzRviADmcOeuXd"
+6) "2VFszpm3kvvLkJTcdmGU"
+7) "2VFt0kuNrOktefX6m4nP"
+127.0.0.1:6379>
 ```
 
 
 
-```bash
-127.0.0.1:6379> zrange mqtt:msg:/devices/001/temp 0 -1
-1) "2V7sw5t4nUJn4gsvqT7h"
-2) "2V7szMYcJMndAzRPUbez"
-```
+### 消息详情
 
-
+每条消息详情将以 `mqtt:msg:{message_id}` 格式的 key 存储在 Redis Hash 中：
 
 ```bash
-127.0.0.1:6379> hgetall mqtt:msg:2V7sw5t4nUJn4gsvqT7h
+## 获取 message id 为 2VFt0kuNrOktefX6m4nP 的消息详情
+127.0.0.1:6379> HGETALL mqtt:msg:2VFt0kuNrOktefX6m4nP
  1) "id"
- 2) "2V7sw5t4nUJn4gsvqT7h"
+ 2) "2VFt0kuNrOktefX6m4nP" ## message id
  3) "from"
- 4) "pub_client1"
+ 4) "sub_client" ## client id
  5) "qos"
  6) "2"
  7) "topic"
- 8) "/devices/001/temp"
+ 8) "up/upstream_topic"
  9) "payload"
-10) "hello message"
+10) "{ \"cmd\": \"reboot\" }"
 11) "ts"
-12) "1541056734"
+12) "1542338754" ## pub 时间戳
 13) "retain"
 14) "false"
 ```
 
 
 
-TODO：再加一下 一对多、retain 等的例子。
+
+
+## 获取离线消息
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
+
+```bash
+## hook: session.subscribed
+## action/function: on_message_fetch_for_queue、on_message_fetch_for_pubsub
+
+## 一对一离线消息
+backend.redis.hook.session.subscribed.1  = {"topic": "queue/#", "action": {"function": "on_message_fetch_for_queue"}, "pool": "pool1"}
+
+## 一对多离线消息
+backend.redis.hook.session.subscribed.2  = {"topic": "pubsub/#", "action": {"function": "on_message_fetch_for_pubsub"}, "pool": "pool1"}
+
+```
 
 
 
-TODO：如果上述都描述的比较清楚了，那么可能下面大部分内容都不需要了，只需要留一些总结性的内容即可。
+### 使用示例
+
+MQTT 离线消息需满足以下条件：
+
+1. 以 clean_session = false 连接
+2. 订阅 QoS > 0
+3. 发布 QoS > 0
+
+在 EMQ X 管理控制台中以如下配置建立连接，
+
+![image-20181116114147230](../assets/image-20181116114147230.png)
+
+
+
+
+
+## 持久化 retain 消息
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
+
+```bash
+## hook: message.publish
+## action/function: on_client_connected、on_message_retain
+
+backend.redis.hook.message.publish.2     = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1"}
+
+backend.redis.hook.message.publish.3     = {"topic": "#", "action": {"function": "on_retain_delete"}, "pool": "pool1"}
+```
+### 消息列表
+
+EMQ X 将消息列表以 message id 持久化至 `mqtt:retain:{topic}` Redis Hash 中：
+
+```bash
+## 获取 upstream_topic 主题集合中所有 message id
+127.0.0.1:6379> ZRANGE mqtt:retain:upstream_topic 0 -1
+1) "2VFsyhDm0cPIQvnY9osj"
+127.0.0.1:6379>
+```
+
+
+
+### 消息详情
+
+每条消息详情将以 `mqtt:msg:{message_id}` 格式的 key 存储在 Redis Hash 中：
+
+```bash
+## 获取 message id 为 2VFt0kuNrOktefX6m4nP 的消息详情
+127.0.0.1:6379> HGETALL mqtt:msg:2VFt0kuNrOktefX6m4nP
+ 1) "id"
+ 2) "2VFt0kuNrOktefX6m4nP" ## message id
+ 3) "from"
+ 4) "sub_client" ## client id
+ 5) "qos"
+ 6) "2"
+ 7) "topic"
+ 8) "up/upstream_topic"
+ 9) "payload"
+10) "{ \"cmd\": \"reboot\" }"
+11) "ts"
+12) "1542338754" ## pub 时间戳
+13) "retain"
+14) "false"
+```
 
 
 
 ## 总结
 
 读者在理解了 Redis 中所存储的数据结构之后，可以利用各种 [Redis 客户端](https://redis.io/clients)来实现对相关信息的读取，
-
-
-
-## Redis 存储规则说明
-
-| hook                | topic    | action/function             | 说明               |
-| ------------------- | -------- | --------------------------- | ------------------ |
-| client.connected    |          | on_client_connected         | 存储客户端在线状态 |
-| client.connected    |          | on_subscribe_lookup         | 订阅主题           |
-| client.disconnected |          | on_client_disconnected      | 存储客户端离线状态 |
-| session.subscribed  | queue/#  | on_message_fetch_for_queue  | 获取一对一离线消息 |
-| session.subscribed  | pubsub/# | on_message_fetch_for_pubsub | 获取一对多离线消息 |
-| session.subscribed  | #        | on_retain_lookup            | 获取 retain 消息     |
-| message.publish     | #        | on_message_publish          | 存储发布消息       |
-| message.publish     | #        | on_message_retain           | 存储 retain 消息     |
-| message.publish     | #        | on_retain_delete            | 删除 retain 消息     |
-| message.acked       | queue/#  | on_message_acked_for_queue  | 一对一消息 ACK 处理  |
-| message.acked       | pubsub/# | on_message_acked_for_pubsub | 一对多消息 ACK 处理  |
-
-
-
-
-
-## Redis 命令行参数说明
-
-
-
-| hook                   | 可用参数                                      | 示例 (每个字段分隔，必须是一个空 格)          |
-| ---------------------- | --------------------------------------------- | -------------------------------------------- |
-| client.connected       | clientid                                      | SET conn:${clientid} ${clientid}             |
-| client.disconnected    | clientid                                      | SET disconn:${clientid} ${clientid}          |
-| ses- sion.subscribed   | clientid, topic, qos                          | HSET sub:${clientid} ${topic} ${qos}         |
-| ses- sion.unsubscribed | clientid, topic                               | SET unsub:${clientid} ${topic}               |
-| message.publish        | message, msgid, topic, payload, qos, clientid | RPUSH pub:${topic} ${msgid}                  |
-| message.acked          | msgid, topic, clientid                        | HSET ack:${clientid} ${topic} ${ms- gid}     |
-| message.delivered      | msgid, topic, clientid                        | HSET delivered:${clientid} ${topic} ${msgid} |
-
-
-
-
-
-## Redis 命令行配置 Action
-
-Redis 存储支持用户采用 Redis Commands 语句配置 Action，例如:
-
-```bash
-## 在客户端连接到 EMQ X 服务器后，可以支持配置一条或多条 Redis 指令 
-
-backend.redis.hook.client.connected.3 = {"action": {"commands": ["SET conn:${clientid} ${clientid}"]}, "pool": "pool1"}
-```
-
-
-
-
-
-## Redis 设备在线状态 Hash
-
-mqtt:client Hash 存储设备在线状态:
-
-```bash
-hmset
-key = mqtt:client:${clientid}
-value = {state:int, online_at:timestamp, offline_at:timestamp}
-hset
-key = mqtt:node:${node}
-field = ${clientid}
-value = ${ts}
-```
-
-
-
-## 查询设备在线状态
-
-```bash
-HGETALL "mqtt:client:${clientId}"
-```
-
-例如 ClientId 为 test 客户端上线:
-
-```bash
-HGETALL mqtt:client:test
-1) "state"
-2) "1"
-3) "online_at"
-4) "1481685802"
-5) "offline_at"
-6) "undefined"
-```
-
-例如 ClientId 为 test 客户端下线:
-
-```bash
-HGETALL mqtt:client:test
-1) "state"
-2) "0"
-3) "online_at"
-4) "1481685802"
-5) "offline_at"
-6) "1481685924"
-```
-
-
-
-## Redis 保留消息 Hash
-
-mqtt:retain Hash 存储 Retain 消息:
-
-```bash
-hmset
-key = mqtt:retain:${topic}
-value = {id: string, from: string, qos: int, topic: string, retain: int, payload: string, ts: timestamp}
-```
-
-查询 retain 消息:
-
-```bash
-HGETALL "mqtt:retain:${topic}" 
-```
-
-例如查看 topic 为 topic 的 retain 消息: 
-
-```bash
- HGETALL mqtt:retain:topic
- 1) "id"
- 2) "6P9NLcJ65VXBbC22sYb4"
- 3) "from"
- 4) "test"
- 5) "qos"
- 6) "1"
- 7) "topic"
- 8) "topic"
- 9) "retain"
-10) "true"
-11) "payload"
-12) "Hello world!"
-13) "ts"
-14) "1481690659"
-```
-
-## Redis 消息存储 Hash
-
-mqtt:msg Hash 存储 MQTT 消息:
-
-```bash
-hmset
-key = mqtt:msg:${msgid}
-value = {id: string, from: string, qos: int, topic: string, retain: int, payload: string, ts: timestamp}
-zadd
-key = mqtt:msg:${topic}
-field = 1
-value = ${msgid}
-```
-
-
-
-## Redis 消息确认 SET
-
-mqtt:acked SET 存储客户端消息确认:
-
-```bash
-set
-key = mqtt:acked:${clientid}:${topic}
-value = ${msgid}
-```
-
-
-
-##  Redis 订阅存储 Hash
-
-mqtt:sub Hash 存储订阅关系:
-
-```bash
-hset
-key = mqtt:sub:${clientid}
-field = ${topic}
-value = ${qos}
-```
-
-某个客户端订阅主题:
-
-```bash
-HSET mqtt:sub:${clientid} ${topic} ${qos}
-```
-
-例如为 ClientId 为 "test" 的客户端订阅主题 topic1, topic2:
-
-```bash
-HSET "mqtt:sub:test" "topic1" 1
-HSET "mqtt:sub:test" "topic2" 2
-```
-
-
-
-## 查询 ClientId 为 "test" 的客户端已订阅主题
-
-```bash
-HGETALL mqtt:sub:test
-1) "topic1"
-2) "1"
-3) "topic2"
-4) "2"
-```
-
-
-
-## Redis SUB/UNSUB 事件发布
-
-设备需要订阅 / 取消订阅主题时，业务服务器向 Redis 发布事件消息:
-
-```bash
-PUBLISH
-channel = "mqtt_channel"
-message = {type: string , topic: string, clientid: string, qos: int}
-type: [subscribe/unsubscribe]
-```
-
-
-
-例如 ClientId 为 test 客户端订阅主题 topic0:
-
-```bash
- PUBLISH "mqtt_channel" "{\"type\": \"subscribe\", \"topic\": \"topic0\", \"clientid\": \"test\", \"qos\": \"0\"}"
-```
-
-
-
-例如 ClientId 为 test 客户端取消订阅主题:
-
-```bash
-PUBLISH "mqtt_channel" "{\"type\": \"unsubscribe\", \"topic\": \"test_topic0\", \"clientid\": \"test\"}"
-```
-
-
-
-## EMQ X 启用 Redis 存储插件
-
-```bash
-./bin/emqx_ctl plugins load emqx_backend_redis
-```
-

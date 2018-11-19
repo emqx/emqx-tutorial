@@ -19,6 +19,14 @@
     color: #07ae79;
 }
 
+.markdown-section h2 {
+    margin-top: 3rem !important;
+}
+
+.markdown-section h3 {
+    margin-top: 2rem !important;
+}
+
 @media (min-width: 1200px) {
     .page-inner {
         max-width: 80%;

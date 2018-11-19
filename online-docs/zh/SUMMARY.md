@@ -27,11 +27,11 @@
 
 ## 数据持久化（企业版）
 * [数据持久化概览](backend/whats_backend.md)
-  * [Redis](backend/redis.md)
-  * [MySQL](backend/mysql.md)
-  * [PostgreSQL](backend/postgres.md)
-  * [MongoDB](backend/mongo.md)
-  * [Cassandra](backend/cassandra.md)
+* [Redis](backend/redis.md)
+* [MySQL](backend/mysql.md)
+* [PostgreSQL](backend/postgres.md)
+* [MongoDB](backend/mongo.md)
+* [Cassandra](backend/cassandra.md)
 
 ## 桥接
 * [桥接的概念](bridge/bridge.md)
