@@ -14,7 +14,7 @@
 
 ## 配置 EMQ X 服务器
 
-通过 RPM 方式安装的 EMQ X，Redis 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_pgsql.conf`，如果只是测试 PostgreSQL 持久化的功能，大部分配置不需要做更改，填入用户名、密码、数据库即可：
+通过 RPM 方式安装的 EMQ X，PostgreSQL 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_pgsql.conf`，如果只是测试 PostgreSQL 持久化的功能，大部分配置不需要做更改，填入用户名、密码、数据库即可：
 
 ```bash
 backend.pgsql.pool1.server = 127.0.0.1:5432

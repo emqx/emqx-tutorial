@@ -15,7 +15,7 @@
 
 ## 配置 EMQ X 服务器
 
-通过 RPM 方式安装的 EMQ X，Redis 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_mysql.conf`，如果只是测试 MySQL 持久化的功能，大部分配置不需要做更改。填入用户名、密码、数据库即可：
+通过 RPM 方式安装的 EMQ X，MySQL 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_mysql.conf`，如果只是测试 MySQL 持久化的功能，大部分配置不需要做更改。填入用户名、密码、数据库即可：
 
 ```bash
 auth.mysql.server = 127.0.0.1:3306
