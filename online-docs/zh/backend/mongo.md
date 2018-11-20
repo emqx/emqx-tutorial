@@ -76,14 +76,14 @@ mqtt_sub
 ### 通过命令行启动
 
 ```bash
-emqx_ctl plugins load emqx_mongo_pgsql
+emqx_ctl plugins load emqx_backend_mongo
 ```
 
 
 
 ### 通过管理控制台启动
 
-EMQ X 管理控制台 **插件** 页面中，找到 **emqx_mongo_pgsql** 插件，点击 **启动**。
+EMQ X 管理控制台 **插件** 页面中，找到 **emqx_backend_mongo** 插件，点击 **启动**。
 
 
 
@@ -332,7 +332,6 @@ backend.mongo.hook.session.unsubscribed.1= {"topic": "#", "action": {"function":
 { "_id" : ObjectId("5bf286cddf489d65be000002"), "clientid" : "sub_client", "topic" : "sub_client/downlink", "mongo_id" : 0 }
 
 { "_id" : ObjectId("5bf286ecdf489d65be000003"), "clientid" : "sub_client", "topic" : "upstream_topic", "mongo_id" : 2 }
->
 ```
 
 
