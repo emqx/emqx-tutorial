@@ -1,7 +1,5 @@
 # ACL（Access Control List）访问控制
 
-
-
 上一章介绍的认证（认证鉴权）用于控制用户是否可以登录 EMQ X 服务器；而本章则介绍利用 ACL 用户控制用户的权限：EMQ X 支持限定客户端可以使用的主题，从而实现设备权限的管理。
 
 ## ACL 访问控制
@@ -28,8 +26,6 @@ EMQ X  接收到 MQTT 客户端发布 (PUBLISH) 或订阅 (SUBSCRIBE) 请求时�
 - ACL 可以设置超级用户，如果是超级用户客户端，可以进行任意发布 / 订阅操作
 - ACL 控制与认证用的是同一个配置文件``plugins/emqx_auth_xxx.conf``，但并不是所有的插件都支持 ACL。
 
-
-
 ## ACL 缓存
 
 ```bash
@@ -52,9 +48,113 @@ ACL 规则在命中后，会在内存中有缓存，避免下次需要验证 ACL
 
 ## 配置文件访问控制
 
+### ACL 配置
 
+#### 准备访问控制数据
 
+设定如下的访问规则。
 
+1. 设定所有用户不可以订阅系统主题，除了从特定机器 ``10.211.55.10`` 发起的连接除外；
+2. 应用的主题设计为``/smarthome/$clientId/temperature``，设定一条规则只允许相同的 ``clientId`` 的设备才可以对它自己的主题进行发布消息操作
+
+打开访问控制的配置文件 ``/etc/emqx/acl.conf`` ，配置文件内容如下。
+
+```bash
+{allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
+
+{allow, all, publish, ["/smarthome/%c/temperature"]}.
+
+{allow, {ipaddr, "10.211.55.10"}, pubsub, ["$SYS/#", "#"]}.
+
+{deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
+```
+
+#### 修改配置文件
+
+打开配置文件 ``/etc/emqx/emqx.conf`` ，将 ACL 的规则匹配变为：不匹配则不允许。
+
+```bash
+mqtt.acl_nomatch = deny
+```
+
+打开配置文件 ``/etc/emqx/plugins/emqx_auth_username.conf``，加入以下的认证用户。
+
+```
+auth.user.1.username = userid_001
+auth.user.1.password = public
+```
+
+使用命令行 ``emqx_ctl plugins load emqx_auth_username`` 激活 emqx_auth_username 插件，然后重启 EMQ X 服务。
+
+#### 测试系统主题
+
+在机器 ``10.211.55.6`` 订阅系统主题，请注意订阅系统主题的时候，在 mosquitto 客户端需要对主题的字符``$``前加入转义符 ``\``，变成 ``\$SYS/#`` ，命令如下所示。目前版本无法在前端知道是否订阅失败，需要结合EMQ X 后台日志才可以进行判断。
+
+```bash
+mosquitto_sub -h 10.211.55.10 -u test_username1 -i test_username1  -P test_password  -t "\$SYS/#" -d
+Client test_username1 sending CONNECT
+Client test_username1 received CONNACK
+Client test_username1 sending SUBSCRIBE (Mid: 1, Topic: $SYS/#, QoS: 0)
+Client test_username1 received SUBACK
+Subscribed (mid: 1): 128
+```
+
+EMQ X 后台日志（``/var/log/emqx/error.log``）出错信息。
+
+```bash
+2018-11-13 02:12:43.866 [error] <0.1993.0>@emqx_protocol:process:294 Client(test_username1@10.211.55.6:57612): Cannot SUBSCRIBE [{<<"$SYS/#">>,[{qos,0}]}] for ACL Deny
+```
+
+在机器 ``10.211.55.10`` 订阅系统主题，成功收到所有的系统消息。
+
+```bash
+# mosquitto_sub -h 10.211.55.10 -u test_username1 -i test_username1  -P test_password  -t "\$SYS/#" -d
+Client test_username1 sending CONNECT
+Client test_username1 received CONNACK
+Client test_username1 sending SUBSCRIBE (Mid: 1, Topic: $SYS/#, QoS: 0)
+Client test_username1 received SUBACK
+Subscribed (mid: 1): 0
+Client test_username1 received PUBLISH (d0, q0, r1, m0, '$SYS/brokers', ... (14 bytes))
+emqx@127.0.0.1
+Client test_username1 received PUBLISH (d0, q0, r1, m0, '$SYS/brokers/emqx@127.0.0.1/version', ... (5 bytes))
+2.4.3
+Client test_username1 received PUBLISH (d0, q0, r1, m0, '$SYS/brokers/emqx@127.0.0.1/sysdescr', ... (12 bytes))
+EMQ X Broker
+Client test_username1 received PUBLISH (d0, q0, r0, m0, '$SYS/brokers/emqx@127.0.0.1/uptime', ... (22 bytes))
+17 minutes, 14 seconds
+Client test_username1 received PUBLISH (d0, q0, r0, m0, '$SYS/brokers/emqx@127.0.0.1/datetime', ... (19 bytes))
+2018-11-13 02:14:03
+```
+
+#### 测试设备操作自己的主题
+
+订阅失败，结合 EMQ X 的后台日志可以得知 ACL 禁止的消息。
+
+```bash
+# mosquitto_sub -h 10.211.55.10 -u test_username1 -i test_username1  -P test_password  -t "/smarthome/user1/temperature" -d
+Client test_username1 sending CONNECT
+Client test_username1 received CONNACK
+Client test_username1 sending SUBSCRIBE (Mid: 1, Topic: /smarthome/user1/temperature, QoS: 0)
+Client test_username1 received SUBACK
+Subscribed (mid: 1): 128
+```
+
+EMQ X 后台日志（``/var/log/emqx/error.log``）出错信息。
+
+```bash
+2018-11-13 02:16:56.118 [error] <0.2001.0>@emqx_protocol:process:294 Client(test_username1@10.211.55.6:57676): Cannot SUBSCRIBE [{<<"/smarthome/user1/temperature">>,[{qos,0}]}] for ACL Deny
+```
+
+成功的订阅：EMQ X 后台日志（``/var/log/emqx/error.log``）如果没有打印 ACL 的出错信息表示订阅成功。
+
+```bash
+# mosquitto_sub -h 10.211.55.10 -u test_username1 -i test_username1  -P test_password  -t "/smarthome/test_username1/temperature" -d
+Client test_username1 sending CONNECT
+Client test_username1 received CONNACK
+Client test_username1 sending SUBSCRIBE (Mid: 1, Topic: /smarthome/test_username1/temperature, QoS: 0)
+Client test_username1 received SUBACK
+Subscribed (mid: 1): 0
+```
 
 ## HTTP 访问控制
 
@@ -650,11 +750,33 @@ Client userid_001 received PUBLISH (d0, q0, r1, m0, '$SYS/brokers/emqx@127.0.0.1
 EMQ X Broker
 ```
 
-
-
 #### 测试设备操作自己的主题
 
+用户 ``userid_001`` 向不是自己的主题 ``/smarthome/userid_002/temperature`` 发送消息，结合 EMQ X 的后台日志可以得知 ACL 禁止的消息
 
+```shell
+# mosquitto_pub -h 10.211.55.10 -u userid_001 -i userid_001 -P public -t "/smarthome/userid_002/temperature" -m "hello" -d
+Client userid_001 sending CONNECT
+Client userid_001 received CONNACK
+Client userid_001 sending PUBLISH (d0, q0, r0, m1, '/smarthome/userid_002/temperature', ... (5 bytes))
+Client userid_001 sending DISCONNECT
+```
+
+EMQ X 后台日志（``/var/log/emqx/error.log``）出错信息。
+
+```shell
+2018-11-13 21:44:44.161 [error] <0.2700.0>@emqx_protocol:process:257 Client(userid_001@10.211.55.6:56967): Cannot publish to /smarthome/userid_002/temperature for ACL Deny
+```
+
+用户 ``userid_001`` 向自己的主题 ``/smarthome/userid_001/temperature`` 发送消息，后台无 ACL 出错信息，发送消息成功。
+
+```shell
+# mosquitto_pub -h 10.211.55.10 -u userid_001 -i userid_001 -P public -t "/smarthome/userid_001/temperature" -m "hello" -d
+Client userid_001 sending CONNECT
+Client userid_001 received CONNACK
+Client userid_001 sending PUBLISH (d0, q0, r0, m1, '/smarthome/userid_001/temperature', ... (5 bytes))
+Client userid_001 sending DISCONNECT
+```
 
 
 
