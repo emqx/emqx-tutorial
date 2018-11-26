@@ -78,7 +78,7 @@ Client mosqsub|19324-Zeus- sending SUBSCRIBE (Mid: 1, Topic: sensor/#, QoS: 1)
 Client mosqsub|19324-Zeus- received SUBACK
 Subscribed (mid: 1): 1
 ```
-在Mosquitto上发布消息：
+在VerneMQ上发布消息：
 ```
 mosquitto_pub -t "sensor/1/temperature" -m "37.5" -d -h 192.168.1.101 -q 1 -u user -P passwd
 Client mosqpub|19325-Zeus- sending CONNECT
@@ -95,7 +95,7 @@ Client mosqsub|19324-Zeus- sending PUBACK (Mid: 1)
 ```
 
 ### 测试桥接的 in 方向
-在Mosquitto上订阅 'control/#'主题：
+在VerneMQ上订阅 'control/#'主题：
 ```
 $ mosquitto_sub -t "control/#" -p 1883 -d -q 1 -h 192.168.1.101 -u user -P passwd
 Client mosqsub|19338-Zeus- sending CONNECT
@@ -115,7 +115,7 @@ Client mosqpub|19343-Zeus- received PUBACK (Mid: 1)
 Client mosqpub|19343-Zeus- sending DISCONNECT
 ```
 
-在Mosquitto上应能收到该消息：
+在VerneMQ上应能收到该消息：
 ```
 Client mosqsub|19338-Zeus- received PUBLISH (d0, q1, r0, m2, 'control/1', ... (8 bytes))
 Client mosqsub|19338-Zeus- sending PUBACK (Mid: 2)

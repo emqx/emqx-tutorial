@@ -1,5 +1,3 @@
-# RabbitMQ
-
 # EMQ X 到 RabbitMQ 的桥接
 EMQ X 节点可以桥接到其他类型的 MQTT 消息中间件，实现跨平台的消息订阅和发送。在这个章节我们以一个配置例来说明如何配置 EMQ X 到 RabbitMQ 的桥接。
 
@@ -52,12 +50,12 @@ Setting permissions for user "user" in vhost "/" ...
 ## 配置 EMQ X 桥接
 为了使 EMQ X 节点可以桥接其他节点，我们需要在配置文件`emqx.conf`做相应的配置。
 
-在eqmx1上，打开`emqx.conf`, 找到`Bridges`部分，在其中添加一个新的桥接配置。
+在emqx1上，打开`emqx.conf`, 找到`Bridges`部分，在其中添加一个新的桥接配置。
 EMQ X 的桥接配置项的格式为`bridge.bridge_name.directive1[.sub_directives]`，是一个以`.`分隔的字符串。桥接配置项总是以`bridge`开头，然后是自定义的桥接名，然后是配置项内容，如果配置项内容有子配置项，可以在后面继续以这种方式添加。
 
 ### 添加一个新桥接配置
 
-通过一下配置我们可以添加一个新的 EMQ X 桥接
+通过以下配置我们可以添加一个新的 EMQ X 桥接
 
 ```
 ##--------------------------------------------------------------------
@@ -176,7 +174,7 @@ topic: control/#, qos: 1
 ## 测试桥接
 我们使用 `mosquitto_pub` 和 `mosquitto_sub` 工具来测试上面的配置是否生效。
 
-在 'emqx2' 上订阅'sensor/#'主题：
+在 RqbbitMQ 上订阅'sensor/#'主题：
 ```
 $ mosquitto_sub -t sensor/# -p 1883 -d
 ```
@@ -184,7 +182,7 @@ $ mosquitto_sub -t sensor/# -p 1883 -d
 ```
 $ mosquitto_pub -t sensor/1/temperature -m "37.5" -d
 ```
-发布之后，在'emqx2'上应能正常收到消息。
+发布之后，在 RqbbitMQ 上应能正常收到消息。
 ```
 $ mosquitto_sub -t "bridge/example/#" -p 1883 -d -h 192.168.1.101
 Client mosqsub|11612-Zeus- sending CONNECT
@@ -200,7 +198,7 @@ Client mosqsub|11612-Zeus- received PUBLISH (d0, q0, r0, m0, 'bridge/example/emq
 ```
 $ mosquitto_sub -t control/# -p 1883 -d
 ```
-在'emqx2'上对主题'control/device1/restart'发布消息：
+在 RqbbitMQ 上对主题'control/device1/restart'发布消息：
 ```
 mosquitto_pub -t control/device1 -m "list_all" -d -h 192.168.1.101
 ```
