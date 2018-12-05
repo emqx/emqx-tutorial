@@ -25,7 +25,7 @@ EMQ X 节点可以桥接到流式数据处理。Apache Kafka是一个快速、�
 | 192.168.1.101 | 2181 |
 
 ## 配置 Zookeeper
-因为仅使用一台本地zookeeper服务器，我们可以使用Kafka安装自带的zookeeper和它的默认配置。Kafka的满装目录下的`config/zookeeper.properties`为配置文件。打开配置文件，确认一下配置项：
+因为仅使用一台本地zookeeper服务器，我们可以使用Kafka安装自带的zookeeper和它的默认配置。Kafka的安装目录下的`config/zookeeper.properties`为配置文件。打开配置文件，确认一下配置项：
 ```
 dataDir=/tmp/zookeeper  # 数据文件保存路径
 clientPort=2181         # zookeeper客户端监听端口
@@ -52,7 +52,7 @@ $ bin/kafka-server-start.sh config/server.properties
 ```
 
 ## 创建topic
-创建一个名为"sensor"的topic。该topic有一个分区和一个副本：
+创建一个名为"message"的topic。该topic有一个分区和一个副本：
 ```
 $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic message
 ```

@@ -1,343 +1,365 @@
 # MongoDB 数据存储
 
-配置文件: emqx_backend_mongo.conf
+本章节以在 `CentOS 7.2` 中的实际例子来说明如何通过 MongoDB 来存储相关的信息。
 
-## 配置 MongoDB 服务器
 
-支持配置多台 MongoDB 数据库连接池:
 
-```properties
+## 安装与验证 MongoDB 服务器
 
-    ## MongoDB Server Pools
-    ## Mongo Topology Type single|unknown|sharded|rs
-    backend.mongo.pool1.type = single
+读者可以参考 MongoDB [官方文档](https://docs.mongodb.com/) 或 [Docker](https://hub.docker.com/_/mongo/) 来下载安装 MongoDB，本文章使用 MongoDB 3.6.9 版本。
 
-    ## If type rs, need config setname
-    ## backend.mongo.pool1.rs_set_name = testrs
 
-    ## Mongo Server 127.0.0.1:27017,127.0.0.2:27017...
-    backend.mongo.pool1.server = 127.0.0.1:27017
 
-    ## MongoDB Pool Size
-    backend.mongo.pool1.c_pool_size = 8
 
-    ## MongoDB Database
-    backend.mongo.pool1.database = mqtt
+## 配置 EMQ X 服务器
 
-    ## Mongo User
-    ## backend.mongo.pool1.login =  emqtt
-    ## Mongo Password
-    ## backend.mongo.pool1.password = emqtt
-
-    ## MongoDB AuthSource
-    ## Value: String
-    ## Default: mqtt
-    ## backend.mongo.pool1.auth_source = admin
-
-    ## Whether to enable SSL connection.
-    ##
-    ## Value: true | false
-    ## backend.mongo.pool1.ssl = false
-
-    ## SSL keyfile.
-    ##
-    ## Value: File
-    ## backend.mongo.pool1.keyfile =
-
-    ## SSL certfile.
-    ##
-    ## Value: File
-    ## backend.mongo.pool1.certfile =
-
-    ## SSL cacertfile.
-    ##
-    ## Value: File
-    ## backend.mongo.pool1.cacertfile =
-
-    # Value: unsafe | safe
-    ## backend.mongo.pool1.w_mode = safe
-    ## Value: master | slave_ok
-    ## backend.mongo.pool1.r_mode = slave_ok
-
-    ## Mongo Topology Options
-    ## backend.mongo.topology.pool_size = 1
-    ## backend.mongo.topology.max_overflow = 0
-    ## backend.mongo.topology.overflow_ttl = 1000
-    ## backend.mongo.topology.overflow_check_period = 1000
-    ## backend.mongo.topology.local_threshold_ms = 1000
-    ## backend.mongo.topology.connect_timeout_ms = 20000
-    ## backend.mongo.topology.socket_timeout_ms = 100
-    ## backend.mongo.topology.server_selection_timeout_ms = 30000
-    ## backend.mongo.topology.wait_queue_timeout_ms = 1000
-    ## backend.mongo.topology.heartbeat_frequency_ms = 10000
-    ## backend.mongo.topology.min_heartbeat_frequency_ms = 1000
-
-    ## Max number of fetch offline messages. Without count limit if infinity
-    ## backend.mongo.max_returned_count = 500
-
-    ## Time Range. Without time limit if infinity
-    ## d - day
-    ## h - hour
-    ## m - minute
-    ## s - second
-    ## backend.mongo.time_range = 2h
-```
-
-## 配置 MongoDB 存储规则
-
-```properties
-
-    ## Max number of fetch offline messages. Without count limit if infinity
-    ## backend.mongo.max_returned_count = 500
-
-    ## Time Range. Without time limit if infinity
-    ## d - day
-    ## h - hour
-    ## m - minute
-    ## s - second
-    ## backend.mongo.time_range = 2h
-
-    ## Client Connected Record
-    backend.mongo.hook.client.connected.1    = {"action": {"function": "on_client_connected"}, "pool": "pool1"}
-
-    ## Subscribe Lookup Record
-    backend.mongo.hook.client.connected.2    = {"action": {"function": "on_subscribe_lookup"}, "pool": "pool1"}
-
-    ## Client DisConnected Record
-    backend.mongo.hook.client.disconnected.1 = {"action": {"function": "on_client_disconnected"}, "pool": "pool1"}
-
-    ## Lookup Unread Message QOS > 0
-    backend.mongo.hook.session.subscribed.1  = {"topic": "#", "action": {"function": "on_message_fetch"}, "pool": "pool1"}
-
-    ## Lookup Retain Message
-    backend.mongo.hook.session.subscribed.2  = {"topic": "#", "action": {"function": "on_retain_lookup"}, "pool": "pool1"}
-
-    ## Store Publish Message  QOS > 0, payload_format options mongo_json | plain_text
-    backend.mongo.hook.message.publish.1     = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1", "payload_format": "mongo_json"}
-
-    ## Store Retain Message, payload_format options mongo_json | plain_text
-    backend.mongo.hook.message.publish.2     = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1", "payload_format": "mongo_json"}
-
-    ## Delete Retain Message
-    backend.mongo.hook.message.publish.3     = {"topic": "#", "action": {"function": "on_retain_delete"}, "pool": "pool1"}
-
-    ## Store Ack
-    backend.mongo.hook.message.acked.1       = {"topic": "#", "action": {"function": "on_message_acked"}, "pool": "pool1"}
-
-```
-
-
-## MongoDB 存储规则说明
-
-| hook                | topic | action                 | 说明               |
-| ------------------- | ----- | ---------------------- | ------------------ |
-| client.connected    |       | on_client_connected    | 存储客户端在线状态 |
-| client.connected    |       | on_subscribe_lookup    | 订阅主题           |
-| client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
-| session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息     |
-| message.publish     | #     | on_message_publish     | 存储发布消息       |
-| message.publish     | #     | on_message_retain      | 存储 retain 消息     |
-| message.publish     | #     | on_retain_delete       | 删除 retain 消息     |
-| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |
-
-
-## 创建 MongoDB 数据库集合
-```javascript
-
-    use mqtt
-    db.createCollection("mqtt_client")
-    db.createCollection("mqtt_sub")
-    db.createCollection("mqtt_msg")
-    db.createCollection("mqtt_retain")
-    db.createCollection("mqtt_acked")
-
-    db.mqtt_client.ensureIndex({clientid:1, node:2})
-    db.mqtt_sub.ensureIndex({clientid:1})
-    db.mqtt_msg.ensureIndex({sender:1, topic:2})
-    db.mqtt_retain.ensureIndex({topic:1})
-````
-
-> 数据库名称可自定义
-
-## MongoDB 设备在线状态集合
-
-*mqtt_client* 存储设备在线状态:
-
-```js
-{
-   clientid: string,
-   state: 0,1, //0 离线 1 在线
-   node: string,
-   online_at: timestamp,
-   offline_at: timestamp
-}
-```
-
-查询设备在线状态:
-
-```js
-db.mqtt_client.findOne({clientid: ${clientid}})
-```
-
-例如 ClientId 为 test 客户端上线:
-
-```js
-db.mqtt_client.findOne({clientid: "test"})
-
-    {
-        "_id" : ObjectId("58646c9bdde89a9fb9f7fb73"),
-        "clientid" : "test",
-        "state" : 1,
-        "node" : "emqx@127.0.0.1",
-        "online_at" : 1482976411,
-        "offline_at" : null
-    }
-```
-
-例如 ClientId 为 test 客户端下线:
-
-```js
-db.mqtt_client.findOne({clientid: "test"})
-
-    {
-        "_id" : ObjectId("58646c9bdde89a9fb9f7fb73"),
-        "clientid" : "test",
-        "state" : 0,
-        "node" : "emq@127.0.0.1",
-        "online_at" : 1482976411,
-        "offline_at" : 1482976501
-    }
-```
-    
-
-## MongoDB 主题订阅集合
-
-*mqtt_sub* 存储订阅关系:
-
-
-```js
-{
-        clientid: string,
-        topic: string,
-        qos: 0,1,2
-}
-```
-
-例如 ClientId 为 test 的客户端订阅主题 test_topic1 test_topic2:
-
-```js
-db.mqtt_sub.insert({clientid: "test", topic: "test_topic1", qos: 1})
-db.mqtt_sub.insert({clientid: "test", topic: "test_topic2", qos: 2})
-```
-
-    
-
-查询 ClientId 为 "test" 的客户端的代理订阅主题:
-
-```js
-db.mqtt_sub.find({clientid: "test"})
-
-    { "_id" : ObjectId("58646d90c65dff6ac9668ca1"), "clientid" : "test", "topic" : "test_topic1", "qos" : 1 }
-    { "_id" : ObjectId("58646d96c65dff6ac9668ca2"), "clientid" : "test", "topic" : "test_topic2", "qos" : 2 }
-```
-    
-
-## MongoDB 消息存储集合
-
-*mqtt_msg* 存储 MQTT 消息:
-
-```js
-    {
-        _id: int,
-        topic: string,
-        msgid: string,
-        sender: string,
-        qos: 0,1,2,
-        retain: boolean (true, false),
-        payload: string,
-        arrived: timestamp
-    }
-```
-
-查询某个客户端发布的消息:
-
-```js
-```
-
-
-例如查询 ClientId 为 "test" 的客户端发布的消息:
-
-```js
-db.mqtt_msg.find({sender: "test"})
-    {
-        "_id" : 1,
-        "topic" : "/World",
-        "msgid" : "AAVEwm0la4RufgAABeIAAQ==",
-        "sender" : "test",
-        "qos" : 1,
-        "retain" : 1,
-        "payload" : "Hello world!",
-        "arrived" : 1482976729
-    }
-```
-    
-
-## MongoDB 保留消息集合
-
-*mqtt_retain* 存储 Retain 消息:
-
-```js
-{
-        topic: string,
-        msgid: string,
-        sender: string,
-        qos: 0,1,2,
-        payload: string,
-        arrived: timestamp
-    }
-```
-    
-
-查询 retain 消息:
-
-```js
-db.mqtt_retain.findOne({topic: ${topic}})
-```
-    
-
-查询 topic 为 "retain" 的 retain 消息:
-
-```js
-db.mqtt_retain.findOne({topic: "/World"})
-    {
-        "_id" : ObjectId("58646dd9dde89a9fb9f7fb75"),
-        "topic" : "/World",
-        "msgid" : "AAVEwm0la4RufgAABeIAAQ==",
-        "sender" : "c1",
-        "qos" : 1,
-        "payload" : "Hello world!",
-        "arrived" : 1482976729
-    }
-```
-    
-
-## MongoDB 消息确认集合
-
-*mqtt_acked* 集合存储客户端消息确认:
-
-```js
-{
-  clientid: string,
-  topic: string,
-  mongo_id: int
-}
-```
-
-    
-
-## 启用 MongoDB 数据存储
+通过 RPM 方式安装的 EMQ X，MongoDB 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_mongo.conf`，如果只是测试 MongoDB 持久化的功能，大部分配置不需要做更改，填入用户名、密码、数据库即可：
 
 ```bash
-./bin/emqx_ctl plugins load emqx_backend_mongo
+## MongoDB 拓扑模式
+backend.mongo.pool1.type = single
+
+backend.mongo.pool1.server = 127.0.0.1:27017
+
+backend.mongo.pool1.c_pool_size = 8
+
+backend.mongo.pool1.database = mqtt
+
+
+## 认证信息，生产环境请务必开启数据库认证或在防火墙配置相关安全规则
+
+## backend.mongo.pool1.login =  emqx
+
+## backend.mongo.pool1.password = emqx
+
+## backend.mongo.pool1.auth_source = emqx
+
+## backend.mongo.pool1.ssl = false
 ```
+
+保持剩下部分的配置文件不变，然后需要启动该插件。启动插件的方式有 `命令行`和 `控制台`两种方式，读者可以任选其一。
+
+
+
+### 数据库集合初始化
+
+MongoDB 集合可由数据操作时自动创建，此处为兼顾性能，预先创建集合并设置索引：
+
+```bash
+use mqtt
+
+db.createCollection("mqtt_client")
+db.createCollection("mqtt_sub")
+db.createCollection("mqtt_msg")
+db.createCollection("mqtt_retain")
+db.createCollection("mqtt_acked")
+
+db.mqtt_client.ensureIndex({clientid:1, node:2})
+db.mqtt_sub.ensureIndex({clientid:1})
+db.mqtt_msg.ensureIndex({sender:1, topic:2})
+db.mqtt_retain.ensureIndex({topic:1})
+```
+
+当前集合信息：
+
+```bash
+> show collections;
+mqtt_acked
+mqtt_client
+mqtt_msg
+mqtt_retain
+mqtt_sub
+```
+
+
+
+### 通过命令行启动
+
+```bash
+emqx_ctl plugins load emqx_backend_mongo
+```
+
+
+
+### 通过管理控制台启动
+
+EMQ X 管理控制台 **插件** 页面中，找到 **emqx_backend_mongo** 插件，点击 **启动**。
+
+
+
+
+
+## 客户端在线状态存储
+
+客户端上下线时，插件将更新在线状态、上下线时间、节点客户端列表至 MongoDB 数据库。
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
+
+```bash
+## hook: client.connected、client.disconnected
+## action/function: on_client_connected、on_client_disconnected
+
+
+## 客户端上下线
+backend.mongo.hook.client.connected.1 = {"action": {"function": "on_client_connected"}, "pool": "pool1"}
+
+## 客户端下线
+backend.mongo.hook.client.disconnected.1 = {"action": {"function": "on_client_disconnected"}, "pool": "pool1"}
+```
+
+
+
+### 使用示例
+
+浏览器打开 `http://127.0.0.1:18083` EMQ X 管理控制台，在 **工具** -> **Websocket** 中新建一个客户端连接，指定 clientid 为 sub_client，点击连接，连接成功后手动断开:
+
+![image-20181116105333637](../assets/image-20181116105333637.png)
+
+
+
+ 查看 `mqtt_client` 集合，此时将写入 / 更新一条客户端上下线记录：
+
+```bash
+> db.mqtt_client.find()
+{ 
+    "_id" : ObjectId("5bf283933afba9bd23c7eb4e"), 
+    "clientid" : "sub_client", 
+    "node" : "emqx@127.0.0.1",  ## 连接 Node
+    "offline_at" : null, 
+    "online_at" : 1542620041,  # 上线时间戳
+    "state" : 1  ## 在线状态 0 离线 1 在线
+}
+```
+
+
+
+## 客户端代理订阅
+
+客户端上线时，存储模块直接从数据库读取预设待订阅列表，代理加载订阅主题。在客户端需要通过预定主题通信（接收消息）场景下，应用能从数据层面设定 / 改变代理订阅列表。
+
+
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
+
+```bash
+## hook: client.connected
+## action/function: on_subscribe_lookup
+backend.mongo.hook.client.connected.2    = {"action": {"function": "on_subscribe_lookup"}, "pool": "pool1"}
+```
+
+
+
+### 使用示例
+
+当 `sub_client` 设备上线时，需要为其订阅 `sub_client/upstream` 与 `sub_client/downlink` 两个 QoS 1 的主题：
+
+1. 在 `mqtt_sub` 集合中初始化插入代理订阅主题信息：
+
+```bash
+db.mqtt_sub.insert({clientid: "sub_client", topic: "sub_client/upstream", qos: 1})
+db.mqtt_sub.insert({clientid: "sub_client", topic: "sub_client/downlink", qos: 1})
+```
+
+2. EMQ X  管理控制台 **WebSocket** 页面，以 clientid `sub_client`  新建一个客户端连接，切换至**订阅**页面，可见当前客户端自动订阅了 `sub_client/upstream` 与 `sub_client/downlink` 两个 QoS 1 的主题：
+
+![image-20181116110036523](../assets/image-20181116110036523.png)
+
+
+
+
+3. 切换回管理控制台 **WebSocket** 页面，向 `sub_client/downlink` 主题发布消息，可在消息订阅列表收到发布的消息。
+
+
+
+
+## 持久化发布消息
+
+### 配置项
+
+打开配置文件，配置 Backend 规则，支持使用 `topic` 参数进行消息过滤，此处使用 `#` 通配符存储任意主题消息：
+
+```bash
+## hook: message.publish
+## action/function: on_message_publish
+
+backend.mongo.hook.message.publish.1     = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1"}
+```
+
+
+
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中，使用 clientdi `sub_client` 建立连接，向主题 `upstream_topic` 发布多条消息，EMQ X 将消息列表持久化至 `mqtt_msg` 集合中：
+
+```bash
+## 所有消息
+> db.mqtt_msg.find()
+{ 
+    "_id" : 1, 
+    "topic" : "upstream_topic", 
+    "msgid" : "2VHdzuz3FAgTcXgCDNx4", 
+    "sender" : "sub_client", ## 消息 pub clientid 
+    "qos" : 1, 
+    "retain" : 0, 
+    "payload" : { "cmd" : "reboot" },  ## payload 根据消息类型而不同
+    "arrived" : 1542620411 ## 消息到达服务器时间戳
+}
+
+## 根据 clientid 查询消息
+> db.mqtt_msg.find({ sender: 'sub_client' })
+{ 
+    "_id" : 1, 
+    "topic" : "upstream_topic", 
+    "msgid" : "2VHdzuz3FAgTcXgCDNx4", 
+    "sender" : "sub_client", ## 消息 pub clientid 
+    "qos" : 1, 
+    "retain" : 0, 
+    "payload" : { "cmd" : "reboot" },  ## payload 根据消息类型而不同
+    "arrived" : 1542620411 ## 消息抵达时间戳
+}
+```
+
+>暂只支持 QoS 1 2 的消息持久化。
+
+
+
+
+## Retain 消息持久化
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
+
+```bash
+## 同时开启以下规则，启用 retain 持久化三个生命周期
+
+## 发布非空 retain 消息时 (存储)
+backend.mongo.hook.message.publish.2     = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1"}
+
+## 设备订阅主题时查询 retain 消息
+backend.mongo.hook.session.subscribed.2  = {"topic": "#", "action": {"function": "on_retain_lookup"}, "pool": "pool1"}
+
+## 发布空 retain 消息时 (清除)
+backend.mongo.hook.message.publish.3     = {"topic": "#", "action": {"function": "on_retain_delete"}, "pool": "pool1"}
+
+```
+
+
+
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中建立连接后，发布消息勾选**保留**：
+
+![image-20181119111926675](../assets/image-20181119111926675.png)
+
+
+
+**发布（消息不为空）**
+
+非空的 retain 消息发布时，EMQ X 将以 topic 为唯一键，持久化该条消息至 `mqtt_retain` 集合中，相同主题下发从不同的 retain 消息，只有最后一条消息会被持久化：
+
+```bash
+> db.mqtt_retain.find()
+
+{ 
+    "_id" : ObjectId("5bf285ed3afba9bd23c7ed60"), 
+    "topic" : "upstream_topic", 
+    "arrived" : 1542620642,  ## 到达服务器时间
+    "msgid" : "2VHe5TZroQWAWbkMWedF", 
+    "payload" : "{ \"cmd\": \"reboot\" }", 
+    "qos" : 1, 
+    "sender" : "sub_client"  ## 消息 pub clientid
+}
+```
+
+
+
+**订阅**
+
+客户端订阅 retain 主题后，EMQ X 将查询 `mqtt_retain` 集合，执行投递 retain 消息操作。
+
+
+
+**发布（消息为空）**
+
+MQTT 协议中，发布空的 retain 消息将清空 retain 记录，此时 retain 记录将从 `mqtt_retain` 集合中删除。
+
+
+
+
+
+## 消息确认持久化
+
+开启消息确认 (ACK) 持久化后，客户端订阅 QoS 1、QoS 2 级别的主题时，EMQ X 将在数据库以 clientid + topic 为唯一键初始化 ACK 记录。
+
+
+
+### 配置项
+
+打开配置文件，配置 Backend 规则，可使用 **topic 通配符** 过滤要应用的消息：
+
+```bash
+## 订阅时初始化 ACK 记录
+backend.mongo.hook.session.subscribed.1  = {"topic": "#", "action": {"function": "on_message_fetch"}, "pool": "pool1"}
+
+
+## 消息抵达时更新抵达状态
+backend.mongo.hook.message.acked.1       = {"topic": "#", "action": {"function": "on_message_acked"}, "pool": "pool1"}
+
+## 取消订阅时删除记录行
+backend.mongo.hook.session.unsubscribed.1= {"topic": "#", "action": {"function": "on_acked_delete"}, "pool": "pool1"}
+```
+
+
+
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中建立连接后，订阅 QoS > 0 的主题：
+
+![image-20181119140251843](../assets/image-20181119140251843.png)
+
+
+
+此时 `mqtt_acked` 集合将插入初始化数据行，每向主题发布一条 QoS > 0 的消息，消息抵达后数据行 mongo_id 将自增 1：
+
+```bash
+{ "_id" : ObjectId("5bf286ccdf489d65be000001"), "clientid" : "sub_client", "topic" : "sub_client/upstream", "mongo_id" : 0 }
+
+{ "_id" : ObjectId("5bf286cddf489d65be000002"), "clientid" : "sub_client", "topic" : "sub_client/downlink", "mongo_id" : 0 }
+
+{ "_id" : ObjectId("5bf286ecdf489d65be000003"), "clientid" : "sub_client", "topic" : "upstream_topic", "mongo_id" : 2 }
+```
+
+
+
+> 代理订阅中满足 QoS > 0 的 topic 也会初始化记录，客户端取消订阅后相关记录将被删除。
+
+
+
+
+
+## 高级选项
+
+```bash
+backend.mongo.time_range = 5s
+
+backend.mongo.max_returned_count = 500
+```
+
+
+
+### MongoDB 集群
+
+配置 `Mongo Topology Options` 相关信息以支持 MongoDB 集群，相关信息见 [MongoDB 分片文档](https://docs.mongodb.com/manual/sharding/)。
+
+
+
+
+## 总结
+
+读者在理解了 MongoDB 中所存储的数据结构之后，可以结合 MongoDB 拓展相关应用。MogoDB 默认不设置任何连接验证，生产环境请务必注意 MongoDB 安全性配置。
+

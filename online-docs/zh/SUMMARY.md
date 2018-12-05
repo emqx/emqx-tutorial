@@ -48,8 +48,24 @@
  * [Kafka 桥接](bridge/bridge_to_kafka.md)
 
 ## 安全
-* [认证与 ACL 访问控制](security/auth.md)
-<!-- * [ACL 访问控制](security/acl.md) -->
+* [认证鉴权](security/auth.md)
+  * [认证与认证链](security/auth.md#认证与认证链)
+  * [用户名密码认证](security/auth.md#用户名密码认证)
+  * [ClientID 认证](security/auth.md#clientid-认证)
+  * [HTTP 认证](security/auth.md#http-认证)
+  * [JWT 认证](security/auth.md#jwt-认证)
+  * [LDAP 认证](security/auth.md#ldap-认证)
+  * [MySQL/PostgreSQL 认证](security/auth.md#mysqlpostgresql-认证)
+  * [Redis 认证](security/auth.md#redis-认证)
+  * [MongoDB 认证](security/auth.md#mongodb-认证)
+
+* [ACL 访问控制](security/acl.md)
+  * [ACL 缓存](security/acl.md#acl-缓存)
+  * [HTTP 访问控制](security/acl.md#http-访问控制)
+  * [MySQL/PostgreSQL 访问控制](security/acl.md#mysqlpostgresql-访问控制)
+  * [Redis 访问控制](security/acl.md#redis-访问控制)
+  * [MongoDB 访问控制](security/acl.md#mongodb-访问控制)
+
 * [安全链接](security/security.md)
   * [证书配置](security/certificate.md)
   * [PSK](security/psk.md)

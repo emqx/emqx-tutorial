@@ -102,7 +102,7 @@ EMQ X 在设备连接、发布/订阅事件中使用当前客户端相关信息�
 
 ```bash
 ## 配置一个认证请求 URL，地址的路径部分“/auth/AuthServlet”，用户可以自己随便定义
-auth.http.auth_req = http://$SERVER:8080/auth/AuthServlet
+auth.http.auth_req = http://$SERVER:$port/auth/AuthServlet
 
 ## HTTP 请求方法
 auth.http.auth_req.method = post
@@ -258,7 +258,7 @@ Database changed
 - username 为客户端连接的时候指定的用户名
 - password_hash 为使用 salt 加密后的密文
 - salt 为加密串
-- is_superuser 为控制 ACL 的时候用，这里先跳过
+- is_superuser 是否为超级用户，用于控制 ACL，缺省为0；设置成1的时候为超级用户，跳过 ACL 检查。具体请参考 [ACL（Access Control List）访问控制](acl.md)。
 
 注：读者在生成的表格中，字段可以不用完全跟下面的一致，用户可以通过配置  ``emqx_auth_mysql.conf `` 文件中的 ``authquery `` 的 SQL 语句来适配）。
 
@@ -579,7 +579,7 @@ Subscribed (mid: 1): 0
 auth.mongo.auth_query.password_field = password,salt
 
 ## sha512 with salt prefix
-auth.mongo.password_hash = salt,sha256
+auth.mongo.password_hash = sha256,salt
 ```
 
 - 在 MongoDB 中存入数据，根据上一步的配置，假设该客户端设置的 salt 为 ``mysalt``，那么加盐后的密码原文为 ``mysaltpublic`` ，读者可以通过[在线的 sha512工具](https://www.liavaag.org/English/SHA-Generator/)将密码转换为密文，并存入 MongoDB。

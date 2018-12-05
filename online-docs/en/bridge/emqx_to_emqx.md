@@ -1,26 +1,19 @@
-# Bridge EMQ X to Mosquitto
-EMQ X node can connect to other MQTT brokers using bridge and exchange messages cross platforms. In this section we will demonstrate it by example.
+# Bridge between EMQ X Nodes
+
+Multiple EMQ X nodes can be bridged and forward messages to each other. In this section we will demonstrate it by example.
+
 
 ## Case Description
-Assuming that we have one EMQ X broker, the 'emqx1', and one Mosquitto server. We will create a bridge on 'emqx1' and forward all messages of topic 'sensor' to Mosquitto server and subscribe to the 'control' topic on Mosquitto server.
+Assuming that we have two EMQ X brokers, the 'emqx1' and the 'emqx2'. We will create a bridge on 'emqx1' and forward all messages of topic 'sensor' to 'emqx2' and subscribe to the 'control' topic on 'emqx2'.
 
-**EMQ X**  
 
 | Node | Node Name | Listening Port |
-| :---: | :---: | :---: |
+| :---:| :-----: | :---: |
 | emqx1 | emqx1@192.168.1.100 | 1883 |
-
-**Mosquitto**
-
-| Address | Listening Port |
-| :---: | :---: |
-| 192.168.1.101 | 1883 |
-
-## Configure the Mosquitto Server
-Using the default Mosquitto configuration after installation should be sufficient to finish the text in this section. For more details about Mosquitto please refer to the [Mosquitto Document](https://mosquitto.org/).
+| emqx2 | emqx2@192.168.1.101 | 1883 |
 
 ## Setup a Bridge on 'emqx1'
-To bridge an EMQ X node to Mosquitto, we need to configure it first.
+To bridge multiple EMQ X nodes, we need to configure it first.
 
 On the 'emqx1', open the config file `emqx.conf`, find 'Bridges' and add a new section below it for our bridge.  
 the format of a bridge configuration directive looks like `bridge.bridge_name.directive1[.sub_directives]`, it starts with `bridge`, followed by bridge name and directive. If a directive has subitems, it will be added at the end.
@@ -154,7 +147,7 @@ topic: control/#, qos: 1
 ## Test the Bridge
 We use `mosquitto_pub` and `mosquitto_sub` to test if the above configuration works as expected.
 
-Subscribe to topic 'sensor/#' on Mosquitto:
+Subscribe to topic ' sensor/#' on 'emqx2':
 
 ```
 $ mosquitto_sub -t sensor/# -p 1883 -d
@@ -163,7 +156,7 @@ Publish to topic 'sensor/1/temperature' on 'emqx1':
 ```
 $ mosquitto_pub -t sensor/1/temperature -m "37.5" -d
 ```
-After publishing, a message should be received on the Mosquitto:
+After publishing, a message should be received on the 'emqx2':
 ```
 $ mosquitto_sub -t "bridge/example/#" -p 1883 -d -h 192.168.1.101
 Client mosqsub|11612-Zeus- sending CONNECT
@@ -179,7 +172,7 @@ Subscribe to topic 'control/#' on 'emqx1':
 ```
 $ mosquitto_sub -t control/# -p 1883 -d
 ```
-Publish to topic 'control/device1/restart' on Mosquitto:
+Publish to topic 'control/device1/restart' on 'emqx2':
 ```
 mosquitto_pub -t control/device1 -m "list_all" -d -h 192.168.1.101
 ```

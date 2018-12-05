@@ -1,300 +1,383 @@
 # Cassandra 数据存储
 
-配置文件: etc/plugins/emqx_backend_cassa.conf
+[TOC]
 
-## 配置 Cassandra 集群地址
+本章节以在 `CentOS 7.2` 中的实际例子来说明如何通过 Cassandra 来存储相关的信息。
 
-支持配置多台 Cassandra 服务器连接池:
 
-```properties
-    ## Cassandra Node
-    backend.ecql.pool1.nodes = 127.0.0.1:9042
 
-    ## Cassandra Pool Size
-    backend.ecql.pool1.size = 8
+## 安装与验证 Cassandra 服务器
 
-    ## Cassandra auto reconnect flag
-    backend.ecql.pool1.auto_reconnect = 1
-
-    ## Cassandra Username
-    backend.ecql.pool1.username = cassandra
-
-    ## Cassandra Password
-    backend.ecql.pool1.password = cassandra
-
-    ## Cassandra Keyspace
-    backend.ecql.pool1.keyspace = mqtt
-
-    ## Cassandra Logger type
-    backend.ecql.pool1.logger = info
-
-    ## Max number of fetch offline messages. Without count limit if infinity
-    ## backend.cassa.max_returned_count = 500
-
-    ## Time Range. Without time limit if infinity
-    ## d - day
-    ## h - hour
-    ## m - minute
-    ## s - second
-    ## backend.cassa.time_range = 2h
-```
-
-## 配置 Cassandra 存储规则
-
-```properties
-
-    ## Max number of fetch offline messages. Without count limit if infinity
-    ## backend.cassa.max_returned_count = 500
-
-    ## Time Range. Without time limit if infinity
-    ## d - day
-    ## h - hour
-    ## m - minute
-    ## s - second
-    ## backend.cassa.time_range = 2h
-
-    ## Client Connected Record
-    backend.cassa.hook.client.connected.1    = {"action": {"function": "on_client_connected"}, "pool": "pool1"}
-
-    ## Subscribe Lookup Record
-    backend.cassa.hook.client.connected.2    = {"action": {"function": "on_subscription_lookup"}, "pool": "pool1"}
-
-    ## Client DisConnected Record
-    backend.cassa.hook.client.disconnected.1 = {"action": {"function": "on_client_disconnected"}, "pool": "pool1"}
-
-    ## Lookup Unread Message QOS > 0
-    backend.cassa.hook.session.subscribed.1  = {"topic": "#", "action": {"function": "on_message_fetch"}, "pool": "pool1"}
-
-    ## Lookup Retain Message
-    backend.cassa.hook.session.subscribed.2  = {"action": {"function": "on_retain_lookup"}, "pool": "pool1"}
-
-    ## Delete Ack
-    backend.cassa.hook.session.unsubscribed.1= {"topic": "#", "action": {"cql": ["delete from acked where client_id = ${clientid} and topic = ${topic}"]}, "pool": "pool1"}
-
-    ## Store Publish Message  QOS > 0
-    backend.cassa.hook.message.publish.1     = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1"}
-
-    ## Delete Acked Record
-    backend.cassa.hook.session.unsubscribed.1= {"topic": "#", action": {"cql": ["delete from acked where client_id = ${clientid} and topic = ${topic}"]},"pool":"pool1"}
-
-    ## Store Retain Message
-    backend.cassa.hook.message.publish.2     = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1"}
-
-    ## Delete Retain Message
-    backend.cassa.hook.message.publish.3     = {"topic": "#", "action": {"function": "on_retain_delete"}, "pool": "pool1"}
-
-    ## Store Ack
-    backend.cassa.hook.message.acked.1       = {"topic": "#", "action": {"function": "on_message_acked"}, "pool": "pool1"}
-```
-
-## Cassandra 存储规则说明
-
-| hook                | topic | action                 | 说明               |
-| ------------------- | ----- | ---------------------- | ------------------ |
-| client.connected    |       | on_client_connected    | 存储客户端在线状态 |
-| client.connected    |       | on_subscribe_lookup    | 订阅主题           |
-| client.disconnected |       | on_client_disconnected | 存储客户端离线状态 |
-| session.subscribed  | #     | on_message_fetch       | 获取离线消息       |
-| session.subscribed  | #     | on_retain_lookup       | 获取 retain 消息     |
-| message.publish     | #     | on_message_publish     | 存储发布消息       |
-| message.publish     | #     | on_message_retain      | 存储 retain 消息     |
-| message.publish     | #     | on_retain_delete       | 删除 retain 消息     |
-| message.acked       | #     | on_message_acked       | 消息 ACK 处理        |
+读者可以参考 Cassandra [官方文档](http://cassandra.apache.org/doc/latest/) 或 [Docker](https://docs.docker.com/samples/library/cassandra/) 来下载安装 Cassandra，本文章使用 Cassandra 3.11.3 版本。
 
 
 
 
-## CQL 语句参数说明
+## 配置 EMQ X 服务器
 
-| hook                         | 可用参数                                          | 示例 (cql 语句中 ${name} 表示可获取的参数)                      |
-| ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
-| client.connected             | clientid                                          | insert into conn(clientid) values(${clientid})               |
-| client.disconnected clientid | insert into disconn(clientid) values(${clientid}) |                                                              |
-| ses- sion.subscribed         | clientid, topic, qos                              | insert into sub(topic, qos) values(${topic}, ${qos})         |
-| ses- sion.unsubscribed       | clientid, topic                                   | delete from sub where topic = ${topic}                       |
-| message.publish              | msgid, topic, payload, qos, clientid              | insert into msg(msgid, topic) values(${msgid}, ${topic})     |
-| message.acked                | msgid, topic, clientid                            | insert into ack(msgid, topic) values(${msgid}, ${topic})     |
-| mes- sage.delivered          | msgid, topic, clientid                            | insert into delivered(msgid, topic) values(${msgid}, ${topic}) |
-
-## CQL 语句方式配置 Action
-
-Cassandra 存储支持用户采用 CQL 语句配置规则 Action，例如:
-
-```properties
-
-    ## 在客户端连接到 EMQ X 服务器后，执行一条 cql 语句 (支持多条 cql 语句)
-    backend.cassa.hook.client.connected.3 = {"action": {"cql": ["insert into conn(clientid) values(${clientid})"]}, "pool": "pool1"}
-```
-
-## Cassandra 初始化
-
-创建 KeySpace:
+通过 RPM 方式安装的 EMQ X，Cassandra 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_cassa.conf`，如果只是测试 Cassandra 持久化的功能，大部分配置不需要做更改，填入用户名、密码、keyspace 即可：
 
 ```bash
-CREATE KEYSPACE mqtt WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
-USR mqtt;
+backend.ecql.pool1.nodes = 127.0.0.1:9042
+
+backend.ecql.pool1.size = 8
+
+backend.ecql.pool1.auto_reconnect = 1
+
+backend.ecql.pool1.username = cassandra
+
+backend.ecql.pool1.password = cassandra
+
+backend.ecql.pool1.keyspace = mqtt
+
+backend.ecql.pool1.logger = info
 ```
 
+保持剩下部分的配置文件不变，然后需要启动该插件。启动插件的方式有 `命令行`和 `控制台`两种方式，读者可以任选其一。
 
-导入 Cassandra 表:
 
-```js
-cqlsh -e "SOURCE'emqx_backend_cassa.cql'"
-```
-    
 
-> 数据库名称可自定义
+### keyspace 初始化
 
-## Cassandra 设备在线状态表
-
-*mqtt.client* 存储设备在线状态::
-```js
-    CREATE TABLE mqtt.client (
-        client_id text,
-        node text,
-        state int,
-        connected timestamp,
-        disconnected timestamp,
-        PRIMARY KEY(client_id)
-    );
-```
-
-查询设备在线状态:
-```js
-select * from mqtt.client where clientid = 'test';
-```
-
-例如 ClientId 为 test 客户端上线::
+在 Cassandra 上创建名为 `mqtt` 的 keyspace：
 
 ```bash
-     client_id | connected                       | disconnected  | node          | state
-    -----------+---------------------------------+---------------+---------------+-------
-    test | 2017-02-14 08:27:29.872000+0000 |          null | emqx@127.0.0.1|     1
+cqlsh> CREATE KEYSPACE IF NOT EXISTS mqtt WITH REPLICATION = {'class': 'SimpleStrategy','replication_factor':1};
+
+cqlsh> describe keyspaces
+
+system_traces  mqtt  system
+
+cqlsh> use mqtt;
 ```
 
-例如 ClientId 为 test 客户端下线::
+
+
+### 通过命令行启动
 
 ```bash
-select * from mqtt.client where clientid = 'test';
-
-     client_id | connected                       | disconnected                    | node          | state
-    -----------+---------------------------------+---------------------------------+---------------+-------
-test | 2017-02-14 08:27:29.872000+0000 | 2017-02-14 08:27:35.872000+0000 | emqx@127.0.0.1|     0
+emqx_ctl plugins load emqx_backend_cassa
 ```
 
-## Cassandra 主题订阅表
 
-*mqtt.sub* 存储设备订阅关系::
+
+### 通过管理控制台启动
+
+EMQ X 管理控制台 **插件** 页面中，找到 **emqx_backend_cassa** 插件，点击 **启动**。
+
+
+
+
+
+## 客户端在线状态存储
+
+客户端上下线时，插件将更新在线状态、上下线时间、节点客户端列表至 Cassandra 数据库。
+
+### 数据表
+
+创建 mqtt.client 设备在线状态表:
+
+```CQL
+CREATE TABLE mqtt.client (
+    client_id text,
+    node text,
+    state int,
+    connected timestamp,
+    disconnected timestamp,
+    PRIMARY KEY(client_id)
+);
+```
+
+
+
+### 配置项
+
+打开配置文件，配置 Backend 规则：
 
 ```bash
+## hook: client.connected、client.disconnected
+## action/function: on_client_connected、on_client_disconnected
+
+
+## 客户端上下线
+backend.cassa.hook.client.connected.1 = {"action": {"function": "on_client_connected"}, "pool": "pool1"}
+
+## 客户端下线
+backend.cassa.hook.client.disconnected.1 = {"action": {"function": "on_client_disconnected"}, "pool": "pool1"}
+```
+
+
+
+### 使用示例
+
+浏览器打开 `http://127.0.0.1:18083` EMQ X 管理控制台，在 **工具** -> **Websocket** 中新建一个客户端连接，指定 clientid 为 sub_client，点击连接，连接成功后手动断开:
+
+![image-20181116105333637](../assets/image-20181116105333637.png)
+
+
+
+ 查看 `mqtt.client` 表，此时将写入 / 更新一条客户端上下线记录：
+
+```bash
+cqlsh:mqtt> select * from mqtt.client ;
+
+ client_id  | connected                | disconnected | node           | state
+------------+--------------------------+--------------+----------------+-------
+ sub_client | 2018-11-20 01:49:20+0000 |         null | emqx@127.0.0.1 |     1
+
+(1 rows)
+```
+
+
+
+## 客户端代理订阅
+
+客户端上线时，存储模块直接从数据库读取预设待订阅列表，代理加载订阅主题。在客户端需要通过预定主题通信（接收消息）场景下，应用能从数据层面设定 / 改变代理订阅列表。
+
+### 数据表
+
+创建 mqtt.sub 设备订阅表:
+
+```CQL
 CREATE TABLE mqtt.sub (
-        client_id text,
-        topic text,
-        qos int,
-        PRIMARY KEY(client_id, topic)
+    client_id text,
+    topic text,
+    qos int,
+    PRIMARY KEY(client_id, topic)
 );
 ```
 
-例如为 ClientId 为 "test" 订阅主题 test_topic1, test_topic2:
+### 配置项
 
-```sql
-insert into mqtt.sub(client_id, topic, qos) values('test', 'test_topic1', 1);
-insert into mqtt.sub(client_id, topic, qos) values('test', 'test_topic2', 2);
-```
-
-查询某个客户端订阅主题::
-
-    select * from mqtt_sub where clientid = ${clientid};
-
-
-查询 ClientId 为'test' 的客户端已订阅主题:
-
- ```bash
- select * from mqtt_sub where clientid = 'test';
- 
-      client_id | topic       | qos
-     -----------+-------------+-----
- test | test_topic1 |   1
- test | test_topic2 |   2
- ```
-
-## Cassandra 消息存储表
-
-*mqtt.msg* 存储 MQTT 消息:
-```bash
-    CREATE TABLE mqtt.msg (
-        topic text,
-        msgid text,
-        sender text,
-        qos int,
-        retain int,
-        payload text,
-        arrived timestamp,
-        PRIMARY KEY(topic, msgid)
-      ) WITH CLUSTERING ORDER BY (msgid DESC);
-```
-
-查询某个客户端发布的消息:
+打开配置文件，配置 Backend 规则：
 
 ```bash
-select * from mqtt_msg where sender = ${clientid};
+## hook: client.connected
+## action/function: on_subscribe_lookup
+backend.cassa.hook.client.connected.2    = {"action": {"function": "on_subscribe_lookup"}, "pool": "pool1"}
 ```
 
-查询 ClientId 为  'test'的客户端发布的消息::
 
-```bash
-select * from mqtt_msg where sender = 'test';
 
-     topic | msgid                | arrived                         | payload      | qos | retain | sender
-    -------+----------------------+---------------------------------+--------------+-----+--------+--------
-     hello | 2PguFrHsrzEvIIBdctmb | 2017-02-14 09:07:13.785000+0000 | Hello world! |   1 |      0 |   test
-     world | 2PguFrHsrzEvIIBdctmb | 2017-02-14 09:07:13.785000+0000 | Hello world! |   1 |      0 |   test
+### 使用示例
+
+当 `sub_client` 设备上线时，需要为其订阅 `sub_client/upstream` 与 `sub_client/downlink` 两个 QoS 1 的主题：
+
+1. 在 `mqtt.sub` 表中初始化插入代理订阅主题信息：
+
+```CQL
+insert into mqtt.sub(client_id, topic, qos) values('sub_client', 'sub_client/upstream', 1);
+insert into mqtt.sub(client_id, topic, qos) values('sub_client', 'sub_client/downlink', 1);
 ```
-    
 
-## Cassandra 保留消息表
+2. EMQ X  管理控制台 **WebSocket** 页面，以 clientid `sub_client`  新建一个客户端连接，切换至**订阅**页面，可见当前客户端自动订阅了 `sub_client/upstream` 与 `sub_client/downlink` 两个 QoS 1 的主题：
 
-*mqtt.retain* 存储 Retain 消息:
+![image-20181116110036523](../assets/image-20181116110036523.png)
+
+
+
+
+3. 切换回管理控制台 **WebSocket** 页面，向 `sub_client/downlink` 主题发布消息，可在消息订阅列表收到发布的消息。
+
+
+
+
+## 持久化发布消息
+
+### 数据表
+
+创建 mqtt.msg MQTT 消息持久化表:
+
+```CQL
+CREATE TABLE mqtt.msg (
+    topic text,
+    msgid text,
+    sender text, -- 发布的 clientid
+    qos int,
+    retain int,
+    payload text,
+    arrived timestamp, -- 发布时间
+    PRIMARY KEY(topic, msgid)
+  ) WITH CLUSTERING ORDER BY (msgid DESC);
+```
+
+### 配置项
+
+打开配置文件，配置 Backend 规则，支持使用 `topic` 参数进行消息过滤，此处使用 `#` 通配符存储任意主题消息：
 
 ```bash
+## hook: message.publish
+## action/function: on_message_publish
+
+backend.cassa.hook.message.publish.1     = {"topic": "#", "action": {"function": "on_message_publish"}, "pool": "pool1"}
+```
+
+
+
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中，使用 clientdi `sub_client` 建立连接，向主题 `upstream_topic` 发布多条消息，EMQ X 将消息列表持久化至 `mqtt.msg` 表中：
+
+```CQL
+cqlsh:mqtt> select * from mqtt.msg;
+
+ topic          | msgid                | arrived                  | payload             | qos | retain | sender
+----------------+----------------------+--------------------------+---------------------+-----+--------+------------
+ upstream_topic | 2VI0ceNQJ1UPaUHki88I | 2018-11-20 01:54:40+0000 | { "cmd": "reboot" } |   1 |   null | sub_client
+
+(1 rows)
+```
+
+>暂只支持 QoS 1 2 的消息持久化。
+
+
+
+
+## Retain 消息持久化
+
+### 表结构
+
+创建 mqtt.retain Retain 消息表:
+
+```CQL
 CREATE TABLE mqtt.retain (
-        topic text,
-        msgid text,
-        PRIMARY KEY(topic)
+    topic text,
+    msgid text,
+    PRIMARY KEY(topic)
 );
 ```
 
-查询 retain 消息:
+### 配置项
+
+打开配置文件，配置 Backend 规则：
 
 ```bash
-select * from mqtt_retain where topic = ${topic};
+## 同时开启以下规则，启用 retain 持久化三个生命周期
+
+## 发布非空 retain 消息时 (存储)
+backend.cassa.hook.message.publish.2     = {"topic": "#", "action": {"function": "on_message_retain"}, "pool": "pool1"}
+
+## 设备订阅主题时查询 retain 消息
+backend.cassa.hook.session.subscribed.2  = {"topic": "#", "action": {"function": "on_retain_lookup"}, "pool": "pool1"}
+
+## 发布空 retain 消息时 (清除)
+backend.cassa.hook.message.publish.3     = {"topic": "#", "action": {"function": "on_retain_delete"}, "pool": "pool1"}
+
 ```
 
-查询 topic 为'retain' 的 retain 消息:
+
+
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中建立连接后，发布消息勾选**保留**：
+
+![image-20181119111926675](../assets/image-20181119111926675.png)
+
+
+
+**发布（消息不为空）**
+
+非空的 retain 消息发布时，EMQ X 将以 topic 为唯一键，持久化该条消息至 `mqtt.retain` 表中，相同主题下发从不同的 retain 消息，只有最后一条消息会被持久化：
 
 ```bash
-select * from mqtt_retain where topic = 'retain';
+cqlsh:mqtt> select * from mqtt.retain;
 
-     topic  | msgid
-    --------+----------------------
-     retain | 2PguFrHsrzEvIIBdctmb
+ topic          | msgid                
+----------------+----------------------
+ upstream_topic | 2VI0fSdsg79YegwFTMDz 
 ```
 
-## Cassandra 消息确认表
 
-*mqtt.acked* 存储客户端消息确认::
 
-```bash
+**订阅**
+
+客户端订阅 retain 主题后，EMQ X 将查询 `mqtt.retain` 表，执行投递 retain 消息操作。
+
+
+
+**发布（消息为空）**
+
+MQTT 协议中，发布空的 retain 消息将清空 retain 记录，此时 retain 记录将从 `mqtt.retain` 表中删除。
+
+
+
+
+
+## 消息确认持久化
+
+开启消息确认 (ACK) 持久化后，客户端订阅 QoS 1、QoS 2 级别的主题时，EMQ X 将在数据库以 clientid + topic 为唯一键初始化 ACK 记录。
+
+### 数据表
+
+创建 mqtt.acked  客户端消息确认表:
+
+```CQL
 CREATE TABLE mqtt.acked (
-        client_id text,
-        topic text,
-        msgid text,
-        PRIMARY KEY(client_id, topic)
-);
+    client_id text,
+    topic text,
+    msgid text,
+    PRIMARY KEY(client_id, topic)
+  );
 ```
 
-## 启用 Cassandra 存储插件
+### 配置项
 
-```js
-./bin/emqx_ctl plugins load emqx_backend_cassa
+打开配置文件，配置 Backend 规则，可使用 **topic 通配符** 过滤要应用的消息：
+
+```bash
+## 订阅时初始化 ACK 记录
+backend.cassa.hook.session.subscribed.1  = {"topic": "#", "action": {"function": "on_message_fetch"}, "pool": "pool1"}
+
+
+## 消息抵达时更新抵达状态
+backend.cassa.hook.message.acked.1       = {"topic": "#", "action": {"function": "on_message_acked"}, "pool": "pool1"}
+
+## 取消订阅时删除记录行
+backend.cassa.hook.session.unsubscribed.1= {"topic": "#", "action": {"cql": ["delete from acked where client_id = ${clientid} and topic = ${topic}"]}, "pool": "pool1"}
 ```
+
+
+
+### 使用示例
+
+在 EMQ X 管理控制台 **WebSocket** 页面中建立连接后，订阅 QoS > 0 的主题：
+
+![image-20181119140251843](../assets/image-20181119140251843.png)
+
+
+
+此时 `mqtt.acked` 表将插入初始化数据行：
+
+```bash
+cqlsh:mqtt> select * from mqtt.acked;
+
+ client_id  | topic          | msgid
+------------+----------------+----------------------
+ sub_client | upstream_topic | 2VI0o9gul3jAXzYE9q4f
+
+(1 rows)
+```
+
+
+
+> 代理订阅中满足 QoS > 0 的 topic 也会初始化记录，客户端取消订阅后相关记录将被删除。
+
+
+
+
+
+## 高级选项
+
+```bash
+backend.mongo.time_range = 5s
+
+backend.mongo.max_returned_count = 500
+```
+
+
+
+
+## 总结
+
+读者在理解了 Cassandra 中所存储的数据结构之后，可以结合 Cassandra 拓展相关应用。
+
