@@ -122,6 +122,10 @@ A:  Hook is an interface provided by EMQ X, which will be triggered when a conne
 - message.acked: MQTT message is acknowledged
 - message.dropped: MQTT message is dropped
 
+## Q: What's mqueue? How to use mqueue in EMQ X?
+
+A: mqueue is message queue stored in session during the message publish process. If the clean session is set false in mqtt connect packet, then EMQ X would maintain session for the client which conneced to EMQ X even the client has disconnected with EMQ X. Then the session would receive messages from the subscribed topic and store these messages into mqueue. And when the client online again, these messages would be delivered to client instantly. Because of low priority of qos 0 message in mqtt protocol, EMQ X do not cache qos 0 message into mqueue. However, the mqueue could be configured in `emqx.conf`, if this entry has been configured as `zone.$name.mqueue_store_qos0 = true`, the qos0 mesage would been stored into mqueue, too. mqueue has limit size, it would be configured with `zone.external.max_mqueue_len` to determine the number of messages cached into mqueue. Notice that these messages are stored in memory, so please do not set the mqueue length to 0, otherwise it would risk running out of memory.
+
 ## Q: What's WebSocket? When to use Websocket to connect EMQ X?
 
 A: WebSocket is a full-duplex communication protocol based on HTTP protocol, user can realize dual direction communications between browser and server. Through Websocket, server can push message to web browser. EMQ X provides support of WebSocket, user can realize pub to topics and sub to topic from browsers.

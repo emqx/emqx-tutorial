@@ -157,6 +157,10 @@ A: 钩子（hook）指的是由 EMQ X 在连接、对话和消息触发某些事
 - message.acked：MQTT 消息回执
 - message.dropped：MQTT 消息丢弃
 
+## Q: 什么是 mqueue？如何配置 mqueue？
+
+A: mqueue 是 EMQ X 在消息发布流程中为会话所保存的一个消息队列，当 MQTT 连接报文中的 clean session 设置为 false 的时候，即使是客户端断开连接的情况下，EMQ X 也会为断连客户端保存一个会话，这个会话会缓存订阅关系，并代替断开连接的客户端去接收订阅主题上的消息，而这些消息会存在 EMQ X 的 mqueue 中，等到客户端重新上线再将消息重新发给客户端。由于 qos0 消息在 MQTT 协议中的优先级比较低，所以 EMQ X 默认不缓存 qos 0 的消息，mqueue 在 EMQ X 中是可以配置的，通过配置 `zone.$name.mqueue_store_qos0 = true` 可以将 qos0 消息也存在 mqueue 中，mqueue 的大小也是有限制的，通过配置项 `zone.external.max_mqueue_len` ，可以确定每个会话缓存的消息数量，注意，这些消息是存储在内存中的，所以尽量不要将 mqueue 长度限制修改为 0，否则在实际的业务场景中，有内存耗光的风险。
+
 ## Q: 什么是 WebSocket？什么情况下需要通过 WebSocket 去连接 EMQ X 服务器？
 
 A: WebSocket 是一种在基于 HTTP 协议上支持全双工通讯的协议，通过该协议，用户可以实现浏览器和服务器之间的双向通信，比如可以通过服务器往浏览器端推送消息。EMQ X 提供了 WebSocket 连接支持，用户可以在浏览器端直接实现对主题的订阅和消息发送等操作。
