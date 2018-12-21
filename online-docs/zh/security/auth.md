@@ -1,12 +1,10 @@
 # 认证（认证鉴权）
 
-
-
 认证（认证鉴权）指的是当一个客户端连接到 MQTT 服务器的时候，通过服务器端的配置来控制客户端连接服务器的权限。EMQ X 的认证支持包括多个层面，分别有 MQTT 传输层，应用层和 EMQ X 本身以插件的方式来支持各种增强的认证方式。
 
 - 在传输层上，TLS 可以保证使用客户端证书的客户端到服务器的身份验证，并确保服务器向客户端验证服务器证书
 - 在应用层上，MQTT 协议本身在 CONNECT 报文中指定用户名和密码。客户端可以在连接到 MQTT 服务器时发送用户名和密码进行认证，有效阻止非法客户端的连接
-- EMQ X 层面上，以插件形式支持文件系统、HTTP API、JWT、LDAP 及各类数据库如 MongoDB、MySQL、PostgreSQL、Redis 等多种认证
+- EMQ X 层面上，以插件形式支持配置文件、HTTP API、JWT、LDAP 及各类数据库如 MongoDB、MySQL、PostgreSQL、Redis 等多种认证
 
 ## 认证与认证链
 
@@ -41,14 +39,14 @@ auth.user.2.password = passwd2
 
 ```./bin/emqx_ctl plugins load emqx_auth_username```
 
-然后重启 ``emqx`` 服务，如果配置成功正确，可以直接连接成功；如果配置不正确，通过 mosquitto 提供的命令行会报以下的错误。读者在修改了配置文件后，**需要重新启动 ``emqx`` 服务才可以生效**。
+然后重启 ``emqx`` 服务。如果配置成功正确，使用正确的用户名和密码可以连接成功，而指定的错误的用户名和密码，通过 mosquitto 提供的命令行会报以下的错误。读者在修改了配置文件后，**需要重新启动 ``emqx`` 服务才可以生效**。
 
 ```bash
 # mosquitto_sub -h $your_host -u username -P passwd1 -t /devices/001/temp
 Connection Refused: bad user name or password.
 ```
 
-EMQ X 的 ``/var/log/emqx/error.log`` 会有类似于以下的错误信息。
+在错误日志文件 ``/var/log/emqx/error.log`` 中会有类似于以下的错误信息。
 
 ```
  [error] <0.1981.0>@emqx_protocol:process:241 Client(mosqsub/10166-master@10.211.55.6:40177): Username 'username' login failed for "No auth module to check!"
@@ -89,7 +87,7 @@ HTTP 认证调用自定义的 HTTP API 实现认证鉴权。
 
 ### 实现原理
 
-EMQ X 在设备连接、发布/订阅事件中使用当前客户端相关信息作为参数，向用户自定义的认证服务发起请求查询权限，通过返回的 HTTP **响应状态码** (HTTP Response Code) 来处理事件。
+EMQ X 在设备连接事件中使用当前客户端相关信息作为参数，向用户自定义的认证服务发起请求查询权限，通过返回的 HTTP **响应状态码** (HTTP Response Code) 来处理认证请求。
 
  - 认证成功，API 返回 200 状态码
 
@@ -188,47 +186,13 @@ Connection Refused: bad user name or password.
 ```
 
 
-
-
 ## JWT 认证
 
-TODO：等待 Erlang 文档支持
-
-emqx_auth_jwt 
-
-
+TODO 
 
 ## LDAP 认证
 
-emqx_auth_ldap 使用 LDAP 协议进行认证。
-
-```
-conn=1012 op=3 SRCH base=“uid=user1,ou=auth,dc=emqx,dc=io” scope=2 deref=3 filter=“(?username=user1)”
-
-```
-
-
-
-
-
-打开 `etc/plugins/emqx_auth_ldap.conf` 文件，配置相关规则：
-
-```bash
-## 服务地址
-auth.ldap.servers = 127.0.0.1
-
-## 服务端口
-auth.ldap.port = 389
-
-auth.ldap.timeout = 30
-
-## 访问规则
-auth.ldap.user_dn = uid=%u,ou=People,dc=example,dc=com
-
-auth.ldap.ssl = false
-```
-
-
+TODO
 
 
 ## MySQL/PostgreSQL 认证
