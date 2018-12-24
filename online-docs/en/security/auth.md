@@ -190,11 +190,11 @@ Connection Refused: bad user name or password.
 
 ## MySQL/PostgreSQL authentication
 
-emqx_auth_mysql / emqx_auth_pgsql provide authentication based on MySQL and PostgreSQL database. EMQ X will generated SQLs with client information according to the plugin configuration, then running against database to authenticate. 
+emqx_auth_mysql / emqx_auth_pgsql provide authentication based on MySQL and PostgreSQL database. EMQ X will be generated SQLs with client information according to the plugin configuration, then running against database to authenticate. 
 
 ### Auth configuration
 
-Please refer to related doc in Internet for the installation of MySQL, and it's skip in this tutorial.
+Please refer to related doc in Internet for the installation of MySQL, and its skip in this tutorial.
 
 #### Create database
 
@@ -262,7 +262,7 @@ Insert the sample data, password is ``test_password``, and  salt is  ``secret``.
 - If configuration is ``auth.mysql.password_hash = md5,salt`` , then EMQ X uses MD5 to encryt password against ``test_passwordsecret`` - (test_password is the password, and secret is password, which is added after the password)
 - If configuration is``auth.mysql.password_hash = salt,md5`` , then EMQ X uses MD5 to encryt password against ``secrettest_password`` - (test_password is the password, and secret is password, which is added before the password).
 
-This tutortial uses the 1st configuration, and insert the generated MD5 password into table  ``mqtt_user``.  User can use the [online MD5 tool](https://www.md5hashgenerator.com/) or programming by yourself to encrypt the password.
+This tutorial uses the 1st configuration, and insert the generated MD5 password into table  ``mqtt_user``.  User can use the [online MD5 tool](https://www.md5hashgenerator.com/) or programming by yourself to encrypt the password.
 
 ```java
 MD5("test_passwordsecret") -> a904b2d1d2b2f73de384955022964595
@@ -284,7 +284,7 @@ mysql> select * from mqtt_user;
 
 #### Modify EMQ X configuration file
 
-It's becuase there is no `password` field in table, the query SQL should use ``AS`` statement to create an alias field name.
+It's because there is no `password` field in table, the query SQL should use ``AS`` statement to create an alias field name.
 
 ```sql
 SELECT password_hash AS password, ...
@@ -354,7 +354,7 @@ OK
 
 #### Modify configuration file
 
-emqx_auth_redis plugin uses the configurations, and generate corresponding Redis command according to passed client infomation, then query and compare the result.
+emqx_auth_redis plugin uses the configurations, and generate corresponding Redis command according to passed client information, then query and compare the result.
 
 Open ``etc/plugins/emqx_auth_redis.conf``, make following changes. 
 
@@ -433,15 +433,15 @@ Subscribed (mid: 1): 0
 
 
 
-## MongoDB 认证
+## MongoDB authentication
 
-### Auth 配置
+### Auth configuration
 
-客户端上线后，MongoDB 认证插件连接至 MongoDB ，通过查询和比对 MongoDB 中预先存储的认证信息来判断该客户端是否有权限连接该服务器。
+When a client is online, MongoDB authentication plugin connect to MongoDB, then query data that previously saved in MongoDB & compare the authentication info to determine the authentication of client is successful or not.
 
-#### MongoDB 安装
+#### MongoDB installation
 
-读者请按照 [MongoDB 安装文档](https://docs.mongodb.com/manual/administration/install-community/)安装好数据库，然后使用客户端 ``mongo`` 连接到数据库。
+Reader can follow [MongoDB installation document](https://docs.mongodb.com/manual/administration/install-community/) to install MongoDB, then use the client tool ``mongo`` to connect to the database.
 
 ```bash
 # mongo
@@ -453,47 +453,47 @@ Welcome to the MongoDB shell.
 ......
 ```
 
-#### 准备数据
+#### Prepare data
 
-emqx_auth_mongo 插件根据配置的存储客户端信息的集合（collection）、password 字段名（password_field）、过滤查询的 selector 进行认证操作：
+emqx_auth_mongo plugin authenticates clients by client information collection, password and selector query.
 
-MongoDB mqtt 数据库中有如下信息：
+MongoDB mqtt database stores following data:
 
 ```bash
-## 插入数据
+## Insert data
 > use mqtt
 switched to db mqtt 
 > db.mqtt_user.insert({ username: 'userid_001', password: 'public', is_superuser: false })
 WriteResult({ "nInserted" : 1 })
 
-## 查看数据
+## Query data
 > db.mqtt_user.find({})
 { "_id" : ObjectId("5be795f7744a3bac99a6fd02"), "username" : "userid_001", "password" : "public", "is_superuser" : false }
 ```
 
-#### 修改配置文件
+#### Modify configuration file
 
-打开 `etc/plugins/emqx_auth_mongo.conf`，配置以下信息：
+Open `etc/plugins/emqx_auth_mongo.conf`, and change below items.
 
 ```bash
-## Mongo 认证数据库名称
+## Mongo authentication database name
 auth.mongo.database = mqtt
 
-## 认证信息所在集合
+## Collection used for authentication
 auth.mongo.auth_query.collection = mqtt_user
 
-## 密码字段
+## Password field
 auth.mongo.auth_query.password_field = password
 
-## 使用明文密码存储
+## Use plain approach for password field
 auth.mongo.auth_query.password_hash = plain
 
-## 查询指令
+## Query command
 auth.mongo.auth_query.selector = username=%u
 ```
 
 
-配置完毕后执行  ``emqx_ctl plugins load emqx_auth_mongo`` 并重启 emqx 服务。`username` 为 `userid_001` 的客户端连接时，EMQ X 将执行下列查询：
+After configuration, executing command  ``emqx_ctl plugins load emqx_auth_mongo`` to restart emqx service. When a client with username  `userid_001` is connecting to server, EMQ X will execute following query.
 
 ```bash
 > db.mqtt_user.findOne({ username: 'userid_001' })
@@ -505,14 +505,14 @@ auth.mongo.auth_query.selector = username=%u
 }
 ```
 
-当查询结果中的 `password`（password_field 字段）与当前客户端 `password` 相等时，认证成功。在客户端使用 ``mosquitto_sub`` 命令来连接。
+If the value of `password` (password_field field) is the same as client specified `password` , then authentication is successful. Client uses ``mosquitto_sub`` to test the connection.
 
 ```shell
-## 使用错误的用户名和密码
+## Using wrong user name & password.
 # mosquitto_sub -h 10.211.55.10 -u userid_001 -P password -t /devices/001/temp
 Connection Refused: bad user name or password.
 
-## 使用正确的用户名和密码，加入 -d 参数，打印交互的 MQTT 报文
+## Use the coreect user name and password, add -d option, print debug info
 #  mosquitto_sub -h 10.211.55.10 -u userid_001 -P public -t /devices/001/temp -d
 Client mosqsub/18771-master sending CONNECT
 Client mosqsub/18771-master received CONNACK
@@ -521,13 +521,13 @@ Client mosqsub/18771-master received SUBACK
 Subscribed (mid: 1): 0
 ```
 
-#### 密码加密、加盐
+#### Password encryption, add salt
 
-上文描述的是在 MongoDB 中采用明文的方式保存密码，EMQ X 还支持用加密算法对密码进行加密和加盐处理。
+In previous parts, we described how to save password with plain in MongoDB. Besides plain approach, EMQ X also support use encryption algorithm to encrypt & salt for passwords.
 
-- 修改配置文件：打开配置文件 ``emqx_auth_mongo.conf`` ，
-  - 更改配置 ``auth.mongo.password_hash = salt,sha256`` ，采用 sha256 加密算法，加入的 salt 在密码之前；如果该配置是 ``sha256,salt`` 则表示加入的 salt 在密码之后；**注意：salt 只是一个标识符，不代表使用该字符进行加盐处理**
-  - 更改完成后重启 EMQ X 服务。
+- Change configuration file: open configuration file ``emqx_auth_mongo.conf`` ,
+  - Change item ``auth.mongo.password_hash = salt,sha256`` , using sha256 algorithm, the salt is added ahead of password; If the configuration is  ``sha256,salt`` , which means the salt is added after password. **Notice: salt is ONLY an identification, it does NOT mean use the string 'salt' to encrypt.**
+  - Reboot  EMQ X service after modification.
 
 ```bash
 
@@ -537,24 +537,24 @@ auth.mongo.auth_query.password_field = password,salt
 auth.mongo.password_hash = sha256,salt
 ```
 
-- 在 MongoDB 中存入数据，根据上一步的配置，假设该客户端设置的 salt 为 ``mysalt``，那么加盐后的密码原文为 ``mysaltpublic`` ，读者可以通过[在线的 sha512工具](https://www.liavaag.org/English/SHA-Generator/)将密码转换为密文，并存入 MongoDB。
+- Save data into MongoDB, according to configuration of last step, let's say the client uses ``mysalt`` as salt, then the plain password after adding salt is  ``mysaltpublic`` , user can convert password into encrypted password through [online sha512 tools](https://www.liavaag.org/English/SHA-Generator/), then saves in MongoDB.
 
 ```java
 sha512("mysaltpublic") -> c3acb78da1592319f47d15c5230071f22a9d3b23671a29c8f7b4ab92d66f39aa
 ```
 
-打开 mongo 命令行工具。
+Open mongo command line.
 
 ```bash
-## 先删除之前保存的认证数据
+## Delete data was saved previously
 > db.mqtt_user.deleteOne({ username: 'userid_001'})
 { "acknowledged" : true, "deletedCount" : 1 }
 
-## 保存认证数据
+## Save authentication data
 > db.mqtt_user.insert({ username: 'userid_001', password: 'c3acb78da1592319f47d15c5230071f22a9d3b23671a29c8f7b4ab92d66f39aa', is_superuser: false, salt: 'mysalt' })
 WriteResult({ "nInserted" : 1 })
 
-## 取出相关的密码和盐
+## Fetch related password and salt.
 > db.mqtt_user.findOne({ username: 'userid_001' })
 {
 	"_id" : ObjectId("5be7aad8744a3bac99a6fd0c"),
@@ -565,7 +565,7 @@ WriteResult({ "nInserted" : 1 })
 }
 ```
 
-- 在客户端使用 ``mosquitto_sub`` 命令来连接。
+- Use  ``mosquitto_sub`` client to connect the server.
 
 ```shell
 # mosquitto_sub -h 10.211.55.10 -u userid_001 -P public -t /devices/001/temp -d
