@@ -77,7 +77,7 @@ EMQ X 管理控制台 **插件** 页面中，找到 **emqx_backend_cassa** 插�
 
 创建 mqtt.client 设备在线状态表:
 
-```CQL
+```sql
 CREATE TABLE mqtt.client (
     client_id text,
     node text,
@@ -138,7 +138,7 @@ cqlsh:mqtt> select * from mqtt.client ;
 
 创建 mqtt.sub 设备订阅表:
 
-```CQL
+```sql
 CREATE TABLE mqtt.sub (
     client_id text,
     topic text,
@@ -165,7 +165,7 @@ backend.cassa.hook.client.connected.2    = {"action": {"function": "on_subscribe
 
 1. 在 `mqtt.sub` 表中初始化插入代理订阅主题信息：
 
-```CQL
+```sql
 insert into mqtt.sub(client_id, topic, qos) values('sub_client', 'sub_client/upstream', 1);
 insert into mqtt.sub(client_id, topic, qos) values('sub_client', 'sub_client/downlink', 1);
 ```
@@ -188,7 +188,7 @@ insert into mqtt.sub(client_id, topic, qos) values('sub_client', 'sub_client/dow
 
 创建 mqtt.msg MQTT 消息持久化表:
 
-```CQL
+```sql
 CREATE TABLE mqtt.msg (
     topic text,
     msgid text,
@@ -218,7 +218,7 @@ backend.cassa.hook.message.publish.1     = {"topic": "#", "action": {"function":
 
 在 EMQ X 管理控制台 **WebSocket** 页面中，使用 clientdi `sub_client` 建立连接，向主题 `upstream_topic` 发布多条消息，EMQ X 将消息列表持久化至 `mqtt.msg` 表中：
 
-```CQL
+```sql
 cqlsh:mqtt> select * from mqtt.msg;
 
  topic          | msgid                | arrived                  | payload             | qos | retain | sender
@@ -239,7 +239,7 @@ cqlsh:mqtt> select * from mqtt.msg;
 
 创建 mqtt.retain Retain 消息表:
 
-```CQL
+```sql
 CREATE TABLE mqtt.retain (
     topic text,
     msgid text,
@@ -311,7 +311,7 @@ MQTT 协议中，发布空的 retain 消息将清空 retain 记录，此时 reta
 
 创建 mqtt.acked  客户端消息确认表:
 
-```CQL
+```sql
 CREATE TABLE mqtt.acked (
     client_id text,
     topic text,
