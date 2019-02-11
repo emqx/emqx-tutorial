@@ -207,7 +207,7 @@ MySQL 的安装过程请读者参考网上相关文章，此处不再赘述。
 
 读者可以使用任何自己喜欢的 mysql 客户端，创建好相应的数据库。这里用的是 MySQL 自带的命令行客户端，打开 MySQL 的控制台，如下所示，创建一个名为 ``emqx`` 的认证数据库，并切换到  ``emqx``  数据库。
 
-```mysql
+```sql
 mysql> create database emqx;
 Query OK, 1 row affected (0.00 sec)
 
@@ -241,7 +241,7 @@ CREATE TABLE `mqtt_user` (
 
 创建成功后，查看一下表结构如下，
 
-```mysql
+```sql
 mysql> desc mqtt_user;
 +---------------+------------------+------+-----+---------+----------------+
 | Field         | Type             | Null | Key | Default | Extra          |

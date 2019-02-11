@@ -71,10 +71,10 @@
   * [PSK](security/psk.md)
 
 ## 进阶功能
-* [代理订阅](advanced/proxy_subscription.md)
-* [流控](advanced/dlow_control.md)
-* [离线消息](advanced/offline_message.md)
-
+* [共享订阅](advanced/share_subscribe.md)
+* [本地订阅](advanced/local_subscribe.md)
+* [代理订阅](advanced/proxy_subscribe.md)
+* [流控](advanced/advanced.md#流控)
 
 ## 配置 EMQ X
 * [EMQ X 的配置原则](config/README.md)
