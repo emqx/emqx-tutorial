@@ -339,7 +339,7 @@ auth.mysql.super_query = SELECT is_superuser FROM mqtt_user WHERE username = '%u
 
 读者可以使用任何自己喜欢的 mysql 客户端，创建好相应的数据库。这里用的是 MySQL 自带的命令行客户端，打开 MySQL 的控制台，如下所示，创建一个名为 ``emqx`` 的认证数据库，并切换到  ``emqx``  数据库。
 
-```mysql
+```sql
 mysql> create database emqx;
 Query OK, 1 row affected (0.00 sec)
 
@@ -374,7 +374,7 @@ CREATE TABLE `mqtt_acl` (
 
 创建成功后，查看一下表结构，
 
-```mysql
+```sql
 mysql> desc mqtt_acl;
 +----------+------------------+------+-----+---------+----------------+
 | Field    | Type             | Null | Key | Default | Extra          |
@@ -397,7 +397,7 @@ mysql> desc mqtt_acl;
 1. 设定所有用户不可以订阅系统主题，除了从特定机器 ``10.211.55.10`` 发起的连接除外；
 2. 应用的主题设计为``/smarthome/$clientId/temperature``，设定一条规则只允许相同的 ``clientId`` 的设备才可以对它自己的主题进行发布消息操作
 
-```mysql
+```sql
 # 所有用户不可以订阅系统主题
 INSERT INTO mqtt_acl (allow, ipaddr, username, clientid, access, topic) VALUES (0, NULL, '$all', NULL, 1, '$SYS/#');
 

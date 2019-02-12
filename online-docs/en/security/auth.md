@@ -200,7 +200,7 @@ Please refer to related doc in Internet for the installation of MySQL, and its s
 
 Reader can use any preferred MySQL client, and create the database. This tutorial uses the client shipped with MySQL.  Open MySQL client console, create a database named  ``emqx`` , and switch to  ``emqx`` . Please refer to below.
 
-```mysql
+```sql
 mysql> create database emqx;
 Query OK, 1 row affected (0.00 sec)
 
@@ -234,7 +234,7 @@ CREATE TABLE `mqtt_user` (
 
 After creation successfully, take a look at the table structure. 
 
-```mysql
+```sql
 mysql> desc mqtt_user;
 +---------------+------------------+------+-----+---------+----------------+
 | Field         | Type             | Null | Key | Default | Extra          |
