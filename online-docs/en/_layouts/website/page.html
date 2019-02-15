@@ -3,12 +3,8 @@
 {% block body %}
 
 <script type="text/javascript" src="https://developer.emqx.io/docs/emq/v3/en/_static/jquery.js"></script>
-<script type="text/javascript" src="https://developer.emqx.io/docs/emq/v3/en/static/lib/toolkit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
-      type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
 
 <nav id="nav_header" class="navbar navbar-default navbar-fixed-top navbar-padded app-navbar" style="margin-bottom: 0">
   <div class="container">
@@ -24,22 +20,11 @@
         </li>
         <li>
           <!--
-            <a class="github-button" href="https://github.com/emqtt/emqttd" data-icon="octicon-star" data-style="mega" data-count-href="/emqtt/emqttd/stargazers" data-count-api="/repos/emqtt/emqttd#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star emqtt/emqttd on GitHub">Star</a>
-          -->
+              <a class="github-button" href="https://github.com/emqtt/emqttd" data-icon="octicon-star" data-style="mega" data-count-href="/emqtt/emqttd/stargazers" data-count-api="/repos/emqtt/emqttd#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star emqtt/emqttd on GitHub">Star</a>
+            -->
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <select v-model="lang" @change="docsChangeLang">
-            <option value="zh">中文</option>
-            <option value="en" selected>English</option>
-          </select>
-        </li>
-        <li>
-          <select v-model="version" @change="docsChangeVersion">
-            <option value="3.0">3.0</option>
-          </select>
-        </li>
         <li><a href="https://developer.emqx.io/docs">Docs</a></li>
         <li><a class="active" href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
         <li><a href="https://developer.emqx.io/sdk_tools?category=MQTT_Clients">SDK &amp; Tools</a></li>
@@ -51,127 +36,146 @@
   </div>
 </nav>
 
+
+<div class="back-top" onclick="toTop()">
+  <img src="../assets/back-top.png" width="26px">
+</div>
+<script>
+
+function toTop() {
+  var topBtn = document.querySelector('#anchorNavigationExGoTop')
+  if (topBtn) {
+    topBtn.click()
+  }
+}
+</script>
+
 <style>
+  .book-header .js-toolbar-action.btn {
+    display: none
+  }
+  .back-top {
+    position: fixed;
+    bottom: 5%;
+    right: 35px;
+    width: 38px;
+    height: 38px;
+    background: #333844;
+    text-align: center;
+    padding-top: 6px;
+    cursor: pointer;
+    z-index: 1111;
+  }
 
-@font-face {
-  font-family: 'Geomanist Book';
-  src: url("/fonts/hinted-Geomanist-Book.eot");
-  src: url("/fonts/hinted-Geomanist-Book.eot?#iefix") format("embedded-opentype"), url("/fonts/hinted-Geomanist-Book.woff2") format("woff2"), url("/fonts/hinted-Geomanist-Book.woff") format("woff"), url("/fonts/hinted-Geomanist-Book.ttf") format("truetype"), url("/fonts/hinted-Geomanist-Book.svg#Geomanist-Book") format("svg");
-  font-weight: normal;
-  font-style: normal
-}
+  #anchorNavigationExGoTop {
+    display: none;
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Geomanist Book", sans-serif;
-  color: #33444C;
-  clear: both;
-  line-height: 26px
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #333;
+    clear: both;
+    line-height: 26px
+  }
 
-body {
-  font-family: "Open Sans", sans-serif;
-}
 
-p {
-  font-family: "Open Sans", sans-serif;
-  color: #33444C;
-  font-size: 14px;
-  line-height: 24px;
-  margin: 10px 0 10px 0;
-}
+  .version--wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 299px;
+    border-top: 1px solid #E6E8F1;
+  }
 
-.button {
-  font-family: Geomanist Book;
-}
+  .book-summary ul.summary {
+    padding-bottom: 50px !important;
+  }
 
-.navbar.navbar-default.navbar-fixed-top .container {
-  width: 100%;
-  padding: 0 20px;
-}
+  #version-toggle {
+    display: block;
+    padding: 10px 15px;
+    border-bottom: none;
+    color: #364149;
+    background: #fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
 
-.navbar-nav > li > a:hover {
-  color: #06b777 !important;
-  background-color: transparent;
-}
+  #version-toggle select {
+    border: none;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0)
+  }
 
-.navbar .navbar-nav > li > a {
-  font-size: 16px;
-  font-weight: 300;
-  color: #adafb4;
-  padding-left: 20px;
-  padding-right: 20px;
-}
+  p {
+    color: #333;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 10px 0 10px 0;
+  }
 
-.navbar li select {
-  margin-top: 11px;
-  background-color: transparent;
-  border-color: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 300;
-  color: #adafb4;
-  padding: 4px 20px;
-  outline: none;
-  height: 30px;
-  line-height: 26px;
-  vertical-align: middle;
-}
 
-.navbar li select:hover {
-  color: #28D390;
-}
+  .navbar.navbar-default.navbar-fixed-top .container {
+    width: 100%;
+    padding: 0 32px;
+  }
 
-body {
-  padding-top: 60px !important;
-}
+  .navbar-nav>li>a:hover {
+    color: #06b777 !important;
+    background-color: transparent;
+  }
+
+  .navbar .navbar-nav>li>a {
+    font-size: 16px;
+    font-weight: 300;
+    color: #adafb4;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .navbar li select {
+    margin-top: 11px;
+    background-color: transparent;
+    border-color: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 300;
+    color: #adafb4;
+    padding: 4px 20px;
+    outline: none;
+    height: 30px;
+    line-height: 26px;
+    vertical-align: middle;
+  }
+
+  .navbar li select:hover {
+    color: #28D390;
+  }
+
+  body {
+    padding-top: 60px !important;
+  }
+
+  .book-header .btn {
+    color: #9297AA !important;
+  }
+
+  .book-header .btn:hover {
+    color: #7D8399 !important;
+  }
 </style>
 
 
 {{ super() }}
 
-
-<script>
-var vm = new Vue({
-  el: '#nav_header',
-  data: {
-    lang: /\/zh/.test(location.href) ? 'zh' : 'en',
-    version: '3.0',
-  },
-  methods: {
-    docsChangeLang: function() {
-      $docsChangeLang(this.lang)
-    },
-    docsChangeVersion: function() {
-      console.log('version')
-    },
-  },
-})
-
-var version = ['3.0']
-var doc = document.querySelector('#book-search-input input')
-if (doc.placeholder === '輸入並搜尋') {
-  doc.placeholder = '请输入并搜索'
-}
-var link = document.querySelector('.gitbook-link')
-
-if (link.text.includes('本書使用 GitBook 釋出')) {
-  link.text = '本书使用 GitBook 释出'
-}
-
-function $docsChangeLang(lang) {
-  lang = lang || 'zh'
-  var href = location.href
-  if (!['zh', 'en'].includes(lang) || href.includes('/' + lang)) {
-    return
-  }
-  location.href = href.replace(/\/zh|\/en/, '/' + lang)
-  console.log(href)
-}
-</script>
-
-<script src="https://www.emqx.io/static/lib/jquery-3.2.1.min.js"></script>
-<script src="https://www.emqx.io/static/lib/toolkit.min.js"></script>
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css" type="text/css" />
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css" />
 
 
 {% endblock %}
-
