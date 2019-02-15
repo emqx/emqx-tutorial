@@ -7,7 +7,8 @@
     "anchors",
     "copy-code-button",
     "anchor-navigation-ex",
-    "cuav-chapters"
+    "cuav-chapters",
+    "emqx-docs"
   ],
   "pluginsConfig": {
     "anchor-navigation-ex": {
@@ -23,7 +24,7 @@
   },
   "title": "EMQ X 在线手册",
   "author": "EMQX Team",
-  "language": "zh-hans",
+  "language": "zh",
   "links": {
     "sharing": {
       "facebook": false,

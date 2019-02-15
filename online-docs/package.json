@@ -7,6 +7,7 @@
   "license": "Apache 2.0",
   "private": true,
   "scripts": {
+    "serve": "gitbook serve",
     "docs": "gitbook install && gitbook serve",
     "html": "gitbook install && gitbook build . _book && npm run clear",
     "pdf": "gitbook install && gitbook pdf . _book.pdf",
