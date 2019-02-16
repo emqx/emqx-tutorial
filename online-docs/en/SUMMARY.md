@@ -41,7 +41,7 @@
  * [HiveMQ](bridge/hivemq_to_emqx.md)
  * [RabbitMQ](bridge/rabbitmq_to_emqx.md)
  * [VerneMQ](bridge/vernemq_to_emqx.md)
-* [Brige EMQ X to other message middleware](bridge/bridge_form_emqx.md)
+* [Brige EMQ X to other message middleware](bridge/emqx_to_mosquitto.md)
  * [Mosquitto](bridge/emqx_to_mosquitto.md)
  * [HiveMQ](bridge/emqx_to_hivemq.md)
  * [RabbitMQ](bridge/emqx_to_rabbitmq.md)
