@@ -66,8 +66,8 @@
 ## EMQ X configuration
 * [EMQ X configruation princinple](config/README.md)
 * [EMQ X configuration](config/feedback_please.md)
-  * [MQTT protocol](config/better_tools.md)
-  * [Connection/Listener](config/better_tools.md)
+  * [MQTT protocol](config/protocol.md)
+  * [Connection/Listener](config/listener.md)
   * [Zone](config/zone.md)
   * [Nodes](config/nodes.md)
   * [Session](config/session.md)
