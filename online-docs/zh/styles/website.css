@@ -2,13 +2,17 @@
     font-weight: normal !important;
 }
 
+.book p {
+    letter-spacing: 0.2px !important;
+}
+
 .markdown-section h1 {
     border-bottom: 1px solid #D7DAE1;
     padding-bottom: 20px;
 }
 
 .book-summary {
-    background-color: #f8f8f8;
+    background-color: #fafafa;
 }
 
 .book-summary ul.summary li.active {
@@ -20,9 +24,9 @@
 }
 
 /* 左侧 */
-.navigation {
+/* .navigation {
     width: 320px;
-}
+} */
 
 .navigation ul.summary {
     padding-left: 32px;
@@ -74,6 +78,3 @@ p img {
 .developer-center a {
     color: #28D390;
 }
-
-
-@media (min-width: 1200px) {}
