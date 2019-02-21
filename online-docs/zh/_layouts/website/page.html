@@ -6,27 +6,33 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 
-<nav id="nav_header" class="navbar navbar-default navbar-fixed-top navbar-padded app-navbar" style="margin-bottom: 0">
+<nav class="navbar navbar-default navbar-fixed-top navbar-padded app-navbar">
   <div class="container">
     <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed p-x-0" data-toggle="collapse" data-target="#navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
       <a class="navbar-brand" href="https://emqx.io">
-        <img src="https://developer.emqx.io/docs/emq/v3/en/static/images/logo.png" alt="">
+        <img src="https://developer.emqx.io/static/images/logo.png" alt="">
       </a>
     </div>
     <div class="navbar-collapse collapse" id="navbar-collapse">
       <ul class="nav navbar-nav">
         <li class="developer-center">
-          <a style="color: #28D390">Developer Center</a>
+          <a>Developer Center</a>
         </li>
         <li>
           <!--
-              <a class="github-button" href="https://github.com/emqtt/emqttd" data-icon="octicon-star" data-style="mega" data-count-href="/emqtt/emqttd/stargazers" data-count-api="/repos/emqtt/emqttd#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star emqtt/emqttd on GitHub">Star</a>
-            -->
+            <a class="github-button" href="https://github.com/emqtt/emqttd" data-icon="octicon-star" data-style="mega" data-count-href="/emqtt/emqttd/stargazers" data-count-api="/repos/emqtt/emqttd#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star emqtt/emqttd on GitHub">Star</a>
+          -->
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="https://developer.emqx.io/docs">Docs</a></li>
-        <li><a class="active" href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
+        <li><a class="active" href="https://developer.emqx.io/docs">Docs</a></li>
+        <li><a href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
         <li><a href="https://developer.emqx.io/sdk_tools?category=MQTT_Clients">SDK &amp; Tools</a></li>
         <li><a href="https://developer.emqx.io/blog?page=1">Blog</a></li>
         <li><a class="btn-download" href="https://emqx.io/downloads">Download</a></li>
@@ -42,7 +48,7 @@
 </div>
 <script>
 
-function toTop() {
+  function toTop() {
   var topBtn = document.querySelector('#anchorNavigationExGoTop')
   if (topBtn) {
     topBtn.click()
@@ -54,6 +60,7 @@ function toTop() {
   .book-header .js-toolbar-action.btn {
     display: none
   }
+
   .back-top {
     position: fixed;
     bottom: 5%;
@@ -87,6 +94,7 @@ function toTop() {
     position: fixed;
     bottom: 0;
     left: 0;
+    padding-left: 32px;
     width: 299px;
     border-top: 1px solid #E6E8F1;
   }
@@ -97,7 +105,7 @@ function toTop() {
 
   #version-toggle {
     display: block;
-    padding: 10px 15px;
+    padding: 10px 0;
     border-bottom: none;
     color: #364149;
     background: #fff;
@@ -108,9 +116,15 @@ function toTop() {
   }
 
   #version-toggle select {
-    border: none;
     font-size: 16px;
-    background-color: rgba(0, 0, 0, 0)
+    outline: none;
+    border: none;
+    appearance: none;
+    -moz-appearance: none;
+    padding-left: 12px;
+    -webkit-appearance: none;
+    background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
+    padding-right: 20px;
   }
 
   p {
@@ -126,17 +140,12 @@ function toTop() {
     padding: 0 32px;
   }
 
-  .navbar-nav>li>a:hover {
-    color: #06b777 !important;
-    background-color: transparent;
+  .navbar .navbar-nav>li>a {
+    font-weight: normal !important;
   }
 
-  .navbar .navbar-nav>li>a {
-    font-size: 16px;
-    font-weight: 300;
-    color: #adafb4;
-    padding-left: 20px;
-    padding-right: 20px;
+  .app-navbar .navbar-right>li>a:hover {
+    color: #009966 !important;
   }
 
   .navbar li select {
@@ -154,15 +163,12 @@ function toTop() {
     vertical-align: middle;
   }
 
-  .navbar li select:hover {
-    color: #28D390;
-  }
-
   body {
     padding-top: 60px !important;
   }
 
   .book-header .btn {
+    z-index: 1001;
     color: #9297AA !important;
   }
 
