@@ -1,6 +1,6 @@
 {
   "name": "online-docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EMQ X Online Docs",
   "main": "index.js",
   "author": "emqx team",
@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "serve": "gitbook serve",
-    "docs": "gitbook install && gitbook serve",
+    "docs": "gitbook install && serve",
     "html": "gitbook install && gitbook build . _book && npm run clear",
     "pdf": "gitbook install && gitbook pdf . _book.pdf",
     "mkdir": "node ./_tools/generate_summary.js",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "gitbook-cli": "^2.3.2",
-    "pangu": "^3.3.0",
-    "glob": "^7.1.3"
+    "glob": "^7.1.3",
+    "pangu": "^3.3.0"
   }
 }

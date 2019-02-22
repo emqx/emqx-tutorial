@@ -31,8 +31,8 @@
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a class="active" href="https://developer.emqx.io/docs">Docs</a></li>
-        <li><a href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
+        <li><a href="https://developer.emqx.io/docs">Docs</a></li>
+        <li><a class="active" href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
         <li><a href="https://developer.emqx.io/sdk_tools?category=MQTT_Clients">SDK &amp; Tools</a></li>
         <li><a href="https://developer.emqx.io/blog?page=1">Blog</a></li>
         <li><a class="btn-download" href="https://emqx.io/downloads">Download</a></li>
@@ -46,9 +46,11 @@
 <div class="back-top" onclick="toTop()">
   <img src="https://developer.emqx.io/docs/emq/v3/en/static/images/back-top.png" width="26px">
 </div>
+
+
 <script>
 
-  function toTop() {
+function toTop() {
   var topBtn = document.querySelector('#anchorNavigationExGoTop')
   if (topBtn) {
     topBtn.click()
@@ -57,131 +59,142 @@
 </script>
 
 <style>
-  .book-header .js-toolbar-action.btn {
-    display: none
-  }
+.book-header .js-toolbar-action.btn {
+  display: none
+}
 
-  .back-top {
-    position: fixed;
-    bottom: 5%;
-    right: 35px;
-    width: 38px;
-    height: 38px;
-    background: #333844;
-    text-align: center;
-    padding-top: 6px;
-    cursor: pointer;
-    z-index: 1111;
-  }
+.back-top {
+  position: fixed;
+  bottom: 5%;
+  right: 35px;
+  width: 38px;
+  height: 38px;
+  background: #333844;
+  text-align: center;
+  padding-top: 6px;
+  cursor: pointer;
+  z-index: 1111;
+}
 
-  #anchorNavigationExGoTop {
-    display: none;
-  }
+#anchorNavigationExGoTop {
+  display: none;
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: #333;
-    clear: both;
-    line-height: 26px
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #333;
+  clear: both;
+  line-height: 26px
+}
 
+.version--wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 299px;
+  border-top: 1px solid #E6E8F1;
+}
 
-  .version--wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    padding-left: 32px;
-    width: 299px;
-    border-top: 1px solid #E6E8F1;
-  }
+.book-summary ul.summary {
+  padding-bottom: 50px !important;
+}
 
-  .book-summary ul.summary {
-    padding-bottom: 50px !important;
-  }
+#version-toggle, #language-toggle {
+  display: block;
+  padding: 10px 0;
+  border-bottom: none;
+  color: #364149;
+  background: #fff;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  float: left;
+  position: relative;
+}
 
-  #version-toggle {
-    display: block;
-    padding: 10px 0;
-    border-bottom: none;
-    color: #364149;
-    background: #fff;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-  }
+#version-toggle {
+  width: 114px;
+  padding-left: 10px;
+}
 
-  #version-toggle select {
-    font-size: 16px;
-    outline: none;
-    border: none;
-    appearance: none;
-    -moz-appearance: none;
-    padding-left: 12px;
-    -webkit-appearance: none;
-    background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
-    padding-right: 20px;
-  }
+#language-toggle {
+  width: 179px;
+  float: right;
+  text-align: right;
+  padding-right: 10px;
+}
 
-  p {
-    color: #333;
-    font-size: 14px;
-    line-height: 24px;
-    margin: 10px 0 10px 0;
-  }
+#version-toggle select, #language-toggle select {
+  font-size: 16px;
+  outline: none;
+  border: none;
+  appearance: none;
+  -moz-appearance: none;
+  padding-left: 12px;
+  -webkit-appearance: none;
+  background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
+  padding-right: 20px;
+}
 
+p {
+  color: #333;
+  font-size: 14px;
+  line-height: 24px;
+  margin: 10px 0 10px 0;
+}
 
-  .navbar.navbar-default.navbar-fixed-top .container {
-    width: 100%;
-    padding: 0 32px;
-  }
+.navbar.navbar-default.navbar-fixed-top .container {
+  width: 100%;
+  padding: 0 32px;
+}
 
-  .navbar .navbar-nav>li>a {
-    font-weight: normal !important;
-  }
+.navbar .navbar-nav > li > a {
+  font-weight: normal !important;
+}
 
-  .app-navbar .navbar-right>li>a:hover {
-    color: #009966 !important;
-  }
+.app-navbar .navbar-right > li > a:hover {
+  color: #009966 !important;
+}
 
-  .navbar li select {
-    margin-top: 11px;
-    background-color: transparent;
-    border-color: transparent;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 300;
-    color: #adafb4;
-    padding: 4px 20px;
-    outline: none;
-    height: 30px;
-    line-height: 26px;
-    vertical-align: middle;
-  }
+.navbar li select {
+  margin-top: 11px;
+  background-color: transparent;
+  border-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 300;
+  color: #adafb4;
+  padding: 4px 20px;
+  outline: none;
+  height: 30px;
+  line-height: 26px;
+  vertical-align: middle;
+}
 
-  body {
-    padding-top: 60px !important;
-  }
+body {
+  padding-top: 60px !important;
+}
 
-  .book-header .btn {
-    z-index: 1001;
-    color: #9297AA !important;
-  }
+.book-header .btn {
+  z-index: 1001;
+  color: #9297AA !important;
+}
 
-  .book-header .btn:hover {
-    color: #7D8399 !important;
-  }
+.book-header .btn:hover {
+  color: #7D8399 !important;
+}
 </style>
 
 
 {{ super() }}
 
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css" type="text/css" />
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css" />
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
+      type="text/css"/>
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
 
 
 {% endblock %}
