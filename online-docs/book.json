@@ -22,7 +22,7 @@
     "mobi": "styles/mobi.css",
     "epub": "styles/epub.css"
   },
-  "title": "EMQ X 在线手册",
+  "title": "EMQ X Tutorial",
   "author": "EMQX Team",
   "language": "zh",
   "links": {

@@ -28,11 +28,11 @@
 
 ## Data Persistence (Enterprise)
 * [Data Persistence overview](backend/whats_backend.md)
-  * [Redis](backend/redis.md)
-  * [MySQL](backend/mysql.md)
-  * [PostgreSQL](backend/postgres.md)
-  * [MongoDB](backend/mongo.md)
-  * [Cassandra](backend/cassandra.md)
+* [Redis](backend/redis.md)
+* [MySQL](backend/mysql.md)
+* [PostgreSQL](backend/postgres.md)
+* [MongoDB](backend/mongo.md)
+* [Cassandra](backend/cassandra.md)
 
 
 ## Bridge
@@ -59,9 +59,10 @@
 
 
 ## Advanced
-* [Proxy subscription](advanced/proxy_subscription.md)
-* [Flow control ](advanced/dlow_control.md)
-* [Offline message](advanced/offline_message.md)
+* [Share subscription](advanced/share_subscribe.md)
+* [Local subscription](advanced/local_subscribe.md)
+* [Proxy subscription](advanced/proxy_subscribe.md)
+* [Rate limit](advanced/advanced.md#rate-limit)
 
 ## EMQ X configuration
 * [EMQ X configruation princinple](config/README.md)
