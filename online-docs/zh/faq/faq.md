@@ -71,14 +71,13 @@ EMQ X 企业版支持下载试用，用户可以在 [https://www.emqx.io/downloa
 
 ## Q: 怎样更新 EMQ X license?
       
-A: 你需要进行两步操作：
+点击 "Download License" 按钮下载 license, 然后找到您下载的 "license.zip" 文件并解压.
 
-1. 点击 "Download License" 之后, 浏览你下载的 "license.zip" 文件.
+复制压缩包里的两个文件 (emqx.lic, emqx.key) 到 EMQX 的 license 目录.
 
-2. 复制两个文件 (emqx.lic, emqx.key) 到 EMQ X license 目录.
-  - 如果你使用 zip 包安装, licenses 文件在 "emqx/etc/" 目录; 
-  - 使用 DEB/RPM 包安装, licenses 文件在 "/etc/emqx/" 目录;
-  - 使用 Docker 镜像, licenses 文件在 "/opt/emqx/etc/" 目录.
+如果您的 EMQX 是使用 zip 包安装的, 那么压缩包里的两个文件需要拷贝到 "emqx/etc/" 目录;
+如果是用 DEB/RPM 包安装的, 两个文件需要拷贝到 "/etc/emqx/" 目录;
+如果是用 Docker 镜像安装的, 两个文件需要拷贝到 "/opt/emqx/etc/" 目录.
 
 
 
