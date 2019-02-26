@@ -830,9 +830,6 @@ gitbook-cli@^2.3.2:
     tmp "0.0.31"
     user-home "2.0.0"
 
-"gitbook-plugin-emqx-docs@file:../../../workspace/gitbook-plugin-emqx-docs":
-  version "0.0.10"
-
 github-url-from-git@~1.4.0:
   version "1.4.0"
   resolved "http://registry.npm.taobao.org/github-url-from-git/download/github-url-from-git-1.4.0.tgz#285e6b520819001bde128674704379e4ff03e0de"
