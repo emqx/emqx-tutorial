@@ -79,8 +79,8 @@
 ## 配置 EMQ X
 * [EMQ X 的配置原则](config/README.md)
 * [EMQ X 的配置](config/feedback_please.md)
-  * [配置 MQTT 协议](config/better_tools.md)
-  * [连接 / Listener](config/better_tools.md)
+  * [配置 MQTT 协议](config/protocol.md)
+  * [连接 / Listener](config/listener.md)
   * [Zone](config/zone.md)
   * [节点](config/nodes.md)
   * [会话](config/session.md)

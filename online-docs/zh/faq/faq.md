@@ -68,6 +68,19 @@ EMQ X 企业版支持下载试用，用户可以在 [https://www.emqx.io/downloa
 
 - [青云](https://appcenter.qingcloud.com/search/category/iot)
 
+
+## Q: 怎样更新 EMQ X license?
+      
+点击 "Download License" 按钮下载 license, 然后找到您下载的 "license.zip" 文件并解压.
+
+复制压缩包里的两个文件 (emqx.lic, emqx.key) 到 EMQX 的 license 目录.
+
+如果您的 EMQX 是使用 zip 包安装的, 那么压缩包里的两个文件需要拷贝到 "emqx/etc/" 目录;
+如果是用 DEB/RPM 包安装的, 两个文件需要拷贝到 "/etc/emqx/" 目录;
+如果是用 Docker 镜像安装的, 两个文件需要拷贝到 "/opt/emqx/etc/" 目录.
+
+
+
 ## Q: EMQ X 提供方案咨询服务吗？
 
 A: 提供。EMQ X 在为客户搭建物联网平台的咨询方面有丰富的经验，包括为互联网客户和电信运营商搭建千万级物联网平台的实践。包括如何搭建负载均衡、集群、安全策略、数据存储和分析方案等方面可以根据客户的需求制定方案，满足业务发展的需求。
