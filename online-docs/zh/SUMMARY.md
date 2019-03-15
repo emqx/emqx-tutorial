@@ -72,7 +72,6 @@
 
 ## 进阶功能
 * [共享订阅](advanced/share_subscribe.md)
-* [本地订阅](advanced/local_subscribe.md)
 * [代理订阅](advanced/proxy_subscribe.md)
 * [流控](advanced/advanced.md#流控)
 

@@ -60,7 +60,6 @@
 
 ## Advanced
 * [Share subscription](advanced/share_subscribe.md)
-* [Local subscription](advanced/local_subscribe.md)
 * [Proxy subscription](advanced/proxy_subscribe.md)
 * [Rate limit](advanced/advanced.md#rate-limit)
 
