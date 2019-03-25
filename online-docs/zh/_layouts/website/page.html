@@ -6,8 +6,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 
-<nav class="navbar navbar-default navbar-fixed-top navbar-padded app-navbar">
-  <div class="container">
+<nav class="navbar navbar-default navbar-fixed-top app-navbar">
+  <div class="navbar-container container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed p-x-0" data-toggle="collapse" data-target="#navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
@@ -16,7 +16,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="https://emqx.io">
-        <img src="https://developer.emqx.io/static/images/logo.png" alt="">
+        <img src="https://developer.emqx.io/docs/emq/v3/en/static/images/logo.png" alt="">
       </a>
     </div>
     <div class="navbar-collapse collapse" id="navbar-collapse">
@@ -31,10 +31,18 @@
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="https://developer.emqx.io/docs">Docs</a></li>
-        <li><a class="active" href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
-        <li><a href="https://developer.emqx.io/sdk_tools?category=MQTT_Clients">SDK &amp; Tools</a></li>
-        <li><a href="https://developer.emqx.io/blog?page=1">Blog</a></li>
+        <li id="nav-docs" class="dropdown">
+          <a role="button">Docs
+            <span class="icon icon-chevron-down"></span>
+          </a>
+          <ul class="nav-popup" role="menu">
+            <li class="nav-item"><a href="/docs/emq">Broker</a></li>
+            <li class="nav-item"><a href="/docs/edge">Edge</a></li>
+          </ul>
+        </li>
+        <li><a href="/docs/tutorial/en">Tutorial</a></li>
+        <li><a href="/sdk_tools?category=MQTT_Clients">SDK & Tools</a></li>
+        <li><a href="/blog?page=1">Blog</a></li>
         <li><a class="btn-download" href="https://emqx.io/downloads">Download</a></li>
       </ul>
     </div>
