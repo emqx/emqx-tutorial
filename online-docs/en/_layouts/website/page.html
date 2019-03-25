@@ -2,6 +2,9 @@
 
 {% block body %}
 
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
+      type="text/css"/>
+<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
 <script type="text/javascript" src="https://developer.emqx.io/docs/emq/v3/en/_static/jquery.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
@@ -40,7 +43,7 @@
             <li class="nav-item"><a href="/docs/edge">Edge</a></li>
           </ul>
         </li>
-        <li><a href="/docs/tutorial/en">Tutorial</a></li>
+        <li><a class="active" href="/docs/tutorial/en">Tutorial</a></li>
         <li><a href="/sdk_tools?category=MQTT_Clients">SDK & Tools</a></li>
         <li><a href="/blog?page=1">Blog</a></li>
         <li><a class="btn-download" href="https://emqx.io/downloads">Download</a></li>
@@ -160,8 +163,8 @@ p {
   padding: 0 32px;
 }
 
-.navbar .navbar-nav > li > a {
-  font-weight: normal !important;
+.navbar, .navbar h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    font-family: "HanHei SC", "PingHei", "PingFang SC", "STHeitiSC-Light", "Microsoft YaHei", "Helvetica Neue", "Helvetica", "Arial", sans-serif !important;
 }
 
 .app-navbar .navbar-right > li > a:hover {
@@ -199,10 +202,6 @@ body {
 
 
 {{ super() }}
-
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/toolkit-startup.min.css"
-      type="text/css"/>
-<link rel="stylesheet" href="https://developer.emqx.io/docs/emq/v3/en/static/css/navbar.css" type="text/css"/>
 
 
 {% endblock %}
