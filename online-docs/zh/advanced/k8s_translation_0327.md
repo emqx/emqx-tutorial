@@ -3,7 +3,7 @@
 # Building an EMQ X application in a Kubernetes cluster
 
 ## Docker
-以Docker为代表的容器化来实现虚拟化是近年来的趋势，相较传统的虚拟化方式，容器内的应用进程可以直接运行在宿主系统的内核上，而容器自身并没有内核，也不需要进行硬件虚拟。因此，容器化的虚拟化方式比传统的虚拟化更加轻便灵活，对于宿主系统的资源利用率也更高。**<u>以虚拟机的方式，一台宿主设备可能可以虚拟十几个VM，同样的设备使用Docker容器的话，上百个容器运行在同一个宿主上也是可能的</u>**（可以变得有层次一些）。同时，由于Docker镜像提供除了内核以外的完整的运行时，**<u>也保证了容器的环境一致性，使得应用在开发和生产中的应用环境一致，避免出现环境不一致引起的运行结果不一致(语言不够简练)。</u>**
+以Docker为代表的容器化来实现虚拟化是近年来的趋势，相较传统的虚拟化方式，容器内的应用进程可以直接运行在宿主系统的内核上，而容器自身并没有内核，也不需要进行硬件虚拟。因此，容器化的虚拟化方式比传统的虚拟化更加轻便灵活，对于宿主系统的资源利用率也更高。**<u>以虚拟机的方式，一台宿主设备可能可以虚拟十几个VM，同样的设备使用Docker容器的话，上百个容器运行在同一个宿主上也是可能的</u>**（可以变得有层次一些）。同时，由于Docker镜像提供除了内核以外的完整的运行时，**<u>也保证了容器的环境一致性，使得应用在开发和生产中的应用环境一致，避免出现环境不一致引起的运行结果不一致(语言不够简练)  。</u>**
 
 Virtualization realized from containerization represented by Docker is a trend in recent years. Compared with the traditional virtualization method, the application process in the container can run directly on the kernel of the host system. Since the container does not have a kernel and hardware virtualization is not required, containerized virtualization is more portable and flexible than traditional virtualization, and resource utilization for host systems is higher as well. In the methodology of a virtual machine, it is possible for a host device to virtualize a dozen VMs. If a Docker container is used by the same device, it is also possible to run hundreds of containers on the same host. At the same time, because the Docker image provides a complete runtime in addition to the kernel, it also ensures the environmental consistency of the container, which makes the application environment  in development and production consistent  and  avoids inconsistencies in operating results caused by environmental inconsistencies.
 
