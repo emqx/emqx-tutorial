@@ -1,8 +1,8 @@
 # 在Kubernetes集群中构建 EMQ X 应用
 ## Docker
-以Docker为代表的容器化来实现虚拟化是近年来的趋势，相较传统的虚拟化方式，容器内的应用进程可以直接运行在宿主系统的内核上，而容器自身并没有内核，也不需要进行硬件虚拟。因此，容器化的虚拟化方式比传统的虚拟化更加轻便灵活，对于宿主系统的资源利用率也更高。以虚拟机的方式，一台宿主设备可能可以虚拟十几个VM，同样的设备使用Docker容器的话，上百个容器运行在同一个宿主上也是可能的。同时，由于Docker镜像提供除了内核以外的完整的运行时，也保证了容器的环境一致性，使得应用在开发和生产中的应用环境一致，避免出现环境不一致引起的运行结果不一致。
+以Docker为代表的容器化来实现虚拟化是近年来的趋势，相较传统的虚拟化方式，容器内的应用进程可以直接运行在宿主系统的内核上，而容器自身并没有内核，也不需要进行硬件虚拟。因此，容器化的虚拟化方式比传统的虚拟化更加轻便灵活，对于宿主系统的资源利用率也更高。以虚拟机的方式，一台宿主设备可能可以虚拟十几个VM，而同样的设备使用Docker容器的话，上百个容器运行在同一个宿主上也是可能的。同时，由于Docker镜像提供除了内核以外的完整的运行时，也保证了容器的环境一致性，使得应用在开发和生产中的环境一致，避免出现环境不一致引起的运行结果不一致。
 
-在实践上，Docker也可以被看成是将应用程序的环境、执行文件和命令行等打包在一起。这样的包被称为镜像（image），然后在宿主（物理设备或虚拟机）上部署和运行这个镜像。一旦运行起来，这个运行中的镜像就是一个容器。这个容器运行在一个封闭隔离的环境中，在这个环境里，被运行的程序往往是系统中唯一的一个程序。一个宿主，可以运行多个容器，而容器和容器之间并不知道对方的存在。一个容器只完成一个任务。
+在实践上，Docker也可以被看成是应用程序的环境、执行文件和命令行等打包在一起。这样的包被称为镜像（image），然后在宿主（物理设备或虚拟机）上部署和运行这个镜像。一旦运行起来，这个运行中的镜像就是一个容器。这个容器运行在一个封闭隔离的环境中，在这个环境里，被运行的程序往往是系统中唯一的一个程序。一个宿主，可以运行多个容器，而容器和容器之间并不知道对方的存在。一个容器只完成一个任务。
 
 从运维角度来说，引入容器可以大幅度的降低对服务器的手工操作。以容器方式存在的服务都可以以工具启动和配置，并以工具维护和伸缩。
 
@@ -10,9 +10,9 @@
 
 
 ## Kubernetes
-Kubernetes是Google在2014年启动的一个开源容器集群管理项目。它为基础设施容器化提供了强大的支持，它的众多功能可以完成应用的快速自动部署、扩容、升级等功能。同时又保持了良好的中立性和开放性，开发语言无关，易于扩展，并且可以移植到公有、私有云等各种环境。
+Kubernetes是Google在2014年启动的一个开源容器集群管理项目。它为基础设施容器化提供了强大的支持，可以完成应用的快速自动部署、扩容、升级等功能。Kubernetes同时又保持了良好的中立性和开放性，它和开发语言无关，易于扩展，并且可以移植到公有、私有云等各种环境。
 
-Kubernetes的架构比较复杂，学习曲线也比较陡峭，如果您是第一次接触Kubernetes，一开始您就会看到许多可能是陌生的概念。但是一旦您熟悉之后，就会体会到它的强大。本文尽量将覆盖范围限制在运行EMQ X所必须的程度。如果您需要更详细的Kubernetes知识细节，您可以访问[Kubernetes的官方文档](https://kubernetes.io/docs/home/)。
+Kubernetes的架构比较复杂，学习曲线也比较陡峭，如果您是第一次接触Kubernetes，一开始您就会看到许多可能是陌生的概念。但是一旦您熟悉之后，就会体会到它的强大。本文仅介绍运行EMQ X必须的部分。如果您需要更详细的Kubernetes知识细节，您可以访问[Kubernetes的官方文档](https://kubernetes.io/docs/home/)。
 
 下图来自Kubernetes.io，展示了Kubernetes的架构。
 
@@ -28,7 +28,7 @@ Kubernetes使用各种的资源组合成集群（Kubernetes cluster），这些�
 
 * Pod
 
-  Pod是Kubernetes管理的最底层的抽象。一个Pod可以包含一个或者多个容器。这些容器运行在同一个节点上，斌且共享这个节点的资源。在同一个Pod中的容器可以通过Localhost方式通讯。
+  Pod是Kubernetes管理的最底层的抽象。一个Pod可以包含一个或者多个容器。这些容器运行在同一个节点上，并且共享这个节点的资源。在同一个Pod中的容器可以通过Localhost方式通讯。
 
   Pod是Kubernetes中的不可变层（immutable layer）。Pod不会被升级，只会被关闭、丢弃或者替代。Pod的配置和管理可以通过“部署”来完成。
 
@@ -68,7 +68,7 @@ Kubernetes是分布式的集群，由多个节点组成。在本文中我们将�
 * Kubelet
 * Kubectl
 
-要以上软件包需要添加google的repo到apt的资源列表中，添加google的apt key，并安装apt的https传输支持。非Ubuntu系统的安装方法类似。
+要安装以上软件包需要添加google的repo到apt的资源列表中，添加google的apt key，并安装apt的https传输支持。非Ubuntu系统的安装方法类似。
 
 ```
 $ sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -105,7 +105,7 @@ To start using your cluster, you need to run the following as a regular user:
 
 ```
 
-在屏幕输出的最后，会有如下包含token和cert has的命令提示，请做好记录。之后工作节点加入集群需要用到：
+在屏幕输出的最后，会有如下包含token和cert hash的命令提示，请做好记录。之后工作节点加入集群需要用到：
 
 ```
 You can now join any number of machines by running the following on each node
@@ -114,10 +114,6 @@ as root:
   kubeadm join 192.168.1.184:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
 
 ```
-
-
-
-
 
 列出运行中的container应该能看到类似以下内容：
 
@@ -139,7 +135,7 @@ d63a1c63ac22        k8s.gcr.io/pause:3.1   "/pause"                 45 seconds a
 
 
 
-以安装podnetwork（以flannel为例）:
+安装podnetwork（以flannel为例）:
 
 ```
 $ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
@@ -170,11 +166,11 @@ KubeDNS is running at https://192.168.1.184:6443/api/v1/namespaces/kube-system/s
 
 ## Kubernetes 工作节点
 
-工作节点是Kubernetes运行引用程序服务Pod的节点。它收主控节点的管理，主控节点可以将Pod分发至发工作节点，并启停Pod。
+工作节点是Kubernetes运行引用程序服务Pod的节点。它受主控节点的管理，主控节点可以将Pod分发至发工作节点，并启停Pod。
 
 通主控节点一样，在工作节点上也需要安装`Docker`和`kubeadm`、`kubelet`、`kubectl`。注意在工作节点上的Docker版本应该于主控节点的保持一致，否则有可能导致工作节点长时间出于NotReady状态。安装过程同上。
 
-在安装完成之后，工作节点上不需要使用kubeadm对集群进行初始化（已经在主控节点上完成）。这里只需要以root身份运行在主控节点初始化完成是系统给出的命令来加入集群即可。
+在安装完成之后，工作节点上不需要使用kubeadm对集群进行初始化（已经在主控节点上完成），只需要以root身份运行主控节点初始化完成时系统给出的命令加入集群即可。
 
 加入集群：
 
@@ -205,7 +201,7 @@ emq2       NotReady   <none>   10s     v1.13.3
 ubuntu18   Ready      master   44m     v1.13.3
 ```
 
-到这一步，我们的1主控节点+2工作节点的Kubernetes集群就建立完成了。
+到这一步，我们的1主控节点和2工作节点的Kubernetes集群就建立完成了。
 
 
 
@@ -218,7 +214,7 @@ $ kubectl create namespace kube-emqx
 namespace/kube-emqx created
 ```
 
-为了EMQ X镜像打包在pod中，我们创建一个yaml文件（emqx-pod.yaml）来定义这个资源。
+为了将EMQ X镜像打包在pod中，我们创建一个yaml文件（emqx-pod.yaml）来定义这个资源。
 
 文件emqx-pod.yaml的一个示例：
 
@@ -292,7 +288,7 @@ spec:
       protocol: TCP
 ```
 
-在以上配置中，我们用选择起选择了标签问mqtt的pod，以NodePort的方式，将emqx的mqtt broker服务对外暴露。NodePort是一种简单的服务暴露方式，他将服务开放节点上的的端口，再将这些端口暴露给外界。在默认情况下，对外暴露的端口号需要大于30000。可以指定一个端口号，也可以有系统自动配置。上例中，我们把节点上31883端口对外暴露并向内对应容器中emqx应用的1883端口，把节点的30083端口对外暴露并向内对应容器中emqx应用的18083端口。
+在以上配置中，我们选择了标签为mqtt的pod，以NodePort的方式，将emqx的mqtt broker服务对外暴露。NodePort是一种简单的服务暴露方式，他将服务开放节点上的的端口，再将这些端口暴露给外界。在默认情况下，对外暴露的端口号需要大于30000。可以指定一个端口号，也可以有系统自动配置。上例中，我们把节点上31883端口对外暴露并向内对应容器中emqx应用的1883端口，把节点的30083端口对外暴露并向内对应容器中emqx应用的18083端口。
 
 
 
