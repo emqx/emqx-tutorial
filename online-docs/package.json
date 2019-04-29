@@ -9,11 +9,12 @@
   "scripts": {
     "serve": "gitbook serve",
     "docs": "gitbook install && gitbook serve",
-    "html": "gitbook install && gitbook build . _book && npm run clear",
+    "html": "gitbook install && gitbook build . _book && npm run clear && npm run icon",
     "pdf": "gitbook install && gitbook pdf . _book.pdf",
     "mkdir": "node ./_tools/generate_summary.js",
     "lint": "node ./_tools/style_lint.js",
-    "clear": "node ./_tools/clear.js"
+    "clear": "node ./_tools/clear.js",
+    "icon": "node _tools/icon.js"
   },
   "dependencies": {
     "gitbook-cli": "^2.3.2",
