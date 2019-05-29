@@ -64,7 +64,7 @@ EMQ X 企业版支持下载试用，用户可以在 [https://www.emqx.io/downloa
 
 另外，还可以在公有云直接创建 EMQ X 企业版：
 
-- [阿里云](https://market.aliyun.com/products/56014009/cmjj029182.html?spm=5176.730005.productlist.d_cmjj029182.53cf3524sCmfnp)
+- [阿里云](https://market.aliyun.com/products/56014009/cmjj029979.html?spm=5176.730005.productlist.d_cmjj029979.69013524xism4L&innerSource=search_EMQ)
 
 - [青云](https://appcenter.qingcloud.com/search/category/iot)
 

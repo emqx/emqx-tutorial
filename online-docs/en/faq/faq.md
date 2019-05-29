@@ -42,7 +42,7 @@ EMQ X Enterprise can be downloaded and evaluated for free.  You can download it 
 
 Also you can use the EMQ X enterprise version through public cloud service.
 
-- [TODO AWS](https://www.emqx.io)
+- [AWS](https://aws.amazon.com/marketplace/pp/B07N2ZFVLX?qid=1552872864456&)
 
 
 ## Q: How to update EMQ X license?
