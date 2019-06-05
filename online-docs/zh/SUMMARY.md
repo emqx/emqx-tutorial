@@ -24,6 +24,14 @@
     * [使用 ETCD 的自动集群](cluster/etcd.md)
     * [在 K8S 上集群 EMQ X](cluster/k8s.md)
     * [为 EMQ X 集群配置负载均衡](cluster/balancer.md)
+    
+## 规则引擎 (新)
+* [规则引擎概览](rule_engine/rule_engine.md)
+* [动作与资源](rule_engine/resource_action.md)
+* [配置示例](rule_engine/example.md)
+* [SQL 手册](rule_engine/sql.md)
+
+
 
 ## 数据持久化（企业版）
 * [数据持久化概览](backend/whats_backend.md)
