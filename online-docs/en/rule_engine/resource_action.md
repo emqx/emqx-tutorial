@@ -1,41 +1,42 @@
-# 资源与动作
+# Resource and Action
 
 
-## 资源
+## Resource
 
-为便于规则创建于维护，EMQ X 将规则引擎动作相关的资源独立管理。
+To facilitate the creation and maintenance of rules, EMQ X manages the resources associated with the rules engine actions independently.
 
-资源保存了规则引擎动作所需的资源实例(如数据库连接，Web Server 的连接地址、请求方法与认证方式等)，创建规则前需要创建相关动作所需资源并保证资源可用。
-
-
-## 动作
-
-规则引擎处理流程中，数据经过规则筛选、处理最后将交由动作处理。
-
-规则通过动作输出数据，最终实现数据持久化、设备状态切换、事件通知等业务功能。
-
-动作定义了针对数据的操作，大部分动作需要绑定资源并配置数据写入、传递的格式与额外参数（如执行的 SQL 语句模板、消息重发布的主题信息）。
+The resource saves the resource instance (such as database connection, Web Server connection address, request method, and authentication mode) required by the rule engine action. Before creating the rule, you need to create the resources required by the related action and ensure that the resource is available.
 
 
-规则引擎内置了多种动作：
+## Action
 
-- 检查调试：简单打印数据内容和动作参数，用于开发调试、运维排错等；
-- 发送数据到 Web 服务：将数据发送到 HTTP 协议相关的 API 网关，支持常见的公有云函数计算、私有部署服务器、WehHook 等，数据处理较为灵活；
-- 消息重新发布：消息重新发布到指定主题，用于消息汇聚、重导向等。
+In the rule engine processing flow, the data is filtered by the rules at first, and  is processed by the action in the end.
 
-对于企业版，规则引擎支持更多动作：
+The rules output data through actions, and finally implement business functions such as data persistence, device state switching, and event notification.
 
-**数据桥接：**
-- 桥接数据到 Kafka：桥接数据到 Kafka
-- 桥接数据到 RabbitMQ：桥接数据到 RabbitMQ
-
-**数据持久化：**
-- 保存数据到 Cassandra：将数据保存到 Cassandra 数据库
-- 保存数据到 MongoDB：保存数据到 MongoDB
-- 保存数据到 MySQL：将数据保存到 MySQL 数据库
-- 保存数据到 OpenTSDB：将数据存储到 OpenTSDB 数据库
-- 保存数据到 PostgreSQL：将数据存储到 PostgreSQL 数据库
-- 保存数据到 Redis：保存数据到 Redis
-- 保存数据到 TimescaleDB：将数据存储到 TimescaleDB 数据库
+Actions define operations on data. Most actions require binding resources and configuring the format in which data is written and passed, and additional parameters (such as executed SQL statement templates, topic information for message republish).
 
 
+The rules engine has a variety of built-in actions:
+
+- Check and debug: simply print data content and action parameters for development and debugging, operation and maintenance troubleshooting, and so on.
+- Send data to the Web service: Send data to the API gateway related to the HTTP protocol, support common public cloud function calculation, private deployment server, WehHook, etc., and the data processing is flexible;
+- Message republish: The message is republished to the specified topic for message aggregation, redirection, and so on.
+
+For the Enterprise version, the rules engine supports more actions:
+
+**Data Bridging:**
+
+- Bridge data to Kafka: Bridge data to Kafka
+-  Bridge data to RabbitMQ: Bridge data to RabbitMQ
+
+**Data persistence：**
+
+- Save data to Cassandra: save data to Cassandra database
+
+- Save data to MongoDB: Save data to MongoDB
+- Save data to MySQL: save data to MySQL database
+- Save data to OpenTSDB: save data to OpenTSDB database
+- Save data to PostgreSQL: save data to a PostgreSQL database
+- Save data to Redis: Save data to Redis
+- Save data to TimescaleDB: save data to TimescaleDB database

@@ -1,47 +1,47 @@
-# 配置实例
+# Configuration examples
 
-本篇提供两个示例，通过 Dashboard 可视化界面演示规则引擎的创建于使用。
+This article provides two examples to demonstrate the creation and use of the rules engine through the dashboard visual interface.
 
 
 
-## 示例一：通过 Web Server 持久化消息到磁盘/数据库
+## Example 1: Persist messages to disk/database via Web Server
 
-### 场景描述
+### Scenario Description
 
-该场景中拟设车联网卡车车载传感器通过 `/monitor/:device_id/state` 主题上报如下 JSON 消息(device_id 为车辆连接客户端的 client_id，同车辆 ID)：
+In this scenario, the on-board sensor of the truck from vehicle networking is used to report the following JSON message through the topic of `/monitor/:device_id/state`(device_id is the client_id of the vehicle connection client, the same with vehicle ID):
 
 ```js
 {
-  "speed": 20, // 实时车速(千米/小时)
-  "lng": 102.8622543812, // 位置经度
-  "lat": 24.8614503916, // 位置纬度
-  "load": 1200101 // 载重量(千克)
+  "speed": 20, // Real-time speed (km/h)
+  "lng": 102.8622543812, // Position longitude  
+  "lat": 24.8614503916, // Position latitude
+  "load": 1200101 // Load capacity (kg)
 }
 ```
 
-规则引擎需要将车速大于 60 km/h 的数据发送到 Web Server 进行持久化处理，以便后期结合地理位置进行是否超速判定。
+Rule engine needs to send data at speeds greater than 60 km/h to Web Server for persistence processing, so as to determine whether speeding occurs in the later period combined with geographical location.
 
-> 使用 Web Server 持久化设备消息从吞吐性能与消息一致性上考量都略显不足，此处仅为规则引擎体验示例，如有相关场景请尝试数据桥接、直接持久化到数据库等方案。
+> With consideration of throughput performance and message consistency, it is not enough to  persist device messages by using Web Server . Here is just a rule engine experience example. If you have related scenarios, try the scheme of data bridging or directly persisting to the database.
 
 
 
-### 准备
+### Preparation
 
-#### 编写 HTTP 接口，准备接收并处理规则引擎的消息
+#### Write HTTP interface to receive and process messages from rule engine
 
-该部分示例代码如下：
+The sample code of this section is as follows:
 
 ```js
 'use strict'
 const http = require('http')
 const execSync = require('child_process').execSync
-// 初始化全局变量用于计数
+// Initialize global variables for counting
 let msg_num = 0
 http.createServer((req, res) => {
 
   const { token } = req.headers
   console.log('message coming', 'token:', token)
-  // 简单的认证
+  // Simple authentication
   if (!token || token !== 'web_token') {
     return res.end('-1')
   }
@@ -53,11 +53,11 @@ http.createServer((req, res) => {
     body = body.toString()
     try {
       const message = JSON.parse(body)
-      // 附加时间戳
+      // Additional timestamp
       /** @type {number} */
       message.ts = Date.now()
       message.index = msg_num
-      // 持久化数据到磁盘，实际根据业务处理
+      // Persist data to disk, actually processed according to business
       execSync(`echo '${JSON.stringify(message)}' >> message.log`)
       msg_num = msg_num + 1
       res.end(msg_num.toString())
@@ -67,30 +67,28 @@ http.createServer((req, res) => {
   })
 }).listen(8888, () => {
   console.log('Listen on 8888')
-}) // 监听 8888 端口
+}) // Listen on port 8888
 
 ```
 
 
 
-#### 本地启动服务
+#### Startup service locally
 
-使用 Node.js 快速在本地启动服务器
+Quickly start the server locally using Node.js
 
 ```bash
 node app.js
 > Listen on 8888
 ```
 
->  此处使用依赖极简代码示例，实际开发中应当有完备的权限校验、数据校验操作。
+>  The example of dependency minimalist code is used here. In the actual development, there should be complete permission verification and data verification operations.
 
 
 
+### Create a persistent API interface in the resource
 
-
-### 在资源中创建持久化 API 接口
-
-在 **Dashboard** --> **规则引擎** -->  **资源** 页面点击右上角，点击 **新建** 按钮，选择 WebHook 资源类型，填入接入地址与认证信息：
+In the page of **Dashboard** --> **Rules Engine** --> **Resources**, click the **New** button on the top right , select the WebHook resource type, and fill in the access address and authentication information:
 
 ![image-20190605121921163](../assets/image-20190605121921163.png)
 
@@ -98,24 +96,24 @@ node app.js
 
 
 
-### 创建规则
+### Create rules
 
-资源创建完毕后我们可以进行规则创建，**规则引擎** --> **规则** 页面中点击 **新建** 按钮进入规则创建页面。
+After the resource is created, we can create the rule. Click the **New** button in the page of  **Rule Engine -->  Rule**   to enter the rule creation page.
 
-#### 触发事件选择
+#### Trigger event selection
 
-选择 **消息发布** 事件，处理卡车消息上报(发布)时的数据。本示例中我们需要存储的消息如下：
+Select the **Message Publish** event to process the data when the truck message was reported (published). The message we need to store in this example is as follows:
 
 ```js
 {
-  "speed": 20, // 实时车速(千米/小时)
-  "lng": 102.8622543812, // 位置经度
-  "lat": 24.8614503916, // 位置纬度
-  "device_id": "" // 车辆 ID 信息
+  "speed": 20, // Real-time speed (km/h)
+  "lng": 102.8622543812, // Position longitude
+  "lat": 24.8614503916, // Position latitude
+  "device_id": "" // Vehicle ID 
 }
 ```
 
-根据 **可用字段** 提示，`device_id` 字段相当于 client_id 可以从上下文中选取，`speed` 等信息则从 `payload` 中选取，规则 SQL 如下：
+According to the **Available Fields** prompt, the `device_id` field is equivalent to the client_id that can be selected from the context, and the information such as `speed` is selected from `payload`. The rule SQL is as follows:
 
 ```sql
 SELECT 
@@ -126,7 +124,7 @@ SELECT
 FROM "message.publish"
 ```
 
-该条规则默认处理全部的消息，实际上业务仅需处理 `/monitor/+/state`  主题下的消息(使用了主题通配符)，且 `speed` 的值应当大于 60，我们给规则加上限定条件：
+This rule handles all messages by default. In fact, the business only needs to process messages under `/monitor/+/state` topic (using topic wildcards), and the value of speed should be greater than 60. We add restrictions to the rule:
 
 ```sql
 SELECT 
@@ -140,7 +138,7 @@ WHERE
   speed > 60
 ```
 
-使用 SQL 测试功能，输入原始上报数据与相关变量，设置 `speed > 60` 之后，得到如下输出结果：
+Using the SQL test function, input the original report data and related variables, set `speed > 60`, and get the following output:
 
 ```json
 {
@@ -153,29 +151,29 @@ WHERE
 
 
 
-#### 将消息发送到 Web Server
+#### Send messages to Web Server
 
-新建响应动作并选取 **发送数据到 Web 服务**，选择准备工作中创建的资源，保存该条规则。
-
-
-
-### 示例测试
-
-我们成功创建了一条规则，一共包含一个处理动作，动作期望效果如下：
-
-- 向 `/monitor/+/state` 主题发布消息时，当消息体是符合预期的 JSON 格式且 `speed` 数值大于 60，规则将命中并向 Web Server 处理后的消息，Web Server 根目录下 `message.log` 文件将新增新增写入该条数据。
+Create a new response action and select ** to send data to Web Services **, select the resources created in preparation, and save the rule.
 
 
 
-#### 使用 Dashboard 中的 Websocket 工具测试
+### Example Test
 
-切换到 **工具** --> **Websocket** 页面，客户端 ID，用户名，密码均填写 `emqx_c` 模拟设备接入：
+We succeeded in creating a rule that contains a processing action. The expected effect of the action is as follows:
+
+-  When a message is published to the `/monitor/+/state` topic, the message body conforms to the expected JSON format and the value of `'speed'` is greater than 60, the rule will be hit and send the processed message to the Web Server. The file `message.log` under the Web Server root directory  will write in the newly added data.
+
+
+
+#### Test with the Websocket tool in Dashboard
+
+Switch to the page of  **tool  ->** **Websocket** , fill the field of client ID, user name, password  with `'emqx_c'` to analog device access:
 
 ![image-20190605105414993](../assets/image-20190605105414993.png)
 
 
 
-连接成功后向 `/monitor/emqx_c/state` 主题发送如下消息：
+When the connection is successful, the following message is sent to the ``monitor/emqx_c/state'` topic:
 
 ```json
 {
@@ -186,9 +184,9 @@ WHERE
 }
 ```
 
-由于 `speed` 小于预设的 60，查看持久化文件  `message.log` 该条消息并未命中规则。
+Since `speed` is less than the preset 60, look at the persistent file `message.log and find that the  message does not hit the rule.
 
-调整 `speed` 值为 90，单击发送按钮三次，查看文件  `message.log` 中持久化的消息内容如下：
+Adjust the `speed` value to 90, click the Send button three times, and view the message of persistence  in the file `message.log` as follows:
 
 ```json
 {"speed":90,"lng":102.8622543812,"lat":24.8614503916,"device_id":"emqx_c","ts":1559711462746,"index":0}
@@ -198,34 +196,34 @@ WHERE
 
 
 
-至此，我们实现了通过 Web Server 持久化消息到磁盘的业务开发。
+So far, we have implemented business development that persists messages to disk through Web Server.
 
 
 
-## 示例二：设备在线状态记录与上下线通知
+## Example 2: Device online status record and notification for online or offline 
 
 
-### 场景描述
+### Scenario Description
 
-该场景中需要标记接入 EMQ X 的设备在线状态，在 MySQL 中记录设备上下线日志，同时设备下线时通过 HTTP API 通知告警系统。
+In this scenario, it is necessary to mark the online status of devices connected to EMQ X, record the online and offline log of the device in MySQL, and notify the alarm system via HTTP API when the device is offline.
 
-> MySQL 部分功能仅限企业版
+> Part of MySQL functionality is limited to Enterprise version
 
 
-### 准备
+### Preparation
 
-初始化 MySQL 设备表 `devices` 与 连接记录表 `device_connect_log`
+Initialize the MySQL device table `devices` and the connection record table `device_connect_log`
 
 ```sql
--- 设备表
+-- Device table
 CREATE TABLE `emqx`.`devices` (
   `id` INT NOT NULL,
-  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT '客户端 ID',
-  `state` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '状态 0 离线 1 在线',
-  `connected_at` VARCHAR(45) NULL COMMENT '连接时间，毫秒级时间戳',
+  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT 'Client ID',
+  `state` TINYINT(3) NOT NULL DEFAULT 0 COMMENT 'Status 0 Offline 1 Online',
+  `connected_at` VARCHAR(45) NULL COMMENT 'Connection time，Millisecond timestamp',
   PRIMARY KEY (`id`));
 
--- 初始化数据
+-- Initialize data
 
 INSERT INTO `emqx`.`devices` (`client_id`) VALUES ('emqx_c');
 
@@ -233,21 +231,21 @@ INSERT INTO `emqx`.`devices` (`client_id`) VALUES ('emqx_c');
 ```
 
 ```sql
--- 连接记录表
+-- Connection record table
 CREATE TABLE `emqx`.`device_connect_log` (
   `id` INT NOT NULL,
-  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT '客户端 ID',
-  `action` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '动作 0 其他 1 上线 2 下线 3 订阅 4 取消订阅',
-  `target` VARCHAR(255) NULL COMMENT '操作目标',
-  `create_at` VARCHAR(45) NULL COMMENT '记录时间',
+  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT 'Client ID',
+  `action` TINYINT(3) NOT NULL DEFAULT 0 COMMENT 'Action 0 Else 1 Online 2 Offline 3 Subscribe 4 Unsubscribe',
+  `target` VARCHAR(255) NULL COMMENT 'Operation target',
+  `create_at` VARCHAR(45) NULL COMMENT 'Record time',
   PRIMARY KEY (`id`));
 ```
 
 
 
-#### 在资源中创建 MySQL 连接
+#### Create MySQL connection in resource
 
-在 **Dashboard** --> **规则引擎** -->  **资源** 页面点击右上角，点击 **新建** 按钮，选择 MySQL 资源类型，填入相关参数创建 MySQL 连接资源，保存配置前可点击 **测试连接** 进行可用性测试：
+Click the **New** button at  the upper right corner of the page **Dashboard** --> **Rules Engine** --> **Resources** , select the MySQL resource type, and fill in the relevant parameters to create the MySQL connection resource. Before saving the configuration, click **Test Connection** for usability testing:
 
   ![image-20190604164928655](../assets/image-20190604164928655.png)
 
@@ -255,9 +253,9 @@ CREATE TABLE `emqx`.`device_connect_log` (
 
 
 
-#### 在资源中创建告警 API 接口
+#### Create alert API interface in the resource
 
-重复资源创建操作，创建 WehHook 类型的资源用于设备下线通知。此处用户可根据业务逻辑自行开发告警服务：
+Repeat the resource creation operation to create a WehHook type resource for device offline notification. The users can develop their own alarm services based on business logic here:
 
 ![image-20190604165353354](../assets/image-20190604165353354.png)
 
@@ -265,29 +263,29 @@ CREATE TABLE `emqx`.`device_connect_log` (
 
 
 
-### 创建规则
+### Create rules
 
-资源创建完毕后我们可以进行规则创建，**规则引擎** --> **规则** 页面中点击 **新建** 按钮进入规则创建页面。
+After the resource is created, we can create the rule. Click the **New** button in the page of **Rule Engine  -->  Rule ** to enter the rule creation page.
 
-#### 触发事件选择
+#### Trigger event selection
 
-设备上下、线对应的事件分别是 **连接完成** 与 **连接断开**，首先选择 **连接完成** 事件进行上线记录：
+The events corresponding to the online and offline of the device are **Connection completed** and **Disconnection**, select **Connection completed** event to go online at first:
 
 ![image-20190604170304270](../assets/image-20190604170304270.png)
 
 
 
-#### 创建上线处理规则
+#### Create online processing rule
 
-**SQL 测试与动作创建：**
+**SQL test and action creation:**
 
-通过界面上的 **可用字段** 提示，编写规则 SQL 语句选取 `client_id` 与 `connected_at` 如下：
+According to the **Available Fields** prompt on the interface, write the rule SQL statement to select `client_id` and `connected_at`:
 
 ```sql
 SELECT client_id, connected_at FROM "client.connected"
 ```
 
-点击 **SQL 测试**进行 SQL 输出测试，该条 SQL 执行输出为：
+Click **SQL Test** to perform the SQL output test. The SQL execution output is as follows:
 
 ```json
 {
@@ -296,11 +294,11 @@ SELECT client_id, connected_at FROM "client.connected"
 }
 ```
 
-即响应动作中将拿到上述数据。
+The response action  will get the above data.
 
-新建响应动作并选取 **保存数据到 MySQL**，选择准备工作中创建的 MySQL 资源，输入 **SQL 模板** 配置该条数据写入规则，使用类似 `${x}` 的魔法变量可以将规则筛选出来的数据替换进 SQL 语句。
+Create a new response action and select **Save Data to MySQL**, select the MySQL resource created in the preparation work, enter **SQL template** to configure the data writing rule, use magic variable like `${x}` to replace the data filtered by the rule into the SQL statement.
 
-根据 `client_id` 更新设备的 `state` 为 1，表示设备在线
+According to `client_id`, update the device's `state` to 1 which indicates that the device is online.
 
 ```sql
 UPDATE `devices` 
@@ -313,7 +311,7 @@ UPDATE `devices`
 
 
 
-**再添加一个动作，在设备连接表 中插入一条记录，记录设备上线历史：**
+**Add another action and insert a record in the device connection table to record the device's online history:**
 
 ``` sql
 INSERT INTO `device_connect_log` 
@@ -321,25 +319,21 @@ INSERT INTO `device_connect_log`
   VALUES (${client_id}, '1', ${connected_at});
 ```
 
-点击 **新建** 完成规则的创建，该条规则包含两个动作。
+Click **New** to complete the creation of the rule, which contains two actions.
 
 
 
+#### Create offline processing rules
 
+In the previous step, we have completed the creation of the device online rules through the **Connection completion** trigger event. In the next step, we will complete the device offline rule creation:
 
-
-
-#### 创建离线处理规则
-
-上一步中我们已经通过 **连接完成** 触发事件完成了设备上线规则的创建，接下来我们完成设备下线规则创建：
-
-触发事件选择 **连接断开** ，同样将 `client_id` 与 `connected_at` 选择出来，规则 SQL 如下：
+Select **Disconnection** as trigger event, and select `client_id` and `connected_at where the rule SQL is as follows:
 
 ```sql
 SELECT client_id, reason_code FROM "client.disconnected"
 ```
 
-点击 **SQL 测试**进行 SQL 输出测试，该条 SQL 执行输出为：
+Click **SQL Test** to perform the SQL output test. The SQL execution output is as follows:
 
 ```json
 {
@@ -348,9 +342,9 @@ SELECT client_id, reason_code FROM "client.disconnected"
 }
 ```
 
-**将设备状态置为离线并清空上线时间：**
+**Set the device status as offline and clear the online time:**
 
-新增一个响应动作，选择 **保存数据到 MySQL** 并编写如下 SQL 模板 ：
+Add a response action, select **Save data to MySQL** and write the following SQL template:
 
 ```sql
 UPDATE `devices` 
@@ -359,9 +353,9 @@ UPDATE `devices`
   LIMIT 1
 ```
 
-**设备连接表 中插入一条记录，记录设备下线历史：**
+**Insert a record in the device connection table to record the device offline history:**
 
-继续新增一个响应动作，这里复用 `target` 字段，标记下线原因
+Continue to add a response action, and reuse the `target` field here to mark the reason for the offline.
 
 ```sql
 INSERT INTO `device_connect_log` 
@@ -369,9 +363,9 @@ INSERT INTO `device_connect_log`
   VALUES (${client_id}, '2', ${reason_code});
 ```
 
-**将下线消息发送到 Web Server，触发业务系统的设备下线通知：**
+**Send the offline message to the Web server to trigger the offline notification of the device of the business system:**
 
-新增一个 **发送数据到 Web 服务** 动作，选择 **准备** 步骤中创建的 Web 接入点，消息将以 HTTP 请求发送到该接入点。
+Add a **Send Data to Web Service** action, select the Web Access Point created in the **preparation** step, and the message will be sent to the access point as an HTTP request.
 
 
 
@@ -379,33 +373,33 @@ INSERT INTO `device_connect_log`
 
 
 
-点击 **新建** 完成规则的创建，该条规则包含三个动作。
+Click **New** to complete the creation of the rule, which contains three actions.
 
 
 
-### 示例测试
+### Example test
 
-我们成功创建了两条规则，一共包含五个处理动作，动作期望效果如下：
+We have successfully created two rules which contain five processing actions totally. The expected effect of the actions is as follows:
 
-1. 设备上线时，更改数据库 `设备表` 的 `state` 字段 为 `1`，标记设备在线；
-2. 设备上线时，在 `连接记录表` 插入一条上线记录，包含 `client_id` 与 `create_at` 字段，同时设置 `action` 为 `1` 标记这是一条上线记录；
-3. 设备下线时，更改数据库 `设备表` 的 `state` 字段 为 `0`，标记设备离线；
-4. 设备下线时，在 `连接记录表` 插入一条下线记录，包含 `client_id` 与 `target` 字段（标记下线原因），同时设置 `action` 为 `2` 标记这是一条下线记录；
-5. 设备下线时，发送一条请求到 `https://api.emqx.io/v1/connect_hook` 服务网关，网关获取到下线设备的 client_id 与下线原因，做出相应逻辑通知到业务系统。
+1. When the device is online, change the `state` field of the  `device table` in the database to `1 that marks the device is online;
+2. When the device is online, insert an online record in the `Connection Record Table`, including the `client_id` and `create_at` fields, and set `action` to `1` to  mark this is an online record;
+3. When the device is offline, change the `state` field of the `device table` in the database to `0 that marks the device is offline;
+4. When the device is offline, insert an offline record in the `Connection Record Table`, include the `client_id` and `target` fields (marking the reason for the offline), and set `action` ` to `2 to mark this is an offline record;
+5. When the device is offline, send a request to the  service gateway of`https://api.emqx.io/v1/connect_hook`. The gateway obtains the client_id and the offline reason of the offline device, and sends a corresponding logical notification to the business system.
 
 
 
-#### 使用 Dashboard 中的 Websocket 工具测试
+#### Test with the Websocket tool in Dashboard
 
-切换到 **工具** --> **Websocket** 页面，客户端 ID，用户名，密码均填写 `emqx_c` 模拟设备接入：
+Switch to the page of  **tool  ->** **Websocket** , fill the field of client ID, user name, password  with `'emqx_c'` to analog device access:
 
 ![image-20190605105414993](../assets/image-20190605105414993.png)
 
 
 
-**连接成功后，分别查看 `设备表` 与 `连接记录表` 得到以下数据：**
+**When the connection is successful,check the `Device Table` and `Connection Record Table' respectively to get the following data:**
 
-设备状态已被更新，连接记录表新增一条数据
+The device status has been updated, and a new record is added to the connection record table.
 
 ![image-20190605105734703](../assets/image-20190605105734703.png)
 
@@ -415,9 +409,9 @@ INSERT INTO `device_connect_log`
 
 
 
-**手动断开连接，数据表中数据如下：**
+**Manually disconnect, the data in the data table is as follows:**
 
-设备状态已被更新，连接记录表新增一条离线数据，告警 API 接口应当收到了设备离线数据，此处不再赘述。
+The device status has been updated. An offline data is added to the connection record table. The alarm API interface should receive the offline data of the device. It is not repeated here.
 
 ![image-20190605110131358](../assets/image-20190605110131358.png)
 
@@ -425,6 +419,5 @@ INSERT INTO `device_connect_log`
 
 ![image-20190605110145107](../assets/image-20190605110145107.png)
 
+So far, we have realized business development including the scheduled online status switching, online and offline recording and off-line alarm  through two rules
 
-
-至此，我们通过两条规则实现了预定的在线状态切换，上下线记录与下线告警相关业务开发。

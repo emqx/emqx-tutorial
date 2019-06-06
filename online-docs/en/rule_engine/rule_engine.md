@@ -1,34 +1,32 @@
-# 规则引擎概览
+# Overview of Rule Engine 
 
-> 适用版本 `EMQ X v3.1.0+`
+> Applicable version: `EMQ X v3.1.0+`
 
-EMQ X Rule Engine (以下简称规则引擎) 用于配置 EMQ X 消息流与设备事件的处理、响应规则。规则引擎不仅提供了清晰、灵活的"配置式"的业务集成方案，简化了业务开发流程，提升用户易用性，降低业务系统与 EMQ X 的耦合度；也为 EMQ X 的私有功能定制提供了一个更优秀的基础架构。
+EMQ X Rule Engine (Hereinafter referred to as rule engine) is used to configure the processing and response rules of EMQ X message flows and device events. Rule engine not only provides a clear and flexible "configurable" business integration solution, which is used to simplify the business development process, improve usability, and reduce the coupling degree between the business system and EMQ X, but also provides a better infrastructure for the private function customization of EMQ X to speed up development delivery.
 
 ![image-20190506171815028](../assets/image-20190506171815028.png)
 
 
 
-## 最小规则
+## Minimum rule
 
-规则描述了**数据从哪里来**、**如何筛选并处理数据**、**处理结果到哪里去**三个配置，即一条可用的规则包含三个要素：
+The rule describes Three configurations of **where the data comes from, how to filter and process the data, and where the processed results are going. ** One available rule contains three elements:
 
-- 触发事件：规则通过事件触发，触发时事件给规则注入事件的上下文信息（数据源），通过 SQL 的 FROM 子句指定事件类型；
-- 处理规则（SQL）：使用 SELECT 子句 和 WHERE 子句以及内置处理函数， 从上下文信息中过滤和处理数据；
-- 响应动作：如果有处理结果输出，规则将执行相应的动作，如持久化到数据库、重新发布处理后的消息、转发消息到消息队列等。一条规则可以配置多个响应动作。
+- Trigger event: The rule is triggered by an event. When triggered, the event injects context information (data source) of the event into the rule, and  the event type is specified through the FROM clause of the SQL;
+- Processing rules (SQL): Filter and process data from context information using the SELECT clause and the WHERE clause and built-in handlers;
+- Response action: If there is an output of processing result , the rule will perform the corresponding action, such as persistence to the database, republishing the processed message, forwarding the message to the message queue, and so on. A single rule can configure multiple response actions.
 
 
-如图所示是一条简单的规则，该条规则用于处理 **消息发布** 时的数据，将全部主题消息的 `msg` 字段，消息 `topic` 、`QoS` 筛选出来，发送到 Web Server 与 /uplink 主题：
+As shown in the figure, it is a simple rule for processing the data during the **message release** , filtering out the `msg` field,  message `topic and QoS` of all the topic messages, and sending it to the web. Server and /uplink topics:
 
 
 ![image-20190604103907875](../assets/image-20190604103907875.png)
 
 
 
-## 规则引擎典型应用场景举例
+## Examples of typical application scenarios for rule engine 
 
-- 动作监听：智慧家庭智能门锁开发中，门锁会因为网络、电源故障、人为破坏等原因离线导致功能异常，使用规则引擎配置监听离线事件向应用服务推送该故障信息，可以在接入层实现第一时间的故障检测的能力；
-- 数据筛选：车辆网的卡车车队管理，车辆传感器采集并上报了大量运行数据，应用平台仅关注车速大于 40 km/h 时的数据，此场景下可以使用规则引擎对消息进行条件过滤，向业务消息队列写入满足条件的数据；
-- 消息路由：智能计费应用中，终端设备通过不同主题区分业务类型，可通过配置规则引擎将计费业务的消息接入计费消息队列并在消息抵达设备端后发送确认通知到业务系统，非计费信息接入其他消息队列，实现业务消息路由配置；
-- 消息编解码：其他公共协议/私有 TCP 协议接入、工控行业等应用场景下，可以通过规则引擎的本地处理函数（可在 EMQ X 上定制开发）做二进制/特殊格式消息体的编解码工作；亦可通过规则引擎的消息路由将相关消息流向外部计算资源如函数计算进行处理（可由用户自行开发处理逻辑），将消息转为业务易于处理的 JSON 格式，简化项目集成难度、提升应用快速开发交付能力。
-
-
+- Action listening: In the development of intelligent door lock for smart home, the function of the door lock will be abnormal because of offline resulting by the network or power failure, man-made damage and other reasons. Through using rule engine configuration to monitor offline events, it can push the fault information to the application service and realize the ability of first time fault detection in the access layer.
+- Data filtering: Truck fleet management of vehicle network. Vehicle sensors collect and report a large amount of operational data. The application platform only focuses on data with a vehicle speed greater than 40 km/h. In this scenario, the rule engine can be used to conditionally filter messages to the service, and data that satisfies the condition can be written to the  business message queue .
+- Message routing: In the intelligent billing application, the terminal device distinguishes the service type by different topics. The message of billing service can be connected to the billing message queue by configuring the rule engine, and the non-billing information can be connected to other message queues to realize the routing configuration of business messages.
+- Message encoding and decoding: In the application scenarios such as public protocol/proprietary TCP protocol access and industrial control, the encoding and decoding of binary/special format message body can be done through the local processing function of the rule engine (which can be customized and developed on EMQ X). Relevant messages can also be routed through the rule engine to external computing resources such as function computing for processing (processing logic can be developed by users), and the messages can be converted into JSON format that is easy for business processing, which simplifies the difficulty of project integration and improves the ability of rapid development and delivery of applications.

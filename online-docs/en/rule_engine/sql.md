@@ -1,22 +1,22 @@
-# SQL 手册
+# SQL Manual
 
-## SQL 语句
+## SQL  Statement
 
-SQL 语句用于从原始数据中，根据条件筛选出字段，并进行预处理和转换，基本格式为：
+The SQL statement is used to filter out the fields from the original data according to the conditions and perform preprocessing and conversion. The basic format is as follows:
 
 ```
-SELECT <字段名> FROM <触发事件> [WHERE <条件>]
+SELECT <field name> FROM <trigger event> [WHERE <condition>]
 ```
 
-1. 注意事项
-- FROM 子句后面的主题名需要用双引号("") 引起来。
-- WHERE 子句后面接筛选条件，如果使用到字符串需要用单引号 ('') 引起来。
-- SELECT 子句中，若使用 "." 符号对 payload 进行嵌套选择，必须保证 payload 为 JSON 格式。
+1. Precautions
+- The topic name after the FROM clause needs to be enclosed in double quotation marks ("").
+- The WHERE clause is followed by a filter condition, which is enclosed in single quotes ('') if the string is used.
+- In the SELECT clause, if you use the "." symbol to make nested selections of the payload, you must ensure that the payload is in JSON format.
 
 
-## SQL 语句示例
+## SQL Statement Example
 
-1. 从 topic 为 "t/a" 的消息中提取所有字段：
+1. Extract all fields from the messages with  a topic of "t/a":
 
     ```sql
     SELECT * FROM "message.publish" WHERE topic = 't/a'
@@ -24,49 +24,49 @@ SELECT <字段名> FROM <触发事件> [WHERE <条件>]
 
 
 
-2. 从 topic 能够匹配到 't/#' 的消息中提取所有字段。注意这里使用了 '=~' 操作符进行带通配符的 topic 匹配
+2. Extract all fields from the message with a topic that can match 't/#'. Note that the '=~' operator is used here for topic matching with wildcards.
 
     ```sql
     SELECT * FROM "message.publish" WHERE topic =~ 't/#'
     ```
 
-3. 从 topic 能够匹配到 't/#' 的消息中提取 qos，username 和 client_id 字段
+3. Extract the qos, username, and client_id fields from the message with a topic that can match 't/#'
 
     ```sql
     SELECT qos, username, client_id FROM "message.publish" WHERE topic =~ 't/#'
     ```
 
-4. 从任意 topic 的消息中提取 username 字段，并且筛选条件为 username = 'u_emqx'
+4.  Extract the username field from any topic message with the filter criteria of username = 'u_emqx'
 
     ```sql
     SELECT username FROM "message.publish" WHERE username='u_emqx'
     ```
 
-5. 从任意 topic 的消息的消息体(payload) 中提取 x 字段，并创建别名 x 以便在 WHERE 子句中使用。WHERE 子句限定条件为 x = 1。注意 payload 必须为 JSON 格式。举例：此 SQL 语句可以匹配到消息体 `{"x": 1}`, 但不能匹配到消息体 `{"x": 2}`
+5. Extract the x field from the payload of  message with any topic and create the alias x for use in the WHERE clause. The WHERE clause is restricted as x = 1. Note that the payload must be in JSON format. Example: This SQL statement can match the payload `{"x": 1}`, but can not match to the payload `{"x": 2}`
 
     ```sql
     SELECT payload.x as x FROM "message.publish" WHERE x=1
     ```
 
-6. 类似于上面的 SQL 语句，但嵌套地提取消息体中的数据，此 SQL 语句可以匹配到消息体 `{"x": {"y": 1}}`
+6. Similar to the SQL statement above, but nested extract the data in the payload, this SQL statement can match the payload{"x": {"y": 1}}`
 
     ```sql
     SELECT payload.x.y as a FROM "message.publish" WHERE a=1
     ```
 
-7. 在 client_id = 'c1' 尝试连接时，提取其来源 IP 地址和端口号
+7.  Try to connect when client_id = 'c1', extract its source IP address and port number
 
     ```sql
     SELECT peername as ip_port FROM "client.connected" WHERE client_id = 'c1'
     ```
 
-8. 筛选所有订阅 't/#' 主题且订阅级别为 QoS1 的 client_id。注意这里用的是严格相等操作符 '='，所以不会匹配主题为 't' 或 't/+/a' 的订阅请求
+8. Filter all client_ids that subscribe to the 't/#' topic and subscription level is QoS1. Note that the strict equality operator '=' is used here, so it does not match subscription requests with the topic 't' or 't/+/a'
 
     ```sql
     SELECT  client_id FROM "client.subscribe" WHERE topic = 't/#' and qos = 1
     ```
 
-9. 事实上，上例中的 topic 和 qos 字段，是当订阅请求里只包含了一对 (Topic, QoS) 时，为使用方便而设置的别名。但如果订阅请求中 Topic Filters 包含了多个 (Topic, QoS) 组合对，那么必须显式使用 contains_topic() 或 contains_topic_match() 函数来检查 Topic Filters 是否包含指定的 (Topic, QoS)
+9. In fact, the topic and qos  in the above example are aliases that are set for ease of use when the subscription request contains only one pair (Topic, QoS). However, if the Topic Filters in the subscription request contain multiple (Topic, QoS) combination pairs,  the contains_topic() or contains_topic_match() function must be explicitly used to check if the Topic Filters contain the specified (Topic, QoS).
 
     ```sql
     SELECT  client_id FROM "client.subscribe" WHERE contains_topic(topic_filters, 't/#')
@@ -76,148 +76,148 @@ SELECT <字段名> FROM <触发事件> [WHERE <条件>]
     SELECT  client_id FROM "client.subscribe" WHERE contains_topic(topic_filters, 't/#', 1)
     ```
 
-## SELECT 子句可用的字段
+## Fields available for the SELECT clause
 
 
-### 消息发布(message.publish)
+### Publish Message(message.publish)
 
 
-|  字段      | 字段说明                             |
+|  Field  | Description                  |
 |-----------|------------------------------------|
 | client_id | Client ID                          |
-| username  | 用户名                             |
-| event     | 事件类型，固定为 "message.publish" |
-| flags     | MQTT 消息的 flags                  |
-| id        | MQTT 消息 ID                       |
-| topic     | MQTT 主题                          |
-| payload   | MQTT 消息体                        |
-| peername  | 客户端的 IPAddress 和 Port         |
-| qos       | MQTT 消息的 QoS                    |
-| timestamp | 时间戳                             |
+| username  | User name                    |
+| event     | Event type, fixed to "message.publish" |
+| flags     | Flags of MQTT message  |
+| id        | ID of MQTT message       |
+| topic     | MQTT  topic                   |
+| payload   | MQTT  payload                 |
+| peername  | Client's  IP Address and Port |
+| qos       | QoS of MQTT message                    |
+| timestamp | Timestamp                    |
 
 
 
-### 消息投递(message.deliver)
+### Deliver message(message.deliver)
 
-|  字段      | 字段说明                             |
+|  Field | Description                  |
 |-----------|------------------------------------|
 | client_id   | Client ID                          |
-| username    | 用户名                             |
-| event       | 事件类型，固定为 "message.deliver" |
-| flags       | MQTT 消息的 flags                  |
-| id          | MQTT 消息 ID                       |
-| topic       | MQTT 主题                          |
-| payload     | MQTT 消息体                        |
-| peername    | 客户端的 IPAddress 和 Port         |
-| qos         | MQTT 消息的 QoS                    |
-| timestamp   | 时间戳                             |
-| auth_result | 认证结果                           |
-| mountpoint  | 消息主题挂载点                     |
+| username    | User name                    |
+| event       | Event type, fixed to "message.deliver" |
+| flags       | Flags of MQTT message |
+| id          | ID of MQTT message     |
+| topic       | MQTT topic                     |
+| payload     | MQTT payload                 |
+| peername    | Client's  IP Address and Port |
+| qos         | QoS of MQTT message    |
+| timestamp   | Timestamp                    |
+| auth_result | Authentication results     |
+| mountpoint  | Mountpoint of message topic |
 
 
 
-### 消息确认(message.acked)
+### Ack message(message.acked)
 
 
-|  字段      | 字段说明                             |
+|  Field | Description                  |
 |-----------|------------------------------------|
 | client_id | Client ID                        |
-| username  | 用户名                           |
-| event     | 事件类型，固定为 "message.acked" |
-| flags     | MQTT 消息的 flags                |
-| id        | MQTT 消息 ID                     |
-| topic     | MQTT 主题                        |
-| payload   | MQTT 消息体                      |
-| peername  | 客户端的 IPAddress 和 Port       |
-| qos       | MQTT 消息的 QoS                  |
-| timestamp | 时间戳                           |
+| username  | User name                   |
+| event     | Event type, fixed to "message.acked" |
+| flags     | Flags of MQTT message |
+| id        | ID of MQTT message   |
+| topic     | MQTT topic                   |
+| payload   | MQTT payload               |
+| peername  | Client's  IP Address and Port |
+| qos       | QoS of MQTT message |
+| timestamp | Timestamp                  |
 
 
 
-### 消息丢弃(message.dropped)
+### Drop message(message.dropped)
 
 
-|  字段      | 字段说明                             |
+|  Field | Description                  |
 |-----------|------------------------------------|
 | client_id | Client ID                          |
-| username  | 用户名                             |
-| event     | 事件类型，固定为 "message.dropped" |
-| flags     | MQTT 消息的 flags                  |
-| id        | MQTT 消息 ID                       |
-| topic     | MQTT 主题                          |
-| payload   | MQTT 消息体                        |
-| peername  | 客户端的 IPAddress 和 Port         |
-| qos       | MQTT 消息的 QoS                    |
-| timestamp | 时间戳                             |
-| node      | 节点名                             |
+| username  | User name                    |
+| event     | Event type, fixed to "message.dropped" |
+| flags     | Flags of MQTT message |
+| id        | ID of MQTT message     |
+| topic     | MQTT topic                     |
+| payload   | MQTT payload                 |
+| peername  | Client's  IP Address and Port |
+| qos       | QoS of MQTT message |
+| timestamp | Timestamp                    |
+| node      | Node name                     |
 
 
 
-### 连接完成(client.connected)
+### Connect(client.connected)
 
 
-|  字段      | 字段说明                             |
+|  Field | Description                  |
 |-----------|------------------------------------|
 | client_id    | Client ID                           |
-| username     | 用户名                              |
-| event        | 事件类型，固定为 "client.connected" |
-| auth_result  | 认证结果                            |
-| clean_start  | MQTT clean start 标志位             |
-| connack      | MQTT CONNACK 结果                   |
-| connected_at | 连接时间戳                          |
-| is_bridge    | 是否是桥接                          |
-| keepalive    | MQTT 保活间隔                       |
-| mountpoint   | 消息主题挂载点                      |
-| peername     | 客户端的 IPAddress 和 Port          |
-| proto_ver    | MQTT 协议版本                       |
+| username     | User name                     |
+| event        | Event type, fixed to "client.connected" |
+| auth_result  | Authentication results      |
+| clean_start  | MQTT clean start Flag position |
+| connack      | MQTT CONNACK result              |
+| connected_at | Connection timestamp |
+| is_bridge    | Bridge or not              |
+| keepalive    | MQTT keepalive interval     |
+| mountpoint   | Mountpoint of message topic |
+| peername     | Client's  IP Address and Port |
+| proto_ver    | MQTT protocl version        |
 
 
 
 
-### 连接断开(client.disconnected)
+### Disconnect(client.disconnected)
 
 
-|  字段      | 字段说明                             |
+|  Field  | Description                  |
 |-----------|------------------------------------|
 | client_id   | Client ID                              |
-| username    | 用户名                                 |
-| event       | 事件类型，固定为 "client.disconnected" |
-| auth_result | 认证结果                               |
-| mountpoint  | 消息主题挂载点                         |
-| peername    | 客户端的 IPAddress 和 Port             |
-| reason_code | 断开原因码                             |
+| username    | User name                        |
+| event       | Event type, fixed to "client.disconnected" |
+| auth_result | Authentication results         |
+| mountpoint  | Mountpoint of message topic |
+| peername    | Client's  IP Address and Port |
+| reason_code | Reason code for disconnection |
 
 
 
-### 订阅(client.subscribe)
+### Subscribe(client.subscribe)
 
 
-|  字段      | 字段说明                             |
+|  Field  | Description                  |
 |-----------|------------------------------------|
 | client_id     | Client ID                           |
-| username      | 用户名                              |
-| event         | 事件类型，固定为 "client.subscribe" |
-| auth_result   | 认证结果                            |
-| mountpoint    | 消息主题挂载点                      |
-| peername      | 客户端的 IPAddress 和 Port          |
-| topic_filters | MQTT 订阅列表                       |
-| topic         | MQTT 订阅列表中的第一个订阅的主题   |
-| topic_filters | MQTT 订阅列表中的第一个订阅的 QoS   |
+| username      | User name                     |
+| event         | Event type, fixed to "client.subscribe" |
+| auth_result   | Authentication results      |
+| mountpoint    | Mountpoint of message topic |
+| peername      | Client's  IP Address and Port |
+| topic_filters | MQTT subscription list       |
+| topic         | The first subscribed topic in the MQTT subscription list |
+| topic_filters | The first subscribed Qos in the MQTT subscription list |
 
 
 
-### 取消订阅(client.unsubscribe)
+### Unsubscribe(client.unsubscribe)
 
 
-|  字段      | 字段说明                             |
+|  Field | Description                  |
 |-----------|------------------------------------|
 | client_id     | Client ID                             |
-| username      | 用户名                                |
-| event         | 事件类型，固定为 "client.unsubscribe" |
-| auth_result   | 认证结果                              |
-| mountpoint    | 消息主题挂载点                        |
-| peername      | 客户端的 IPAddress 和 Port            |
-| topic_filters | MQTT 订阅列表                         |
-| topic         | MQTT 订阅列表中的第一个订阅的主题     |
-| topic_filters | MQTT 订阅列表中的第一个订阅的 QoS     |
+| username      | User name                       |
+| event         | Event type, fixed to "client.unsubscribe" |
+| auth_result   | Authentication results        |
+| mountpoint    | Mountpoint of message topic |
+| peername      | Client's  IP Address and Port |
+| topic_filters | MQTT subscription list        |
+| topic         | The first subscribed topic in the MQTT subscription list |
+| topic_filters | The first subscribed Qos in the MQTT subscription list |
 

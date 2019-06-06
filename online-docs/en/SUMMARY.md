@@ -26,13 +26,6 @@
     * [Configure load balancer for cluster](cluster/balancer.md)
 
 
-## 数据持久化（企业版）
-* [数据持久化概览](backend/whats_backend.md)
-* [Redis](backend/redis.md)
-* [MySQL](backend/mysql.md)
-* [PostgreSQL](backend/postgres.md)
-* [MongoDB](backend/mongo.md)
-* [Cassandra](backend/cassandra.md)
 
 ## Data Persistence (Enterprise)
 * [Data Persistence overview](backend/whats_backend.md)
