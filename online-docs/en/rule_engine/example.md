@@ -90,7 +90,7 @@ node app.js
 
 In the page of **Dashboard** --> **Rules Engine** --> **Resources**, click the **New** button on the top right , select the WebHook resource type, and fill in the access address and authentication information:
 
-![image-20190605121921163](../assets/image-20190605121921163.png)
+![image-20190610111030017](../assets/image-20190610111030017.png)
 
 
 
@@ -169,7 +169,7 @@ We succeeded in creating a rule that contains a processing action. The expected 
 
 Switch to the page of  **tool  ->** **Websocket** , fill the field of client ID, user name, password  with `'emqx_c'` to analog device access:
 
-![image-20190605105414993](../assets/image-20190605105414993.png)
+![image-20190610111212344](../assets/image-20190610111212344.png)
 
 
 
@@ -247,7 +247,7 @@ CREATE TABLE `emqx`.`device_connect_log` (
 
 Click the **New** button at  the upper right corner of the page **Dashboard** --> **Rules Engine** --> **Resources** , select the MySQL resource type, and fill in the relevant parameters to create the MySQL connection resource. Before saving the configuration, click **Test Connection** for usability testing:
 
-  ![image-20190604164928655](../assets/image-20190604164928655.png)
+  ![image-20190610111720389](../assets/image-20190610111720389.png)
 
 
 
@@ -257,7 +257,7 @@ Click the **New** button at  the upper right corner of the page **Dashboard** --
 
 Repeat the resource creation operation to create a WehHook type resource for device offline notification. The users can develop their own alarm services based on business logic here:
 
-![image-20190604165353354](../assets/image-20190604165353354.png)
+![image-20190610111842041](../assets/image-20190610111842041.png)
 
 
 
@@ -271,7 +271,7 @@ After the resource is created, we can create the rule. Click the **New** button 
 
 The events corresponding to the online and offline of the device are **Connection completed** and **Disconnection**, select **Connection completed** event to go online at first:
 
-![image-20190604170304270](../assets/image-20190604170304270.png)
+![image-20190610111923097](../assets/image-20190610111923097.png)
 
 
 
@@ -307,7 +307,7 @@ UPDATE `devices`
   LIMIT 1
 ```
 
-![image-20190604180541469](../assets/image-20190604180541469.png)
+![image-20190610112004529](../assets/image-20190610112004529.png)
 
 
 
@@ -369,7 +369,7 @@ Add a **Send Data to Web Service** action, select the Web Access Point created i
 
 
 
-![image-20190605104150494](../assets/image-20190605104150494.png)
+![image-20190610112134886](../assets/image-20190610112134886.png)
 
 
 
@@ -393,7 +393,7 @@ We have successfully created two rules which contain five processing actions tot
 
 Switch to the page of  **tool  ->** **Websocket** , fill the field of client ID, user name, password  with `'emqx_c'` to analog device access:
 
-![image-20190605105414993](../assets/image-20190605105414993.png)
+![image-20190610111212344](../assets/image-20190610111212344.png)
 
 
 

@@ -20,7 +20,7 @@ The rule describes Three configurations of **where the data comes from, how to f
 As shown in the figure, it is a simple rule for processing the data during the **message release** , filtering out the `msg` field,  message `topic and QoS` of all the topic messages, and sending it to the web. Server and /uplink topics:
 
 
-![image-20190604103907875](../assets/image-20190604103907875.png)
+![image-20190610112501545](../assets/image-20190610112501545.png)
 
 
 
