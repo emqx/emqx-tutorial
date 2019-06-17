@@ -26,6 +26,12 @@
     * [Configure load balancer for cluster](cluster/balancer.md)
 
 
+## Rule Engine(New)
+* [Overview of Rule Engine](rule_engine/rule_engine.md)
+* [Resource and Action](rule_engine/resource_action.md)
+* [Configuration examples](rule_engine/example.md)
+* [SQL Manual](rule_engine/sql.md)
+
 
 ## Data Persistence (Enterprise)
 * [Data Persistence overview](backend/whats_backend.md)
