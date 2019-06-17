@@ -54,11 +54,15 @@
  * [VerneMQ](bridge/emqx_to_vernemq.md)
 * [EMQ X 桥接至流式服务](bridge/bridge_to_stream.md)
  * [Kafka 桥接](bridge/bridge_to_kafka.md)
+* [EMQ X 桥接至云服务](bridge/bridge_to_cloud.md)
+ <!-- * [华为云桥接](bridge/bridge_to_kafka.md#华为云桥接)
+ * [AWS IoT桥接](bridge/bridge_to_kafka.md#AWS-IoT桥接) -->
+
 
 ## 安全
 * [认证鉴权](security/auth.md)
   * [认证与认证链](security/auth.md#认证与认证链)
-  * [用户名密码认证](security/auth.md#用户名密码认证)
+  * [用户名认证](security/auth.md#用户名认证)
   * [ClientID 认证](security/auth.md#clientid-认证)
   * [HTTP 认证](security/auth.md#http-认证)
   * [JWT 认证](security/auth.md#jwt-认证)

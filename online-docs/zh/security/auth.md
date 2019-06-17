@@ -19,9 +19,17 @@ EMQ X 认证相关插件名称以 `emqx_auth` 开头。当启用认证插件之�
 
 ![auth chain](../assets/auth_chain.png)
 
+
 ## 用户名密码认证
 
-用户名密码认证使用配置文件存储用户名与密码，通过 username 与 password 进行连接认证。
+> 注意: 该部分教程分为旧版与新版，EMQ X v3.0.1 之后为新版，采用安全性更高的认证配置方式。
+
+
+### 旧版配置方式
+
+> 适用于 EMQ X v3.0.1 之前版本。
+
+用户名认证使用配置文件存储用户名与密码，通过 username 与 password 进行连接认证。
 
 打开并配置 `etc/plugins/emqx_auth_username.conf` 文件，按照如下所示创建认证信息：
 
@@ -52,7 +60,202 @@ Connection Refused: bad user name or password.
  [error] <0.1981.0>@emqx_protocol:process:241 Client(mosqsub/10166-master@10.211.55.6:40177): Username 'username' login failed for "No auth module to check!"
 ```
 
+
+### 新版配置方式
+
+> 适用于 EMQ X v3.0.1 及以后版本，以下所有配置均在集群内同步。
+
+用户名认证通过 REST API 设置 username 与 password 进行连接认证。
+
+打开并配置 `etc/plugins/emqx_auth_username.conf` 文件，配置 password 加密方式：
+
+```
+## Password hash.
+##
+## Value: plain | md5 | sha | sha256
+
+## 配置密码加密方式，默认是 SHA256
+auth.user.password_hash = sha256
+```
+
+
+在 EMQ X Dashboard 或控制台启用插件：
+
+```./bin/emqx_ctl plugins load emqx_auth_username```
+
+
+
+通过命令行或 [REST API](https://developer.emqx.io/docs/broker/v3/cn/rest.html) 设置 username 及 password 相关接口与认证 详见 [管理监控 API](https://developer.emqx.io/docs/broker/v3/cn/rest.html)，此处不再赘述。
+
+
+#### 添加用户名
+
+API 定义：
+
+```
+# Request
+POST api/v3/auth_username
+{
+    "username": "emqx_u",
+    "password": "emqx_p"
+}
+
+# Response
+{
+    "code": 0
+}
+```
+
+cURL 请求如下：
+
+使用 POST 请求添加 username 为 `emqx_u` password 为 `emqx_p` 的认证信息，返回信息中 `code = 0` 即为成功
+
+```
+curl -X POST \
+  http://127.0.0.1:8080/api/v3/auth_username \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 5337f088-6afe-4a0a-8ce2-aecd1c02ca11' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "username": "emqx_u",
+    "password": "emqx_p"
+}'
+```
+
+添加成功并关闭匿名认证后，使用 username 为 `emqx_u`，password 为 `emqx_p` 且 client_id 任意方能成功连接至 EMQ X。
+
+
+#### 查看已经添加的用户名
+
+API 定义：
+
+```
+# Request
+GET api/v3/auth_username
+
+# Response
+{
+    "code": 0,
+    "data": ["emqx_u"]
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X GET \
+  http://127.0.0.1:8080/api/v3/auth_username \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 52e19a03-052c-4109-8586-6106e9703001' \
+  -H 'cache-control: no-cache'
+```
+
+#### 更改指定用户名的密码
+
+指定用户名，传递新密码进行更改，再次连接时需要使用新密码进行连接：
+
+API 定义：
+
+```
+# Request
+PUT api/v3/auth_username/$NAME
+{
+    "password": "emqx_new_p"
+}
+
+# Response
+{
+    "code": 0
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X PUT \
+  http://127.0.0.1:8080/api/v3/auth_username/emqx_u \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 57119369-6459-44dc-8b56-5f618e409438' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "password": "emqx_new_p"
+}'
+```
+
+
+#### 查看指定用户名信息
+
+指定用户名，查看相关用户名、密码信息，注意此处返回的密码是使用配置文件指定方式加密后的密码：
+
+API 定义：
+
+```
+# Request
+GET api/v3/auth_username/$NAME
+
+# Response
+{
+    "code": 0,
+    "data": {
+        "username": "emqx_u",
+        "password": "091dc8753347e7dc5d348508fe6323735eecdb84fa800548870158117af8a0c0"
+    }
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X GET \
+  http://127.0.0.1:8080/api/v3/auth_username/emqx_u \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 13cde276-f959-40ef-97a4-a158b356fc50' \
+  -H 'cache-control: no-cache'
+```
+
+
+#### 删除用户名信息
+
+删除指定用户名，删除后无法通过该用户名连接：
+
+API 定义：
+
+```
+# Request
+DELETE api/v3/auth_username/$NAME
+
+# Response
+{
+    "code": 0
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X DELETE \
+  http://127.0.0.1:8080/api/v3/auth_username/emqx_u \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 23a3da25-4b22-48cb-bd8b-2ec6b88192af' \
+  -H 'cache-control: no-cache'
+```
+
+
+
 ## ClientID 认证
+
+> 注意: 该部分教程分为旧版与新版，EMQ X v3.0.1 之后为新版，采用安全性更高的认证配置方式。
+
+
+### 旧版配置方式
+
+> 适用于 EMQ X v3.0.1 之前版本。
+
 
 ClientID 认证使用配置文件存储客户端 ID 与密码，连接时通过 clientid 与 password 进行认证。
 
@@ -78,6 +281,201 @@ auth.client.2.password = passwd2
 # mosquitto_sub -h $your_host -u id -i id1 -P passwd -t /devices/001/temp
 Connection Refused: bad user name or password.
 ```
+
+
+
+
+
+
+
+
+
+### 新版配置方式
+
+> 适用于 EMQ X v3.0.1 及以后版本，以下所有配置均在集群内同步。
+
+ClientID 认证通过 REST API 设置 client_id 与 password 进行连接认证。
+
+打开并配置 `etc/plugins/emqx_auth_clientid.conf` 文件，配置 password 加密方式：
+
+```
+## Password hash.
+##
+## Value: plain | md5 | sha | sha256
+
+## 配置密码加密方式，默认是 SHA256
+auth.client.password_hash = sha256
+```
+
+
+在 EMQ X Dashboard 或控制台启用插件：
+
+```./bin/emqx_ctl plugins load emqx_auth_clientid```
+
+
+
+通过命令行或 [REST API](https://developer.emqx.io/docs/broker/v3/cn/rest.html) 设置 username 及 password 相关接口与认证 详见 [管理监控 API](https://developer.emqx.io/docs/broker/v3/cn/rest.html)，此处不再赘述。
+
+
+#### 添加 ClientID
+
+API 定义：
+
+```
+# Request
+POST api/v3/auth_clientid
+{
+    "clientid": "emqx_c",
+    "password": "emqx_p"
+}
+
+# Response
+{
+    "code": 0
+}
+```
+
+cURL 请求如下：
+
+使用 POST 请求添加 clientid 为 `emqx_c` password 为 `emqx_p` 的认证信息，返回信息中 `code = 0` 即为成功
+
+```
+curl -X POST \
+  http://127.0.0.1:8080/api/v3/auth_clientid \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 5337f088-6afe-4a0a-8ce2-aecd1c02ca11' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "clientid": "emqx_c",
+    "password": "emqx_p"
+}'
+```
+
+添加成功并关闭匿名认证后，使用 client id 为 `emqx_c`，password 为 `emqx_p` 且 username 任意方能成功连接至 EMQ X。
+
+
+#### 查看已经添加的 ClientID
+
+API 定义：
+
+```
+# Request
+GET api/v3/auth_clientid
+
+# Response
+{
+    "code": 0,
+    "data": ["emqx_c"]
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X GET \
+  http://127.0.0.1:8080/api/v3/auth_clientid \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 52e19a03-052c-4109-8586-6106e9703001' \
+  -H 'cache-control: no-cache'
+```
+
+#### 更改指定 ClientID 的密码
+
+指定 client_id，传递新密码进行更改，再次连接时需要使用新密码进行连接：
+
+API 定义：
+
+```
+# Request
+PUT api/v3/auth_clientid/$NAME
+{
+    "password": "emqx_new_p"
+}
+
+# Response
+{
+    "code": 0
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X PUT \
+  http://127.0.0.1:8080/api/v3/auth_clientid/emqx_c \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 57119369-6459-44dc-8b56-5f618e409438' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "password": "emqx_new_p"
+}'
+```
+
+
+#### 查看指定 ClientID 信息
+
+指定 client_id，查看相关 client_id、密码信息，注意此处返回的密码是使用配置文件指定方式加密后的密码：
+
+API 定义：
+
+```
+# Request
+GET api/v3/auth_clientid/$NAME
+
+# Response
+{
+    "code": 0,
+    "data": {
+        "username": "emqx_c",
+        "password": "091dc8753347e7dc5d348508fe6323735eecdb84fa800548870158117af8a0c0"
+    }
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X GET \
+  http://127.0.0.1:8080/api/v3/auth_clientid/emqx_c \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 13cde276-f959-40ef-97a4-a158b356fc50' \
+  -H 'cache-control: no-cache'
+```
+
+
+#### 删除 ClientID 信息
+
+删除指定 client_id，删除后无法通过该 client_id 连接：
+
+API 定义：
+
+```
+# Request
+DELETE api/v3/auth_clientid/$NAME
+
+# Response
+{
+    "code": 0
+}
+```
+
+cURL 请求如下：
+
+```
+curl -X DELETE \
+  http://127.0.0.1:8080/api/v3/auth_clientid/emqx_c \
+  -H 'Authorization: Basic dGVzdDpNamczT1RBMU5URXpOakF4TVRnd01EZ3lOamN6TlRrek9UQXpNamM1TmpNMk5ESQ==' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 23a3da25-4b22-48cb-bd8b-2ec6b88192af' \
+  -H 'cache-control: no-cache'
+```
+
+
+
 
 
 ## HTTP 认证
