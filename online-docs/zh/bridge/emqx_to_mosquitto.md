@@ -20,6 +20,8 @@ EMQ X 节点可以桥接到其他类型的 MQTT 消息中间件，实现跨平�
 在使用包管理器成功安装mosquitto后，不需要特别配置就可以完成本节内容的测试例。更详细的mosquitto配置超出了本文的范围，如有疑问请参考Mosquitto的[官方文档](https://mosquitto.org/)。
 
 ## 配置 EMQ X 桥接
+>  注意：3.2.0 版本后该部分配置有所变动，详见[升级指南](./bridge.md#升级指南)。
+
 为了使 EMQ X 节点可以桥接其他节点，我们需要在配置文件`emqx.conf`做相应的配置。
 
 在emqx1上，打开`emqx.conf`, 找到`Bridges`部分，在其中添加一个新的桥接配置。
