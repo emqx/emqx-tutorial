@@ -40,6 +40,9 @@
 * [PostgreSQL](backend/postgres.md)
 * [MongoDB](backend/mongo.md)
 * [Cassandra](backend/cassandra.md)
+* [DynamoDB(New)](backend/DynamoDB.md)
+* [InfluxDB(New)](backend/InfluxDB.md)
+* [OpenTSDB(New)](backend/OpenTSDB.md)
 
 
 ## Bridge
