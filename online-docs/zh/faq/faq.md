@@ -319,7 +319,7 @@ A: EMQ X 可以转发消息到公有云的 IoT Hub，通过 EMQ X 提供的桥�
 
 ## Q: MQTT Broker（比如 Mosquitto）可以转发消息到 EMQ X 吗？
 
-A: Mosquitto 可以配置转发消息到 EMQ X，请参考[TODO](https://www.emqx.io)。
+A: Mosquitto 可以配置转发消息到 EMQ X，请参考[数据桥接](https://developer.emqx.io/docs/tutorial/zh/bridge/bridge.html)。
 
 
 ## Q: 系统主题有何用处？都有哪些系统主题？
@@ -347,7 +347,7 @@ A: EMQ X 支持追踪来自某个客户端的报文或者发布到某个主题�
 
 A: 在做压力测试的时候，除了要选用有足够计算能力的硬件，也需要对软件运行环境做一定的调优。比如修改修改操作系统的全局最大文件句柄数，允许用户打开的文件句柄数，TCP 的 backlog 和 buffer，erlang 虚拟机的进程数限制等等。甚至包括需要在客户端上做一定的调优以保证客户端可以有足够的连接资源。
 
-系统的调优在不同的需求下有不同的方式，在 EMQ X 的文档 [TODO](https://www.emqx.io) 中对用于普通场景的调优有较详细的说明
+系统的调优在不同的需求下有不同的方式，在 EMQ X 的[文档-测试调优](https://developer.emqx.io/docs/broker/v3/cn/tune.html) 中对用于普通场景的调优有较详细的说明
 
 ## Q：EMQ X 的百万连接压力测试的场景是什么？
 
@@ -478,9 +478,30 @@ Query OK, 0 rows affected (0.00 sec)
 
 
 
-  
+## Q:EMQ X中ssl resumption session的使用
+
+A: 修改emqx.conf配置中的 reuse_sessions = on 并生效后。如果客户端与服务端通过 SSL 已经连接成功，当第二次遇到客户端连接时，会跳过 SSL 握手阶段，直接建立连接，节省连接时间，增加客户端连接速度。
+
+
+## Q：MQTT 客户端断开连接统计
+
+A：执行 `emqx_ctl listeners`，查看对应端口下的 `shutdown_count` 统计。
+
+客户端断开链接错误码列表：
+
++ `keepalive_timeout`：MQTT keepalive 超时
++ `closed`：TCP客户端断开连接（客户端发来的FIN，但没收到 MQTT DISCONNECT）
++ `normal`：MQTT客户端正常断开
++ `einval`：EMQ X 想向客户端发送一条消息，但是Socket 已经断开
++ `function_clause`：MQTT 报文格式错误
++ `etimedout`：TCP 发送超时（没有收到TCP ACK 回应）
++ `proto_unexpected_c`：在已经有一条MQTT连接的情况下重复收到了MQTT连接请求
++ `idle_timeout`： TCP 连接建立 15s 之后，还没收到 connect 报文
 
   
 
   
+
+  
+
 
