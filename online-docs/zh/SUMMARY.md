@@ -40,6 +40,10 @@
 * [PostgreSQL](backend/postgres.md)
 * [MongoDB](backend/mongo.md)
 * [Cassandra](backend/cassandra.md)
+* [DynamoDB(新)](backend/DynamoDB.md)
+* [InfluxDB(新)](backend/InfluxDB.md)
+* [OpenTSDB(新)](backend/OpenTSDB.md)
+
 
 ## 桥接
 * [桥接的概念](bridge/bridge.md)

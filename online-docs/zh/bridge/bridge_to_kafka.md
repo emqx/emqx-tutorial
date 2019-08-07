@@ -129,3 +129,5 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 test --from-begi
 
 {"client_id":"mosqsub|25095-Zeus-","topic":"control/1","qos":0,"node":"emqx1@192.168.1.100","ts":1542113850}
 ```
+
+```

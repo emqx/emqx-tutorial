@@ -319,7 +319,7 @@ A: EMQ X 可以转发消息到公有云的 IoT Hub，通过 EMQ X 提供的桥�
 
 ## Q: MQTT Broker（比如 Mosquitto）可以转发消息到 EMQ X 吗？
 
-A: Mosquitto 可以配置转发消息到 EMQ X，请参考[TODO](https://www.emqx.io)。
+A: Mosquitto 可以配置转发消息到 EMQ X，请参考[数据桥接](https://developer.emqx.io/docs/tutorial/zh/bridge/bridge.html)。
 
 
 ## Q: 系统主题有何用处？都有哪些系统主题？
@@ -347,7 +347,7 @@ A: EMQ X 支持追踪来自某个客户端的报文或者发布到某个主题�
 
 A: 在做压力测试的时候，除了要选用有足够计算能力的硬件，也需要对软件运行环境做一定的调优。比如修改修改操作系统的全局最大文件句柄数，允许用户打开的文件句柄数，TCP 的 backlog 和 buffer，erlang 虚拟机的进程数限制等等。甚至包括需要在客户端上做一定的调优以保证客户端可以有足够的连接资源。
 
-系统的调优在不同的需求下有不同的方式，在 EMQ X 的文档 [TODO](https://www.emqx.io) 中对用于普通场景的调优有较详细的说明
+系统的调优在不同的需求下有不同的方式，在 EMQ X 的[文档-测试调优](https://developer.emqx.io/docs/broker/v3/cn/tune.html) 中对用于普通场景的调优有较详细的说明
 
 ## Q：EMQ X 的百万连接压力测试的场景是什么？
 
@@ -364,4 +364,144 @@ A: 即使在连接数量，消息率不高的情况下（服务器低负载）�
 ## Q: EMQ X 支持加密连接吗？推荐的部署方案是什么？
 
 A：EMQ X 支持加密连接。在生产环境部署时，推荐的方案是使用负载均衡终结 TLS。通过该方式，设备端和服务器端（负载均衡）的采用加密的连接，而负载均衡和后端的 EMQ X 节点采用一般的 TCP 连接。
+
+
+
+## Q：EMQ X 安装之后无法启动怎么排查？
+
+A：执行 `$ emqx console` ，查看输出内容
+
++	`logger` 命令缺失
+
+  ```
+  $ emqx console
+  Exec: /usr/lib/emqx/erts-10.3.5.1/bin/erlexec -boot /usr/lib/emqx/releases/v3.2.1/emqx -mode embedded -boot_var ERTS_LIB_DIR /usr/lib/emqx/erts-10.3.5.1/../lib -mnesia dir "/var/lib/emqx/mnesia/emqx@127.0.0.1" -config /var/lib/emqx/configs/app.2019.07.23.03.07.32.config -args_file /var/lib/emqx/configs/vm.2019.07.23.03.07.32.args -vm_args /var/lib/emqx/configs/vm.2019.07.23.03.07.32.args -- console
+  Root: /usr/lib/emqx
+  /usr/lib/emqx
+  /usr/bin/emqx: line 510: logger: command not found
+  ```
+  
+  **解决办法：**
+  
+  + `Centos/Redhat`
+  
+    ```
+    $ yum install rsyslog
+    ```
+  
+  + `Ubuntu/Debian`
+  
+    ```
+    $ apt-get install bsdutils
+    ```
+  
++	`openssl` 缺失
+
+```
+    $ emqx console
+    Exec: /emqx/erts-10.3/bin/erlexec -boot /emqx/releases/v3.2.1/emqx -mode embedded -boot_var ERTS_LIB_DIR /emqx/erts-10.3/../lib -mnesia dir "/emqx/data/mnesia/emqx@127.0.0.1" -config /emqx/data/configs/app.2019.07.23.03.34.43.config -args_file /emqx/data/configs/vm.2019.07.23.03.34.43.args -vm_args /emqx/data/configs/vm.2019.07.23.03.34.43.args -- console
+    Root: /emqx
+    /emqx
+    Erlang/OTP 21 [erts-10.3] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:32] [hipe]
+    
+    {"Kernel pid terminated",application_controller,"{application_start_failure,kernel,{{shutdown,{failed_to_start_child,kernel_safe_sup,{on_load_function_failed,crypto}}},{kernel,start,[normal,[]]}}}"}
+    Kernel pid terminated (application_controller) ({application_start_failure,kernel,{{shutdown,{failed_to_start_child,kernel_safe_sup,{on_load_function_failed,crypto}}},{kernel,start,[normal,[]]}}})
+    
+    Crash dump is being written to: log/crash.dump...done
+```
+
+**解决办法：**安装1.1.1以上版本的 `openssl`
+
++ `License` 文件缺失
+
+```
+  $ emqx console
+  Exec: /usr/lib/emqx/erts-10.3.5.1/bin/erlexec -boot /usr/lib/emqx/releases/v3.2.1/emqx -mode embedded -boot_var ERTS_LIB_DIR /usr/lib/emqx/erts-10.3.5.1/../lib -mnesia dir "/var/lib/emqx/mnesia/emqx@127.0.0.1" -config /var/lib/emqx/configs/app.2019.07.23.05.52.46.config -args_file /var/lib/emqx/configs/vm.2019.07.23.05.52.46.args -vm_args /var/lib/emqx/configs/vm.2019.07.23.05.52.46.args -- console
+  Root: /usr/lib/emqx
+  /usr/lib/emqx
+  Erlang/OTP 21 [erts-10.3.5.1] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:32] [hipe]
+  
+  Starting emqx on node emqx@127.0.0.1
+  Start http:management listener on 8080 successfully.
+  Start http:dashboard listener on 18083 successfully.
+  Start mqtt:tcp listener on 127.0.0.1:11883 successfully.
+  Start mqtt:tcp listener on 0.0.0.0:1883 successfully.
+  Start mqtt:ws listener on 0.0.0.0:8083 successfully.
+  Start mqtt:ssl listener on 0.0.0.0:8883 successfully.
+  Start mqtt:wss listener on 0.0.0.0:8084 successfully.
+  EMQ X Broker 3.2.1 is running now!
+  "The license certificate is expired!"
+  2019-07-23 05:52:51.355 [critical] The license certificate is expired!
+  2019-07-23 05:52:51.355 [critical] The license certificate is expired! System shutdown!
+  Stop mqtt:tcp listener on 127.0.0.1:11883 successfully.
+  Stop mqtt:tcp listener on 0.0.0.0:1883 successfully.
+  Stop mqtt:ws listener on 0.0.0.0:8083 successfully.
+  Stop mqtt:ssl listener on 0.0.0.0:8883 successfully.
+  Stop mqtt:wss listener on 0.0.0.0:8084 successfully.
+  [os_mon] memory supervisor port (memsup): Erlang has closed
+  [os_mon] cpu supervisor port (cpu_sup): Erlang has closed
+```
+
+  **解决办法：**登陆[emqx.io](https://emqx.io)申请license或安装开源版的 EMQ X Broker
+
+
+
+## Q：EMQ X 无法连接Mysql8.0
+
+  A：不同于以往版本，Mysql8.0 对账号密码配置默认使用`caching_sha2_password`插件，需要将密码插件改成`mysql_native_password`
+
+
+```
+## 切换到 mysql 数据库
+
+## 查看 user 表
+
+    mysql> select user, host, plugin from user;
+    +------------------+-----------+-----------------------+
+    | user             | host      | plugin                |
+    +------------------+-----------+-----------------------+
+    | root             | %         | caching_sha2_password |
+    | mysql.infoschema | localhost | caching_sha2_password |
+    | mysql.session    | localhost | caching_sha2_password |
+    | mysql.sys        | localhost | caching_sha2_password |
+    | root             | localhost | caching_sha2_password |
+    +------------------+-----------+-----------------------+
+
+## 修改密码插件
+mysql> ALTER USER 'your_username'@'your_host' IDENTIFIED WITH mysql_native_password BY 'your_password';
+Query OK, 0 rows affected (0.01 sec)
+
+## 刷新
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+
+
+## Q:EMQ X中ssl resumption session的使用
+
+A: 修改emqx.conf配置中的 reuse_sessions = on 并生效后。如果客户端与服务端通过 SSL 已经连接成功，当第二次遇到客户端连接时，会跳过 SSL 握手阶段，直接建立连接，节省连接时间，增加客户端连接速度。
+
+
+## Q：MQTT 客户端断开连接统计
+
+A：执行 `emqx_ctl listeners`，查看对应端口下的 `shutdown_count` 统计。
+
+客户端断开链接错误码列表：
+
++ `keepalive_timeout`：MQTT keepalive 超时
++ `closed`：TCP客户端断开连接（客户端发来的FIN，但没收到 MQTT DISCONNECT）
++ `normal`：MQTT客户端正常断开
++ `einval`：EMQ X 想向客户端发送一条消息，但是Socket 已经断开
++ `function_clause`：MQTT 报文格式错误
++ `etimedout`：TCP 发送超时（没有收到TCP ACK 回应）
++ `proto_unexpected_c`：在已经有一条MQTT连接的情况下重复收到了MQTT连接请求
++ `idle_timeout`： TCP 连接建立 15s 之后，还没收到 connect 报文
+
+  
+
+  
+
+  
+
 

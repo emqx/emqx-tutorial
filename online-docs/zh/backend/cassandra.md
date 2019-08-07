@@ -1,7 +1,5 @@
 # Cassandra 数据存储
 
-[TOC]
-
 本章节以在 `CentOS 7.2` 中的实际例子来说明如何通过 Cassandra 来存储相关的信息。
 
 
