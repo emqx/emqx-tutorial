@@ -3,12 +3,30 @@
 {% block body %}
 
 <link rel="stylesheet" href="https://developer.emqx.io/docs/broker/v3/en/static/css/toolkit-startup.min.css"
-      type="text/css"/>
+  type="text/css" />
 <link rel="stylesheet" href="https://developer.emqx.io/docs/broker/v3/en/static/css/base.css">
-<link rel="stylesheet" href="https://developer.emqx.io/docs/broker/v3/en/static/css/navbar.css" type="text/css"/>
+<link rel="stylesheet" href="https://developer.emqx.io/docs/broker/v3/en/static/css/navbar.css" type="text/css" />
 <script type="text/javascript" src="https://developer.emqx.io/docs/broker/v3/en/_static/jquery.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/_static/classic.css" type="text/css" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/_static/pygments.css" type="text/css" />
+<script type="text/javascript" id="documentation_options" data-url_root="./" src="https://docs.emqx.io/broker/v3/en/_static/documentation_options.js">
+</script>
+<script type="text/javascript" src="https://docs.emqx.io/broker/v3/en/_static/jquery.js"></script>
+<script type="text/javascript" src="https://docs.emqx.io/broker/v3/en/_static/underscore.js"></script>
+<script type="text/javascript" src="https://docs.emqx.io/broker/v3/en/_static/doctools.js"></script>
+<script type="text/javascript" src="https://docs.emqx.io/broker/v3/en/_static/translations.js"></script>
+
+<link rel="next" title="开始使用 (Get Started)" href="getstarted.html" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/_static/classic.css" type="text/css" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/_static/pygments.css" type="text/css" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/static/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/static/css/base.css" type="text/css" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/static/css/navbar.css" type="text/css" />
+<link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/static/css/docs.css" type="text/css" />
+
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic' rel='stylesheet' type='text/css'>
 
 <nav class="navbar navbar-default navbar-fixed-top app-navbar docs-nav">
   <div class="container">
@@ -20,34 +38,31 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="https://emqx.io">
-        <img src="https://developer.emqx.io/docs/broker/v3/en/static/images/logo.png" alt="">
+        <img src="https://docs.emqx.io/broker/v3/en/static/images/logo.png" alt="">
       </a>
     </div>
     <div class="navbar-collapse collapse" id="navbar-collapse">
       <ul class="nav navbar-nav">
-        <li class="developer-center">
-          <a>Developer Center</a>
-        </li>
-        <li>
-          <!--
-            <a class="github-button" href="https://github.com/emqtt/emqttd" data-icon="octicon-star" data-style="mega" data-count-href="/emqtt/emqttd/stargazers" data-count-api="/repos/emqtt/emqttd#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star emqtt/emqttd on GitHub">Star</a>
-          -->
-        </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li id="nav-docs" class="dropdown">
-          <a role="button">Docs
-            <span class="icon icon-chevron-down"></span>
+          <a class="ac1tive" role="button">Docs
+            <i class="glyphicon glyphicon-menu-down"></i>
           </a>
           <ul class="nav-popup" role="menu">
-            <li class="nav-item"><a href="https://developer.emqx.io/docs/broker" class="active">Broker</a></li>
-            <li class="nav-item"><a href="https://developer.emqx.io/docs/edge">Edge</a></li>
+            <li class="nav-item"><a href="/broker">Broker</a></li>
+            <li class="nav-item"><a href="/edge">Edge</a></li>
           </ul>
         </li>
-        <li><a class="active" href="https://developer.emqx.io/docs/tutorial/en">Tutorial</a></li>
-        <li><a href="https://developer.emqx.io/sdk_tools?category=MQTT_Clients">SDK &amp; Tools</a></li>
-        <li><a href="https://developer.emqx.io/blog?page=1">Blog</a></li>
-        <li><a class="btn-download" href="https://emqx.io/downloads">Download</a></li>
+        <li><a href="/tutorial/en" class="active">Tutorial</a></li>
+        <li><a href="/sdk_tools?category=MQTT_Clients">SDK &amp; Tools</a></li>
+        <li><a href="https://www.emqx.io/blog" "="">Blog</a></li>
+        <li>
+          <a class=" btn-download" href="https://emqx.io/downloads">
+            Try Free
+            <i class="glyphicon glyphicon-arrow-down"></i>
+          </a>
+        </li>
       </ul>
     </div>
     <!--/.nav-collapse -->
@@ -56,145 +71,146 @@
 
 
 <div class="back-top" onclick="toTop()">
-  <img src="https://developer.emqx.io/docs/broker/v3/en/static/images/back-top.png" width="26px">
+  <img src="https://docs.emqx.io/broker/v3/cn/static/images/back-top.png" width="26px">
 </div>
 
 
 <script>
-
-function toTop() {
-  var topBtn = document.querySelector('#anchorNavigationExGoTop')
-  if (topBtn) {
-    topBtn.click()
+  function toTop() {
+    var topBtn = document.querySelector('#anchorNavigationExGoTop')
+    if (topBtn) {
+      topBtn.click()
+    }
   }
-}
 </script>
 
 <style>
-.book-header .js-toolbar-action.btn {
-  display: none
-}
+  .book-header .js-toolbar-action.btn {
+    display: none
+  }
 
-.back-top {
-  position: fixed;
-  bottom: 5%;
-  right: 35px;
-  width: 38px;
-  height: 38px;
-  background: #333844;
-  text-align: center;
-  padding-top: 6px;
-  cursor: pointer;
-  z-index: 1111;
-}
+  .back-top {
+    position: fixed;
+    bottom: 5%;
+    right: 35px;
+    width: 38px;
+    height: 38px;
+    background: #333844;
+    text-align: center;
+    padding-top: 6px;
+    cursor: pointer;
+    z-index: 1111;
+  }
 
-#anchorNavigationExGoTop {
-  display: none;
-}
+  #anchorNavigationExGoTop {
+    display: none;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #333;
-  clear: both;
-  line-height: 26px
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #333;
+    clear: both;
+    line-height: 26px
+  }
 
-.version--wrapper {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 299px;
-  border-top: 1px solid #E6E8F1;
-}
+  .version--wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 299px;
+    border-top: 1px solid #E6E8F1;
+  }
 
-.book-summary ul.summary {
-  padding-bottom: 50px !important;
-}
+  .book-summary ul.summary {
+    padding-bottom: 50px !important;
+  }
 
-#version-toggle, #language-toggle {
-  display: block;
-  padding: 10px 0;
-  border-bottom: none;
-  color: #364149;
-  background: #fff;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  float: left;
-  position: relative;
-}
+  #version-toggle,
+  #language-toggle {
+    display: block;
+    padding: 10px 0;
+    border-bottom: none;
+    color: #364149;
+    background: #fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    float: left;
+    position: relative;
+  }
 
-#version-toggle {
-  width: 120px;
-  padding-left: 10px;
-}
+  #version-toggle {
+    width: 120px;
+    padding-left: 10px;
+  }
 
-#language-toggle {
-  width: 179px;
-  float: right;
-  text-align: right;
-  padding-right: 10px;
-}
+  #language-toggle {
+    width: 179px;
+    float: right;
+    text-align: right;
+    padding-right: 10px;
+  }
 
-#version-toggle select, #language-toggle select {
-  font-size: 16px;
-  outline: none;
-  border: none;
-  appearance: none;
-  -moz-appearance: none;
-  padding-left: 12px;
-  -webkit-appearance: none;
-  background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
-  padding-right: 20px;
-}
+  #version-toggle select,
+  #language-toggle select {
+    font-size: 16px;
+    outline: none;
+    border: none;
+    appearance: none;
+    -moz-appearance: none;
+    padding-left: 12px;
+    -webkit-appearance: none;
+    background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
+    padding-right: 20px;
+  }
 
-p {
-  color: #333;
-  font-size: 14px;
-  line-height: 24px;
-  margin: 10px 0 10px 0;
-}
+  p {
+    color: #333;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 10px 0 10px 0;
+  }
 
-.navbar.navbar-default.navbar-fixed-top .container {
-  width: 100%;
-  padding: 0 32px;
-}
+  .navbar.navbar-default.navbar-fixed-top .container {
+    width: 100%;
+    padding: 0 32px;
+  }
 
-.app-navbar .navbar-right > li > a:hover {
-  color: #009966 !important;
-}
+  .app-navbar .navbar-right>li>a:hover {
+    color: #009966 !important;
+  }
 
-.navbar li select {
-  margin-top: 11px;
-  background-color: transparent;
-  border-color: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 300;
-  color: #adafb4;
-  padding: 4px 20px;
-  outline: none;
-  height: 30px;
-  line-height: 26px;
-  vertical-align: middle;
-}
+  .navbar li select {
+    margin-top: 11px;
+    background-color: transparent;
+    border-color: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 300;
+    color: #adafb4;
+    padding: 4px 20px;
+    outline: none;
+    height: 30px;
+    line-height: 26px;
+    vertical-align: middle;
+  }
 
-body {
-  padding-top: 60px !important;
-}
+  body {
+    padding-top: 60px !important;
+  }
 
-.book-header .btn {
-  z-index: 1001;
-  color: #9297AA !important;
-}
+  .book-header .btn {
+    z-index: 1001;
+    color: #9297AA !important;
+  }
 
-.book-header .btn:hover {
-  color: #7D8399 !important;
-}
+  .book-header .btn:hover {
+    color: #7D8399 !important;
+  }
 </style>
 
 
