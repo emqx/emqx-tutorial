@@ -11,7 +11,8 @@
 
 <link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/_static/classic.css" type="text/css" />
 <link rel="stylesheet" href="https://docs.emqx.io/broker/v3/en/_static/pygments.css" type="text/css" />
-<script type="text/javascript" id="documentation_options" data-url_root="./" src="https://docs.emqx.io/broker/v3/en/_static/documentation_options.js">
+<script type="text/javascript" id="documentation_options" data-url_root="./"
+  src="https://docs.emqx.io/broker/v3/en/_static/documentation_options.js">
 </script>
 <script type="text/javascript" src="https://docs.emqx.io/broker/v3/en/_static/jquery.js"></script>
 <script type="text/javascript" src="https://docs.emqx.io/broker/v3/en/_static/underscore.js"></script>
@@ -38,7 +39,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="https://emqx.io">
-        <img src="https://docs.emqx.io/broker/v3/en/static/images/logo.png" alt="">
+        <img src="https://docs.emqx.io/broker/v3/en/static/images/logo.svg" alt="">
       </a>
     </div>
     <div class="navbar-collapse collapse" id="navbar-collapse">
@@ -76,140 +77,150 @@
 
 
 <script>
-
-function toTop() {
-  var topBtn = document.querySelector('#anchorNavigationExGoTop')
-  if (topBtn) {
-    topBtn.click()
+  function toTop() {
+    var topBtn = document.querySelector('#anchorNavigationExGoTop')
+    if (topBtn) {
+      topBtn.click()
+    }
   }
-}
 </script>
 
 <style>
-.book-header .js-toolbar-action.btn {
-  display: none
-}
+  body {
+    letter-spacing: normal !important;
+  }
 
-.back-top {
-  position: fixed;
-  bottom: 5%;
-  right: 35px;
-  width: 38px;
-  height: 38px;
-  background: #333844;
-  text-align: center;
-  padding-top: 6px;
-  cursor: pointer;
-  z-index: 1111;
-}
+  li.chapter {
+    font-size: 16px !important;
+  }
 
-#anchorNavigationExGoTop {
-  display: none;
-}
+  .book-header .js-toolbar-action.btn {
+    display: none
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #333;
-  clear: both;
-  line-height: 26px
-}
+  .back-top {
+    position: fixed;
+    bottom: 5%;
+    right: 35px;
+    width: 38px;
+    height: 38px;
+    background: #333844;
+    text-align: center;
+    padding-top: 6px;
+    cursor: pointer;
+    z-index: 1111;
+  }
 
-.version--wrapper {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 299px;
-  border-top: 1px solid #E6E8F1;
-}
+  #anchorNavigationExGoTop {
+    display: none;
+  }
 
-.book-summary ul.summary {
-  padding-bottom: 50px !important;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #333;
+    clear: both;
+    line-height: 26px
+  }
 
-#version-toggle, #language-toggle {
-  display: block;
-  padding: 10px 0;
-  border-bottom: none;
-  color: #364149;
-  background: #fff;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  float: left;
-  position: relative;
-}
+  .version--wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 299px;
+    border-top: 1px solid #E6E8F1;
+    font-size: 16px;
+  }
 
-#version-toggle {
-  width: 120px;
-  padding-left: 10px;
-}
+  .book-summary ul.summary {
+    padding-bottom: 50px !important;
+  }
 
-#language-toggle {
-  width: 179px;
-  float: right;
-  text-align: right;
-  padding-right: 10px;
-}
+  #version-toggle,
+  #language-toggle {
+    display: block;
+    padding: 10px 0;
+    border-bottom: none;
+    color: #364149;
+    background: #fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    float: left;
+    position: relative;
+  }
 
-#version-toggle select, #language-toggle select {
-  font-size: 16px;
-  outline: none;
-  border: none;
-  appearance: none;
-  -moz-appearance: none;
-  padding-left: 12px;
-  -webkit-appearance: none;
-  background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
-  padding-right: 20px;
-}
+  #version-toggle {
+    width: 120px;
+    padding-left: 10px;
+  }
 
-p {
-  color: #333;
-  font-size: 14px;
-  line-height: 24px;
-  margin: 10px 0 10px 0;
-}
+  #language-toggle {
+    width: 179px;
+    float: right;
+    text-align: right;
+    padding-right: 10px;
+  }
 
-.navbar.navbar-default.navbar-fixed-top .container {
-  width: 100%;
-  padding: 0 32px;
-}
+  #version-toggle select,
+  #language-toggle select {
+    font-size: 16px;
+    outline: none;
+    border: none;
+    appearance: none;
+    -moz-appearance: none;
+    padding-left: 12px;
+    -webkit-appearance: none;
+    background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
+    padding-right: 20px;
+  }
 
-.app-navbar .navbar-right > li > a:hover {
-  color: #009966 !important;
-}
+  p {
+    color: #333;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 10px 0 10px 0;
+  }
 
-.navbar li select {
-  margin-top: 11px;
-  background-color: transparent;
-  border-color: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 300;
-  color: #adafb4;
-  padding: 4px 20px;
-  outline: none;
-  height: 30px;
-  line-height: 26px;
-  vertical-align: middle;
-}
+  .navbar.navbar-default.navbar-fixed-top .container {
+    width: 100%;
+    padding: 0 32px;
+  }
 
-body {
-  padding-top: 60px !important;
-}
+  .app-navbar .navbar-right>li>a:hover {
+    color: #009966 !important;
+  }
 
-.book-header .btn {
-  z-index: 1001;
-  color: #9297AA !important;
-}
+  .navbar li select {
+    margin-top: 11px;
+    background-color: transparent;
+    border-color: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 300;
+    color: #adafb4;
+    padding: 4px 20px;
+    outline: none;
+    height: 30px;
+    line-height: 26px;
+    vertical-align: middle;
+  }
 
-.book-header .btn:hover {
-  color: #7D8399 !important;
-}
+  body {
+    padding-top: 60px !important;
+  }
+
+  .book-header .btn {
+    z-index: 1001;
+    color: #9297AA !important;
+  }
+
+  .book-header .btn:hover {
+    color: #7D8399 !important;
+  }
 </style>
 
 
