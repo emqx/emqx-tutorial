@@ -23,11 +23,6 @@
     display: none;
 }
 
-/* 左侧 */
-/* .navigation {
-    width: 320px;
-} */
-
 .navigation ul.summary {
     padding-left: 32px;
 }
@@ -38,10 +33,6 @@
 
 .book-header h1 {
     display: none !important;
-}
-
-.page-wrapper {
-    margin-top: -40px;
 }
 
 .page-wrapper .page-inner {
@@ -77,4 +68,52 @@ p img {
 
 .developer-center a {
     color: #28D390;
+}
+
+#version-toggle,
+#language-toggle {
+    display: block;
+    padding: 10px 0;
+    border-bottom: none;
+    color: #364149;
+    background: #fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    float: left;
+    position: relative;
+}
+
+#version-toggle {
+    width: 120px;
+    padding-left: 10px;
+}
+
+#language-toggle {
+    width: 179px;
+    float: right;
+    text-align: right;
+    padding-right: 10px;
+}
+
+#version-toggle select,
+#language-toggle select {
+    font-size: 16px;
+    outline: none;
+    border: none;
+    appearance: none;
+    -moz-appearance: none;
+    padding-left: 12px;
+    -webkit-appearance: none;
+    background: url(https://developer.emqx.io/static/images/arrow.png) no-repeat scroll right 7px transparent;
+    padding-right: 20px;
+}
+
+.version--wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 299px;
+    border-top: 1px solid #E6E8F1;
+    font-size: 16px;
 }
