@@ -8,8 +8,7 @@
     "copy-code-button",
     "anchor-navigation-ex",
     "cuav-chapters",
-    "local-pagefooter",
-    "emqx-docs"
+    "local-pagefooter"
   ],
   "pluginsConfig": {
     "anchor-navigation-ex": {
