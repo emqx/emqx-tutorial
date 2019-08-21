@@ -125,6 +125,8 @@ Client mosqsub|25095-Zeus- received CONNACK
 Client mosqsub|25095-Zeus- sending SUBSCRIBE (Mid: 1, Topic: control/1, QoS: 0)
 ```
 在kafka上使用命令行comsumer:
+
+```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 test --from-beginning --topic session
 
 {"client_id":"mosqsub|25095-Zeus-","topic":"control/1","qos":0,"node":"emqx1@192.168.1.100","ts":1542113850}
