@@ -450,11 +450,13 @@ A：执行 `$ emqx console` ，查看输出内容
 
   A：不同于以往版本，Mysql8.0 对账号密码配置默认使用`caching_sha2_password`插件，需要将密码插件改成`mysql_native_password`
 
+  + 修改 `mysql.user` 表
 
-```
-## 切换到 mysql 数据库
+    ```
+    ## 切换到 mysql 数据库
+    mysql> use mysql;
 
-## 查看 user 表
+    ## 查看 user 表
 
     mysql> select user, host, plugin from user;
     +------------------+-----------+-----------------------+
@@ -467,14 +469,23 @@ A：执行 `$ emqx console` ，查看输出内容
     | root             | localhost | caching_sha2_password |
     +------------------+-----------+-----------------------+
 
-## 修改密码插件
-mysql> ALTER USER 'your_username'@'your_host' IDENTIFIED WITH mysql_native_password BY 'your_password';
-Query OK, 0 rows affected (0.01 sec)
+    ## 修改密码插件
+    mysql> ALTER USER 'your_username'@'your_host' IDENTIFIED WITH mysql_native_password BY 'your_password';
+    Query OK, 0 rows affected (0.01 sec)
 
-## 刷新
-mysql> FLUSH PRIVILEGES;
-Query OK, 0 rows affected (0.00 sec)
-```
+    ## 刷新
+    mysql> FLUSH PRIVILEGES;
+    Query OK, 0 rows affected (0.00 sec)
+    ```
+
+  + 修改 `my.conf`
+    
+    在 `my.cnf` 配置文件里面的 [mysqld] 下面加一行
+    ```
+    default_authentication_plugin=mysql_native_password
+    ```
+
+  + 重启 Mysql
 
 
 
