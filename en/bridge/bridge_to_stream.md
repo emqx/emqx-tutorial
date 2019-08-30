@@ -9,13 +9,13 @@ The data source of a streaming data service generates data continually. Data flo
 **Unbounded Data Processing**  
 To handle the endless data input, the data processing itself must be also endless. Data flows in, and data are processed, stored, and then output to other units or feedback to the input network.  
 
-**低延迟**  
+**Low latency**  
 Low latency. Different from a loop of batch processing, streaming doesn't segments data flow. Streaming processes data at all time. This makes the processing latency in a relative low level.
 
 **Approximate or Speculative Results**  
 The data source generates the data endlessly, at every moment there are data waiting for processing, the result from the processed data can be approximate or speculative.
 
-## EMQ X 作为流数据源
+## EMQ X as data source
 EMQ X is a powerful IoT message broker, The high performance and high availability of EQM X and the Subscribe/Publish pattern of MQTT message exchange make it a natural data source of streaming processing.
 
 _In the next sections you will see how to setup bridge from EMQ X to streaming processing._
