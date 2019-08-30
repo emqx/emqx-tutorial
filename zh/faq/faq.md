@@ -489,7 +489,7 @@ A：执行 `$ emqx console` ，查看输出内容
 
 
 
-## Q:EMQ X中ssl resumption session的使用
+## Q: EMQ X中ssl resumption session的使用
 
 A: 修改emqx.conf配置中的 reuse_sessions = on 并生效后。如果客户端与服务端通过 SSL 已经连接成功，当第二次遇到客户端连接时，会跳过 SSL 握手阶段，直接建立连接，节省连接时间，增加客户端连接速度。
 
