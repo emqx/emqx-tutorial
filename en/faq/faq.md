@@ -56,6 +56,24 @@ A: You need to two steps：
   - For DEB/RPM package, the licenses are under "/etc/emqx/";
   - For Docker image, the licenses are under "/opt/emqx/etc/".
 
+After the copy is completed, the license needs to be reloaded from the command line to complete the update：
+
+```
+emqx_ctl license reload [license file path]
+```
+
+The update commands for different installation modes：
+
+```
+## zip packages
+./bin/emqx_ctl license reload etc/emqx.lic
+
+## DEB/RPM
+emqx_ctl license reload /etc/emqx/emqx.lic
+
+## Docker
+docker exec -it emqx-ee emqx_ctl license reload /opt/emqx/etc/emqx.lic
+```
 
 ## Q: Does EMQ X provide consulting service?
 
