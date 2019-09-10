@@ -30,6 +30,7 @@
 * [动作与资源](rule_engine/resource_action.md)
 * [配置示例](rule_engine/example.md)
 * [SQL 手册](rule_engine/sql.md)
+* [Schema Registry 教程](rule_engine/schema_register.md)
 
 
 

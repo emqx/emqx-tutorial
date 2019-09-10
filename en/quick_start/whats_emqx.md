@@ -37,7 +37,7 @@ EMQ X open source version, user can download and use it for free, it provides fo
 
 ## EMQ X Enterprise
 
-EMQ X commercial version, user can [download evaluation version](https://www.emqx.io/downloads/emq/enterprise?osType=Linux) to make a trial.
+EMQ X commercial version, user can [download evaluation version](https://www.emqx.io/downloads) to make a trial.
 
 - All features in open source version
 - Million concurrent connections level

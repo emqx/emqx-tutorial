@@ -31,6 +31,7 @@
 * [Resource and Action](rule_engine/resource_action.md)
 * [Configuration examples](rule_engine/example.md)
 * [SQL Manual](rule_engine/sql.md)
+* [Schema Registry](rule_engine/schema_register.md)
 
 
 ## Data Persistence (Enterprise)

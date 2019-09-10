@@ -36,9 +36,9 @@ A: EMQ X Enterprise (enterprise version) is based on Broker (open source version
 
 ## Q: How to use EMQ X?
 
-A: EMQ X Broker is free and it can be download at [https://www.emqx.io/downloads/emq/broker](https://www.emqx.io/downloads/emq/broker?osType=Linux).
+A: EMQ X Broker is free and it can be download at [https://www.emqx.io/downloads#broker](https://www.emqx.io/downloads#enterprise#broker).
 
-EMQ X Enterprise can be downloaded and evaluated for free.  You can download it from [https://www.emqx.io/downloads/emq/enterprise](https://www.emqx.io/downloads/emq/enterprise?osType=Linux), and then apply trial license at [https://www.emqx.io/account?tab=login](https://www.emqx.io/account?tab=login).
+EMQ X Enterprise can be downloaded and evaluated for free.  You can download it from [https://www.emqx.io/downloads#enterprise](https://www.emqx.io/downloads#enterprise), and then apply trial license at [https://www.emqx.io/licenses#trial](https://www.emqx.io/licenses#trial).
 
 Also you can use the EMQ X enterprise version through public cloud service.
 
