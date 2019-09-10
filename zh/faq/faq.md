@@ -58,9 +58,9 @@ A: EMQ X 是一个开源的 MQTT 消息服务器，并且 MQTT 是一个 TCP 协
 
 ## Q: 怎么样才能使用 EMQ X？
 
-A: EMQ X 开源版可免费下载使用，下载地址：[https://www.emqx.io/downloads/emq/broker](https://www.emqx.io/downloads/emq/broker?osType=Linux)
+A: EMQ X 开源版可免费下载使用，下载地址：[https://www.emqx.io/downloads#broker](https://www.emqx.io/downloads#broker)
 
-EMQ X 企业版支持下载试用，用户可以在 [https://www.emqx.io/downloads/emq/enterprise](https://www.emqx.io/downloads/emq/enterprise?osType=Linux) 下载，[申请试用 license](https://www.emqx.io/account?tab=login)之后即可试用。
+EMQ X 企业版支持下载试用，用户可以在 [https://www.emqx.io/downloads#enterprise](https://www.emqx.io/downloads#enterprise) 下载，[申请试用 license](https://www.emqx.io/licenses#trial)之后即可试用。
 
 另外，还可以在公有云直接创建 EMQ X 企业版：
 

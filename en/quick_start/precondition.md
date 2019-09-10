@@ -8,7 +8,7 @@ The server has the lowest 512MB memory and at least 1 GB of hard disk space.
 
 EMQ provides binary package downloads of popular Linux distributions, MacOS, Windows operating systems and Docker images. 
 
-Supported operating systems and platforms are available on [download page](https://www.emqx.io/downloads/emq/broker?osType=Linux).
+Supported operating systems and platforms are available on [download page](https://www.emqx.io/downloads).
 
 
 ## Installing From Source

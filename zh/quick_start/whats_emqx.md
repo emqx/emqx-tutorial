@@ -37,7 +37,7 @@ EMQ X 开源版本，用户可以免费下载和使用，包含了以下功能�
 
 ## EMQ X Enterprise
 
-EMQ X 商业版本，用户可以通过网站来 [下载企业评估版](https://www.emqx.io/downloads/emq/enterprise?osType=Linux) 进行试用。
+EMQ X 商业版本，用户可以通过网站来 [下载企业评估版](https://www.emqx.io/downloads#enterprise) 进行试用。
 
 - 开源版的全部功能
 - 百万级并发连接能力
