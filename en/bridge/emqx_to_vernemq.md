@@ -20,6 +20,8 @@ Assuming that we have one EMQ X broker, the 'emqx1', and one VerneMQ server. We 
 After installing the VerneQM, you may need to create user and change the listener address to be able to receive connection from out side. For details about VerneMQ please refer to the [VerneMQ Document](https://vernemq.com/)。
 
 ## Setup a Bridge on 'emqx1'
+Note: The configuration of this part has changed since version 3.2.0. See [Upgrade Guide](./bridge.md#升级指南) for details.
+
 To bridge an EMQ X node to VerneMQ, we need to configure it first.
 
 On the 'emqx1', open the config file `emqx.conf`, find 'Bridges' and add a new section below it for our bridge.  

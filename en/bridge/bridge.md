@@ -1,6 +1,11 @@
 # EMQ X and Bridge
 
+## Upgrade Guide
+
+Since version 3.2.0, the built-in bridging function of EMQ X has been independent to `emqx_bridge_mqtt` plugin. The bridge configuration in `emqx.conf` is migrated to the `etc/plugins/emqx_bridge_mqtt.conf` file. After the configuration is complete,  the plug-in needs to be restarted to apply the configuration.
+
 ## What is Bridge
+
 Bridge is a mechanism to connect multiple EMQ X nodes, or other MQTT broker nodes. Unlike the cluster mode, a bridge doesn't synchronize topic trie or route table between node, it simply forwards messages to other nodes and / or subscribes to topics from nodes. What a bridge does are:
 - to forward messages from local clients to remote nodes according bridge rules; and
 - to subscribe to topics on remote nodes and dispatch this messages  in local cluster as if these messages are from local clients.

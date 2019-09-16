@@ -13,6 +13,8 @@ Assuming that we have two EMQ X brokers, the 'emqx1' and the 'emqx2'. We will cr
 | emqx2 | emqx2@192.168.1.101 | 1883 |
 
 ## Setup a Bridge on 'emqx1'
+Note: The configuration of this part has changed since version 3.2.0. See [Upgrade Guide](./bridge.md#升级指南) for details.
+
 To bridge multiple EMQ X nodes, we need to configure it first.
 
 On the 'emqx1', open the config file `emqx.conf`, find 'Bridges' and add a new section below it for our bridge.  
