@@ -46,7 +46,7 @@ Also you can use the EMQ X enterprise version through public cloud service.
 
 
 ## Q: How to update EMQ X license?
-      
+
 A: You need to two steps：
 
 1. After clicking "Download License", browse to the "license.zip" file that you downloaded.
@@ -340,3 +340,159 @@ A: Even when the connction number is small, or message rate is low, it is still 
 ## Q: Does EMQ X support encrypted connection? What is the recommended deployment?
 
 A: EMQ X Support SSL/TLS. In production, we recommend to terminate the TLS connection by Load Balancer. By this way, the connection between device and server(load balancer) use secured connection, and connection between load balancer and EMQ X nodes use general TCP connection.
+
+## Q: How to troubleshoot if EMQ X can't start after installation?
+
+A: Execute `$ emqx console` to view the output.
+
+- `logger` command is missing
+
+  ```
+  $ emqx console
+  Exec: /usr/lib/emqx/erts-10.3.5.1/bin/erlexec -boot /usr/lib/emqx/releases/v3.2.1/emqx -mode embedded -boot_var ERTS_LIB_DIR /usr/lib/emqx/erts-10.3.5.1/../lib -mnesia dir "/var/lib/emqx/mnesia/emqx@127.0.0.1" -config /var/lib/emqx/configs/app.2019.07.23.03.07.32.config -args_file /var/lib/emqx/configs/vm.2019.07.23.03.07.32.args -vm_args /var/lib/emqx/configs/vm.2019.07.23.03.07.32.args -- console
+  Root: /usr/lib/emqx
+  /usr/lib/emqx
+  /usr/bin/emqx: line 510: logger: command not found
+  ```
+
+  **Solution:**
+
+  - `Centos/Redhat`
+
+    ```
+    $ yum install rsyslog
+    ```
+
+  - `Ubuntu/Debian`
+
+    ```
+    $ apt-get install bsdutils
+    ```
+
+- `Missssl` is missing
+
+```
+    $ emqx console
+    Exec: /emqx/erts-10.3/bin/erlexec -boot /emqx/releases/v3.2.1/emqx -mode embedded -boot_var ERTS_LIB_DIR /emqx/erts-10.3/../lib -mnesia dir "/emqx/data/mnesia/emqx@127.0.0.1" -config /emqx/data/configs/app.2019.07.23.03.34.43.config -args_file /emqx/data/configs/vm.2019.07.23.03.34.43.args -vm_args /emqx/data/configs/vm.2019.07.23.03.34.43.args -- console
+    Root: /emqx
+    /emqx
+    Erlang/OTP 21 [erts-10.3] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:32] [hipe]
+    
+    {"Kernel pid terminated",application_controller,"{application_start_failure,kernel,{{shutdown,{failed_to_start_child,kernel_safe_sup,{on_load_function_failed,crypto}}},{kernel,start,[normal,[]]}}}"}
+    Kernel pid terminated (application_controller) ({application_start_failure,kernel,{{shutdown,{failed_to_start_child,kernel_safe_sup,{on_load_function_failed,crypto}}},{kernel,start,[normal,[]]}}})
+    
+    Crash dump is being written to: log/crash.dump...done
+```
+
+**Solution:** Install openssl above version 1.1.1
+
+- `License` file is missing
+
+```
+  $ emqx console
+  Exec: /usr/lib/emqx/erts-10.3.5.1/bin/erlexec -boot /usr/lib/emqx/releases/v3.2.1/emqx -mode embedded -boot_var ERTS_LIB_DIR /usr/lib/emqx/erts-10.3.5.1/../lib -mnesia dir "/var/lib/emqx/mnesia/emqx@127.0.0.1" -config /var/lib/emqx/configs/app.2019.07.23.05.52.46.config -args_file /var/lib/emqx/configs/vm.2019.07.23.05.52.46.args -vm_args /var/lib/emqx/configs/vm.2019.07.23.05.52.46.args -- console
+  Root: /usr/lib/emqx
+  /usr/lib/emqx
+  Erlang/OTP 21 [erts-10.3.5.1] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:32] [hipe]
+  
+  Starting emqx on node emqx@127.0.0.1
+  Start http:management listener on 8080 successfully.
+  Start http:dashboard listener on 18083 successfully.
+  Start mqtt:tcp listener on 127.0.0.1:11883 successfully.
+  Start mqtt:tcp listener on 0.0.0.0:1883 successfully.
+  Start mqtt:ws listener on 0.0.0.0:8083 successfully.
+  Start mqtt:ssl listener on 0.0.0.0:8883 successfully.
+  Start mqtt:wss listener on 0.0.0.0:8084 successfully.
+  EMQ X Broker 3.2.1 is running now!
+  "The license certificate is expired!"
+  2019-07-23 05:52:51.355 [critical] The license certificate is expired!
+  2019-07-23 05:52:51.355 [critical] The license certificate is expired! System shutdown!
+  Stop mqtt:tcp listener on 127.0.0.1:11883 successfully.
+  Stop mqtt:tcp listener on 0.0.0.0:1883 successfully.
+  Stop mqtt:ws listener on 0.0.0.0:8083 successfully.
+  Stop mqtt:ssl listener on 0.0.0.0:8883 successfully.
+  Stop mqtt:wss listener on 0.0.0.0:8084 successfully.
+  [os_mon] memory supervisor port (memsup): Erlang has closed
+  [os_mon] cpu supervisor port (cpu_sup): Erlang has closed
+```
+
+  **Solution:** Go to [emqx.io](https://emqx.io) to apply for a license or install the open source version of EMQ X Broker
+
+
+
+## Q: EMQ X cannot connect to Mysql8.0
+
+ A: Different from previous versions, Mysql8.0 uses the `caching_sha2_password` plugin by default for account password configuration. The password plugin is required to change to `mysql_native_password`.
+
+- Modify the `mysql.user` table
+
+  ```
+  ## Switch to the mysql database
+  mysql> use mysql;
+  
+  ## View user table
+  
+  mysql> select user, host, plugin from user;
+  +------------------+-----------+-----------------------+
+  | user             | host      | plugin                |
+  +------------------+-----------+-----------------------+
+  | root             | %         | caching_sha2_password |
+  | mysql.infoschema | localhost | caching_sha2_password |
+  | mysql.session    | localhost | caching_sha2_password |
+  | mysql.sys        | localhost | caching_sha2_password |
+  | root             | localhost | caching_sha2_password |
+  +------------------+-----------+-----------------------+
+  
+  ## Change password plugin
+  mysql> ALTER USER 'your_username'@'your_host' IDENTIFIED WITH mysql_native_password BY 'your_password';
+  Query OK, 0 rows affected (0.01 sec)
+  
+  ## Refresh
+  mysql> FLUSH PRIVILEGES;
+  Query OK, 0 rows affected (0.00 sec)
+  ```
+
+- Change `my.conf`
+
+  Add a line below the [mysqld] in the `my.cnf` configuration file.
+
+  ```
+  default_authentication_plugin=mysql_native_password
+  ```
+
+- Restart Mysql
+
+
+
+## Q: Use of ssl resumption session in EMQ X
+
+A: Modify the reuse_sessions = on in the emqx.conf configuration and take effect. If the client and the server are successfully connected through SSL, when the client connection is encountered for the second time, the SSL handshake phase is skipped, the connection is directly established to save the connection time and increase the client connection speed.
+
+## Q: MQTT client disconnect statistics
+
+A: Execute `emqx_ctl listeners` to view the `shutdown_count` statistics under the corresponding port.
+
+Client disconnect link error code list:
+
+- `keepalive_timeout`：MQTT keepalive time out
+
+- `closed`： TCP client disconnected (the FIN sent by the client did not receive the MQTT DISCONNECT)
+
+- `normal`： MQTT client is normally disconnected
+
+- `einval`：EMQ X wants to send a message to the client, but the Socket has been disconnected
+
+- `function_clause`：MQTT packet format error
+
+- `etimedout`：TCP Send timeout (no TCP ACK response received)
+
+- `proto_unexpected_c`：Repeatedly received an MQTT connection request when there is already an MQTT connection
+
+- `idle_timeout`： After the TCP connection is established for 15s, the connect packet has not been received yet.
+
+  
+
+  
+
+  
+
