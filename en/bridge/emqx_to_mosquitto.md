@@ -20,6 +20,8 @@ Assuming that we have one EMQ X broker, the 'emqx1', and one Mosquitto server. W
 Using the default Mosquitto configuration after installation should be sufficient to finish the text in this section. For more details about Mosquitto please refer to the [Mosquitto Document](https://mosquitto.org/).
 
 ## Setup a Bridge on 'emqx1'
+Note: The configuration of this part has changed since version 3.2.0. See [Upgrade Guide](./bridge.md#升级指南) for details.
+
 To bridge an EMQ X node to Mosquitto, we need to configure it first.
 
 On the 'emqx1', open the config file `emqx.conf`, find 'Bridges' and add a new section below it for our bridge.  
