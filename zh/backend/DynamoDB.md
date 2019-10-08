@@ -1,10 +1,12 @@
 #  DynamoDB 数据存储
 
 
-
 本章节以在 `CentOS 7.2` 中的实际例子来说明如何通过 DynamoDB 来存储相关的信息。
 
-Amazon DynamoDB 是一个完全托管的专有 NoSQL 数据库服务，支持键值和文档数据结构，由亚马逊作为 AWS  云产品组合的一部分提供。本处为了方便演示，利用 DynamoDB 可下载版本，在不访问 DynamoDB Web 服务的情况下完成教程，实际生产环境仍推荐使用 AWS 相关服务。
+Amazon DynamoDB 是一个完全托管的 NoSQL 数据库服务，支持键值和文档数据结构，可以提供快速的、可预期的性能，并且可以实现无缝扩展。
+
+Amazon DynamoDB 由亚马逊作为 AWS 云产品组合的一部分提供。本处为了方便演示，利用 DynamoDB 可下载版本，在不访问 AWS DynamoDB 服务的情况下完成教程，实际生产环境仍推荐使用 AWS 相关服务。
+
 
 ## 安装 DynamoDB 服务器
 
