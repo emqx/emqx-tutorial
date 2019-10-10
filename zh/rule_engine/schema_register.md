@@ -8,7 +8,7 @@ EMQ X 企业版 3.4.0 提供了 Schema Registry 功能，提供编解码能力�
 
 下图展示了 Schema Registry 的一个应用案例。多个设备上报不同格式的数据，经过 Schema Registry 解码之后，变为统一的内部格式，然后转发给后台应用。
 
-![schema-registry](./schema-registry.png)
+![schema-registry](../assets/schema-registry.png)
 
 [图1: 使用 Schema Registry 对设备数据进行编解码]
 
@@ -22,7 +22,7 @@ Schema Registry 为 Avro 和 Protobuf 等内置编码格式维护 Schema 文本�
 
 Schema Registry 既可以解码，也可以编码。编码和解码时需要指定 Schema ID。
 
-![architecture](./arch.png)
+![architecture](../assets/arch.png)
 
 [图2: Schema Registry 架构示意图]
 
@@ -48,7 +48,7 @@ EMQ X 的消息处理层面可分为消息路由(Messaging)、规则引擎(Rule 
 
 EMQ X 的 PUB/SUB 系统将消息路由到指定的主题。规则引擎可以灵活地配置数据的业务规则，按规则匹配消息，然后指定相应动作。数据格式转换发生在规则匹配的过程之前，先将数据转换为可参与规则匹配的 Map 格式，然后进行匹配。
 
-![SchemaAndRuleEngine](./SchemaAndRuleEngine.png)
+![SchemaAndRuleEngine](../assets/SchemaAndRuleEngine.png)
 
 [图3: Messaging, Rule Engine and Schema Registry]
 
