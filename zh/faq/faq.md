@@ -116,7 +116,7 @@ A: 支持。部署参考[文章](https://www.jianshu.com/p/e5cf0c1fd55c).
 
 ## Q: EMQ X 支持私有协议进行扩展吗？如支持应该如何实现？
 
-A: TODO...
+A: 对于新开发的私有协议，EMQ X 提供一套 TCP 协议接入规范，私有协议可以按照该规范进行开发接入。如果您所使用的协议已经定型或协议底层非 TCP，可以通过网关进行转换处理，之后通过 MQTT 协议接入 EMQ X，或直接联系 EMQ 官方支持私有协议适配。
 
 ## Q: EMQ X 如何预估资源的使用？
 
@@ -203,8 +203,14 @@ A: WebSocket 是一种在基于 HTTP 协议上支持全双工通讯的协议，�
 
 A: EMQ X 支持限定客户端可以使用的主题，从而实现设备权限的管理。如果要做这样的限定，需要在 EMQ X 启用 ACL（Access Control List），并禁用匿名访问和关闭无 ACL 命中的访问许可（为了测试调试方便，在默认配置中，后两项是开启的，请注意关闭）。
 
-ACL 可以配置在文件中，或者配置在后台数据库中。下面例子是 ACL 控制文件的一个配置行，含义是用户 “dashboard” 可以订阅 “$SYS/#” 主题。ACL 在后台数据库中的配置思想与此类似，详细配置方法请参阅 EMQ X 文档的相关章节。
+```bash
+## etc/emqx.conf
 
+## ACL nomatch
+mqtt.acl_nomatch = allow
+```
+
+ACL 可以配置在文件 `etc/acl.conf` 中，或者配置在后台数据库中。下面例子是 ACL 控制文件的一个配置行，含义是用户 “dashboard” 可以订阅 “$SYS/#” 主题。ACL 在后台数据库中的配置思想与此类似，详细配置方法请参阅 EMQ X 文档的 [ACL 访问控制](https://docs.emqx.io/tutorial/v3/cn/security/acl.html) 章节。
 ```
 {allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
 ```
@@ -215,6 +221,11 @@ ACL 可以配置在文件中，或者配置在后台数据库中。下面例子�
 A: 共享订阅是 MQTT 5.0 标准的新特性，在标准发布前，EMQ X 就已经把共享订阅作为标准外特性进行了支持。在普通订阅中，所有订阅者都会收到订阅主题的所有消息，而在共享订阅中，订阅同一个主题的客户端会轮流的收到这个主题下的消息，也就是说同一个消息不会发送到多个订阅者，从而实现订阅端的多个节点之间的负载均衡。
 
 共享订阅对于数据采集 / 集中处理类应用非常有用。在这样的场景下，数据的生产者远多余数据的消费者，且同一条数据只需要被任意消费者处理一次。
+
+
+更多使用方式请参考 [共享订阅](https://docs.emqx.io/tutorial/v3/cn/advanced/share_subscribe.html)。
+
+
 
 ## Q: EMQ X 能做流量控制吗？
 
@@ -241,7 +252,9 @@ A: 通常情况客户端需要在连接到 EMQ X 之后主动订阅主题。代�
 
 使用代理订阅可以集中管理大量的客户端的订阅，同时为客户端省略掉订阅这个步骤，可以节省客户端侧的计算资源和网络带宽。
 
-* 注：目前 EMQ X 企业版支持代理订阅。*
+以 Redis 数据库为例，代理订阅在 EMQ X 上使用方式请参考 [Redis 实现客户端代理订阅](https://docs.emqx.io/tutorial/v3/cn/backend/redis.html#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BB%A3%E7%90%86%E8%AE%A2%E9%98%85)
+
+> 注：目前 EMQ X 企业版支持代理订阅。
 
 
 ## Q: EMQ X 是如何实现支持大规模并发和高可用的？
@@ -267,12 +280,20 @@ A: EMQ X 企业版支持消息持久化，可以将消息保存到数据库，�
 - MySQL
 - PostgreSQL
 - Cassandra
+- AWS DynamoDB
+- TimescaleDB
+- OpenTSDB
+- InfluxDB
+
+有关数据持久化的支持请参见 [EMQ X 数据持久化概览](https://docs.emqx.io/tutorial/v3/cn/backend/whats_backend.html)。
+
+
 
 ## Q: 在服务器端能够直接断开一个 MQTT 连接吗？
 
-A: 可以的。通过 EMQ X 提供的 REST API 请求就可以实现，在EMQ X 2.x和3.0的实现方式有所不同：
+A: 可以的。EMQ X 提供的 REST API 中包含断开 MQTT 连接，该操作在 EMQ X 2.x 和 3.0 的实现方式有所不同：
 
-- 在2.x版本中是由 EMQ X 自定义扩展协议实现的
+- 在 2.x 版本中是由 EMQ X 自定义扩展协议实现的
 - 在 3.0 版本之后按照 MQTT 5.0 协议对从服务器端断开连接的规范要求实现的
 
 调用的 API 如下所示：
@@ -289,11 +310,18 @@ URL：api/[v2|v3]/clients/{clientid}
 }
 ```
 
+REST API 使用方式参考 [管理监控API (REST API)](https://docs.emqx.io/broker/v3/cn/rest.html)
+
+
 
 
 ## Q: EMQ X 能把接入的消息转发到 Kafka 吗？
 
 A: 能。目前 EMQ X 企业版提供了内置的 Kafka 桥接方式，支持把消息桥接至 Kafka 进行流式处理。
+
+EMQ X 使用 Kafka 参照 [EMQ X 到 Kafka 的桥接](https://docs.emqx.io/tutorial/v3/cn/bridge/bridge_to_kafka.html)
+
+
 
 ## Q: EMQ X 企业版中桥接 Kafka，一条 MQTT 消息到达 EMQ X 集群之后就回 MQTT Ack 报文还是写入 Kafka 之后才回 MQTT Ack 报文? 
 
@@ -327,21 +355,25 @@ A: EMQ X 支持集群自动发现。集群可以通过手动配置或自动配�
 - ETCD 自动集群
 - K8S 自动集群
 
+有关集群概念和组建集群方式请参照 [EMQ X 的集群概念](https://docs.emqx.io/tutorial/v3/cn/cluster/whats_cluster.html)
+
 
 ## Q: 我可以把 MQTT 消息从 EMQ X 转发其他消息中间件吗？例如 RabbitMQ？
 
 A: EMQ X 支持转发消息到其他消息中间件，通过 EMQ X 提供的桥接方式就可以做基于主题级别的配置，从而实现主题级别的消息转发。
 
+EMQ X 桥接相关的使用方式请参照 [EMQ X 桥接](https://docs.emqx.io/tutorial/v3/cn/bridge/bridge.html)
 
 ## Q: 我可以把消息从 EMQ X 转到公有云 MQTT 服务上吗？比如 AWS 或者 Azure 的 IoT Hub？
 
-A: EMQ X 可以转发消息到公有云的 IoT Hub，通过 EMQ X 提供的桥接就可以实现。
+A: EMQ X 可以转发消息到标准 MQTT Broker，包括其他 MQTT 实现、公有云的 IoT Hub，通过 EMQ X 提供的桥接就可以实现。
 
 
 ## Q: MQTT Broker（比如 Mosquitto）可以转发消息到 EMQ X 吗？
 
 A: Mosquitto 可以配置转发消息到 EMQ X，请参考[数据桥接](https://developer.emqx.io/docs/tutorial/zh/bridge/bridge.html)。
 
+> EMQ X 桥接相关的使用方式请参照 [EMQ X 桥接](https://docs.emqx.io/tutorial/v3/cn/bridge/bridge.html)
 
 ## Q: 系统主题有何用处？都有哪些系统主题？
 
@@ -366,7 +398,7 @@ A: EMQ X 支持追踪来自某个客户端的报文或者发布到某个主题�
 
 ## Q: 为什么我做压力测试的时候，连接数目和吞吐量老是上不去，有系统调优指南吗？
 
-A: 在做压力测试的时候，除了要选用有足够计算能力的硬件，也需要对软件运行环境做一定的调优。比如修改修改操作系统的全局最大文件句柄数，允许用户打开的文件句柄数，TCP 的 backlog 和 buffer，erlang 虚拟机的进程数限制等等。甚至包括需要在客户端上做一定的调优以保证客户端可以有足够的连接资源。
+A: 在做压力测试的时候，除了要选用有足够计算能力的硬件，也需要对软件运行环境做一定的调优。比如修改修改操作系统的全局最大文件句柄数，允许用户打开的文件句柄数，TCP 的 backlog 和 buffer，Erlang 虚拟机的进程数限制等等。甚至包括需要在客户端上做一定的调优以保证客户端可以有足够的连接资源。
 
 系统的调优在不同的需求下有不同的方式，在 EMQ X 的[文档-测试调优](https://developer.emqx.io/docs/broker/v3/cn/tune.html) 中对用于普通场景的调优有较详细的说明
 
@@ -467,9 +499,9 @@ A：执行 `$ emqx console` ，查看输出内容
 
 
 
-## Q：EMQ X 无法连接Mysql8.0
+## Q：EMQ X 无法连接 MySQL 8.0
 
-  A：不同于以往版本，Mysql8.0 对账号密码配置默认使用`caching_sha2_password`插件，需要将密码插件改成`mysql_native_password`
+  A：不同于以往版本，MySQL 8.0 对账号密码配置默认使用`caching_sha2_password`插件，需要将密码插件改成`mysql_native_password`
 
   + 修改 `mysql.user` 表
 
@@ -506,7 +538,8 @@ A：执行 `$ emqx console` ，查看输出内容
     default_authentication_plugin=mysql_native_password
     ```
 
-  + 重启 Mysql
+  + 重启 MySQL 即可
+
 
 
 
