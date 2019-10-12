@@ -18,9 +18,9 @@ EMQ X 3.4.0 内置的 Schema Registry 数据格式包括 [Avro](https://avro.apa
 
 ## 架构设计
 
-Schema Registry 为 Avro 和 Protobuf 等内置编码格式维护 Schema 文本，但对于自定义编解码 (3rd-party) 格式，如需要 Schema，Schema 文本需由编解码服务自己维护。Schema Registry 为每个 Schema 创建一个 Schema ID，Schema API 提供了通过 Schema ID 的添加、查询和删除操作。
+Schema Registry 为 Avro 和 Protobuf 等内置编码格式维护 Schema 文本，但对于自定义编解码 (3rd-party) 格式，如需要 Schema，Schema 文本需由编解码服务自己维护。Schema API 提供了通过 Schema Name 的添加、查询和删除操作。
 
-Schema Registry 既可以解码，也可以编码。编码和解码时需要指定 Schema ID。
+Schema Registry 既可以解码，也可以编码。编码和解码时需要指定 Schema Name。
 
 ![architecture](../assets/arch.png)
 
@@ -29,13 +29,13 @@ Schema Registry 既可以解码，也可以编码。编码和解码时需要指�
 编码调用示例：参数为 Schema
 
 ```c
-schema_encode(SchemaID, Data) -> RawData
+schema_encode(SchemaName, Data) -> RawData
 ```
 
 解码调用示例：
 
 ```c
-schema_decode(SchemaID, RawData) -> Data
+schema_decode(SchemaName, RawData) -> Data
 ```
 
 常见的使用案例是，使用规则引擎来调用 Schema Registry 提供的编码和解码接口，然后将编码或解码后的数据作为后续动作的输入。
@@ -117,24 +117,22 @@ SELECT json_decode(payload) AS p FROM "message.publish" WHERE p.x = p.y, topic ~
    }
    ```
 
-Schema 创建完成后，emqx 会分配一个 Schema ID 和 Version。如果是第一次创建 "protobuf_person"，Schema ID 为 "protobuf_person:1.0"。
-
 #### 创建规则
 
-**使用刚才创建好的 Schema ID 来编写规则 SQL 语句：**
+**使用刚才创建好的 Schema 来编写规则 SQL 语句：**
 
 ```sql
 SELECT
-  schema_decode('protobuf_person:1.0', payload, 'Person') as person, payload
+  schema_decode('protobuf_person', payload, 'Person') as person, payload
 FROM
   "message.publish"
 WHERE
   topic =~ 't/#' and person.name = 'Shawn'
 ```
 
-这里的关键点在于 `schema_decode('protobuf_person:1.0', payload, 'Person')`:
+这里的关键点在于 `schema_decode('protobuf_person', payload, 'Person')`:
 
-- `schema_decode` 函数将 payload 字段的内容按照 'protobuf_person:1.0' 这个 Schema 来做解码;
+- `schema_decode` 函数将 payload 字段的内容按照 'protobuf_person' 这个 Schema 来做解码;
 - `as person` 将解码后的值保存到变量 "person" 里;
 - 最后一个参数 `Person` 指明了 payload 中的消息的类型是 protobuf schema 里定义的 'Person' 类型。
 
@@ -217,24 +215,22 @@ t/1 b'\n\x05Shawn\x10\x01\x1a\rliuxy@emqx.io'
    }
    ```
 
-Schema 创建完成后，emqx 会分配一个 Schema ID 和 Version。如果是第一次创建 "avro_user"，Schema ID 为 "avro_user:1.0"。
-
 #### 创建规则
 
-**使用刚才创建好的 Schema ID 来编写规则 SQL 语句：**
+**使用刚才创建好的 Schema 来编写规则 SQL 语句：**
 
 ```sql
 SELECT
-  schema_decode('avro_user:1.0', payload) as avro_user, payload
+  schema_decode('avro_user', payload) as avro_user, payload
 FROM
   "message.publish"
 WHERE
   topic =~ 't/#' and avro_user.name = 'Shawn'
 ```
 
-这里的关键点在于 `schema_decode('avro_user:1.0', payload)`:
+这里的关键点在于 `schema_decode('avro_user', payload)`:
 
-- `schema_decode` 函数将 payload 字段的内容按照 'avro_user:1.0' 这个 Schema 来做解码;
+- `schema_decode` 函数将 payload 字段的内容按照 'avro_user' 这个 Schema 来做解码;
 - `as avro_user` 将解码后的值保存到变量 "avro_user" 里。
 
 **然后使用以下参数添加动作：**
@@ -300,13 +296,13 @@ publish to topic: t/1, payload: b'\nShawn\x00\xb4\n\x00\x06red'
 4. URL: http://127.0.0.1:9003/parser
 5. 编解码配置: xor
 
-其他配置保持默认。emqx 会分配一个 Schema ID "my_parser"。自定义编解码没有 Version 管理。
+其他配置保持默认。
 
 上面第 5 项编解码配置是个可选项，是个字符串，内容跟编解码服务的业务相关。
 
 #### 创建规则
 
-**使用刚才创建好的 Schema ID 来编写规则 SQL 语句：**
+**使用刚才创建好的 Schema 来编写规则 SQL 语句：**
 
 ```sql
 SELECT
