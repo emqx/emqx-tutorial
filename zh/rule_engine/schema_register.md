@@ -60,7 +60,7 @@ Map 是一个 Key-Value 形式的数据结构，形如 #{key => value}。例如�
 
 SQL 语句提供了 "." 操作符嵌套地提取和添加 Map 字段。下面是使用 SQL 语句对这个 Map 操作的示例:
 
-```mysql
+```sql
 SELECT user.id AS my_id
 ```
 
@@ -70,7 +70,7 @@ SQL 语句的筛选结果为 `#{my_id => 1}`。
 
 规则引擎的 SQL 语句提供了对 JSON 格式字符串的编解码支持，将 JSON 字符串和 Map 格式相互转换的 SQL 函数为 json_decode() 和 json_encode():
 
-```mysql
+```sql
 SELECT json_decode(payload) AS p FROM "message.publish" WHERE p.x = p.y, topic ~= "t/#"
 ```
 
