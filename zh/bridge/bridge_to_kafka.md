@@ -81,7 +81,7 @@ bridge.kafka.servers = 192.168.1.101:9092
 bridge.kafka.hook.session.subscribed.1   = {"filter":"#", "topic":"session"}
 bridge.kafka.hook.session.unsubscribed.1 = {"filter":"#", "topic":"session"}
 bridge.kafka.hook.message.publish.1      = {"filter":"#", "topic":"message"}
-bridge.kafka.hook.message.delivered.1    = {"filter":"#", "topic":"message"}
+bridge.kafka.hook.message.deliver.1    = {"filter":"#", "topic":"message"}
 bridge.kafka.hook.message.acked.1        = {"filter":"#", "topic":"message"}
 ```
 

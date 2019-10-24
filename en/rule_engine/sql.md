@@ -1,5 +1,32 @@
 # SQL Manual
 
+## Important Upgrade
+
+EMQ X v3.4.0 and earlier:
+
+```sql
+SELECT
+  payload.host as host,
+  payload.location as location,
+  payload.internal as internal,
+  payload.external as external
+FROM
+  "message. publish"
+```
+
+EMQ X v3.4.1 and later:
+
+```sql
+SELECT
+  json_ decode(payload) as p, -- Need to decode the payload field manually
+  p.host as host,
+  p.location as location,
+  p.internal as internal,
+  p.external as external
+FROM
+  "message. publish"
+```
+
 ## SQL  Statement
 
 The SQL statement is used to filter out the fields from the original data according to the conditions and perform preprocessing and conversion. The basic format is as follows:
@@ -45,13 +72,13 @@ SELECT <field name> FROM <trigger event> [WHERE <condition>]
 5. Extract the x field from the payload of  message with any topic and create the alias x for use in the WHERE clause. The WHERE clause is restricted as x = 1. Note that the payload must be in JSON format. Example: This SQL statement can match the payload `{"x": 1}`, but can not match to the payload `{"x": 2}`
 
     ```sql
-    SELECT payload.x as x FROM "message.publish" WHERE x=1
+    SELECT json_decode(payload) as p, p.x as x FROM "message.publish" WHERE x=1
     ```
 
 6. Similar to the SQL statement above, but nested extract the data in the payload, this SQL statement can match the payload{"x": {"y": 1}}`
 
     ```sql
-    SELECT payload.x.y as a FROM "message.publish" WHERE a=1
+    SELECT json_decode(payload) as p, p.x.y as a FROM "message.publish" WHERE a=1
     ```
 
 7.  Try to connect when client_id = 'c1', extract its source IP address and port number

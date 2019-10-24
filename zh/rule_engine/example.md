@@ -2,6 +2,34 @@
 
 本篇提供两个示例，通过 Dashboard 可视化界面演示规则引擎的创建于使用。
 
+## 兼容性说明（重要）
+
+EMQ X 在 v3.4.1 对规则引擎做出功能调整，不再自动解码对消息 payload 以提升性能和规则 SQL 语义性，需要使用到 payload 中的字段请按如下方式升级：
+
+3.4.0 以及更老版本:
+
+```sql
+SELECT
+  payload.host as host,
+  payload.location as location,
+  payload.internal as internal,
+  payload.external as external
+FROM
+  "message. publish"
+```
+
+3.4.1 以及以后版本:
+```sql
+SELECT
+  json_decode(payload) as p, -- 需要手动对 payload 字段解码
+  p.host as host,
+  p.location as location,
+  p.internal as internal,
+  p.external as external
+FROM
+  "message. publish"
+```
+
 
 
 ## 示例一：通过 Web Server 持久化消息到磁盘/数据库
