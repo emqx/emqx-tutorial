@@ -47,10 +47,12 @@
 
 
 ## Bridge
+* [EMQ X and Bridge](bridge/bridge.md)
+* [Bridge between EMQ X Nodes](bridge/emqx_to_emqx.md)
 * [Bridge other message middleware to EMQ X](bridge/bridge_to_emqx.md)
  * [Mosquitto](bridge/mosquitto_to_emqx.md)
- * [HiveMQ](bridge/hivemq_to_emqx.md)
- * [RabbitMQ](bridge/rabbitmq_to_emqx.md)
+ <!-- * [HiveMQ](bridge/hivemq_to_emqx.md) -->
+ <!-- * [RabbitMQ](bridge/rabbitmq_to_emqx.md) -->
  * [VerneMQ](bridge/vernemq_to_emqx.md)
 * [Brige EMQ X to other message middleware](bridge/emqx_to_mosquitto.md)
  * [Mosquitto](bridge/emqx_to_mosquitto.md)
@@ -59,7 +61,6 @@
  * [VerneMQ](bridge/emqx_to_vernemq.md)
 * [Bridge EMQ X to streaminng service](bridge/bridge_to_stream.md)
  * [Kafka bridge](bridge/bridge_to_kafka.md)
-
 
 ## Security
 * [Authentication](security/auth.md)
