@@ -181,7 +181,7 @@ Using the WebSocket test tool, when a message is published, the option of `reser
 aws dynamodb scan --table-name mqtt_retain --region us-west-2 --endpoint-url  http://localhost:8000
 ```
 
-![image-20190722112649536](D:/emqx/emqx-tutorial/zh/backend/assets/image-20190722112649536.png)
+![image-20190722112649536](/emqx/emqx-tutorial/zh/backend/assets/image-20190722112649536.png)
 
 
 
