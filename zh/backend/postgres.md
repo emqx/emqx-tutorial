@@ -2,7 +2,20 @@
 
 本章节以在 `CentOS 7.2` 中的实际例子来说明如何通过 PostgreSQL 来存储相关的信息。
 
+作为开源关系数据库重要一员，PostgreSQL 标榜自己是世界上最先进的开源数据库，相比于其他开源关系数据库如 MySQL，PostgreSQL 是完全由社区驱动的开源项目，由全世界超过 1000 名贡献者所维护。PostgreSQL 提供了单个完整功能的版本，而不像 MySQL 那样提供了多个不同的社区版、商业版与企业版。PostgreSQL 基于自由的 BSD/MIT 许可，组织可以使用、复制、修改和重新分发代码，只需要提供一个版权声明即可。
 
+PostgreSQL 具有诸多特性，在 GIS 领域有较多支持，其“无锁定”特性非常突出，支持函数和条件索引，有成熟的集群方案。PostgreSQL 还具备及其强悍的 SQL 编程能力如统计函数和统计语法支持，通过 Timescaledb 插件，PostgreSQL 可以转变为功能完备的时序数据库 Timescaledb 。
+
+[toc]
+
+## 功能概览
+
+- [客户端在线状态存储](./postgres.md#客户端在线状态存储)
+- [客户端代理订阅](./postgres.md#客户端代理订阅)
+- [持久化发布消息](./postgres.md#持久化发布消息)
+- [Retain 消息持久化](./postgres.md#retain-消息持久化)
+- [消息确认持久化](./postgres.md#消息确认持久化)
+- [自定义 SQL](./postgres.md#自定义-sql)
 
 ## 安装与验证 PostgreSQL 服务器
 
@@ -45,8 +58,6 @@ emqx_ctl plugins load emqx_backend_pgsql
 ### 通过管理控制台启动
 
 EMQ X 管理控制台 **插件** 页面中，找到 **emqx_backend_pgsql** 插件，点击 **启动**。
-
-
 
 
 
