@@ -8,14 +8,15 @@
     "copy-code-button",
     "anchor-navigation-ex",
     "cuav-chapters",
-    "local-pagefooter"
+    "local-pagefooter",
+    "simpletabs"
   ],
   "pluginsConfig": {
     "anchor-navigation-ex": {
       "showLevel": false
     },
     "local-pagefooter": {
-      "copyright": "© Copyright 2016-2019, EMQ Technologies Co., Ltd.",
+      "copyright": "© Copyright 2016-2020, EMQ Technologies Co., Ltd.",
       "islocal": true,
       "modify_label": "The document reversion time: ",
       "modify_format": "YYYY-MM-DD HH:mm:ss"

@@ -1,5 +1,7 @@
 # Configuration examples
 
+> Compatibility tip: The EMQ X v4.0 makes great adjustments to the SQL syntax of the Rule Engine. For v3.x upgrade users, please refer to the [Migration Guide](./ rule_engine.md#migration-guide) for adaptation.
+
 This article provides two examples to demonstrate the creation and use of the rules engine through the dashboard visual interface.
 
 
@@ -8,7 +10,7 @@ This article provides two examples to demonstrate the creation and use of the ru
 
 ### Scenario Description
 
-In this scenario, the on-board sensor of the truck from vehicle networking is used to report the following JSON message through the topic of `/monitor/:device_id/state`(device_id is the client_id of the vehicle connection client, the same with vehicle ID):
+In this scenario, the on-board sensor of the truck from vehicle networking is used to report the following JSON message through the topic of `/monitor/:device_id/state`(device_id is the clientid of the vehicle connection client, the same with vehicle ID):
 
 ```js
 {
@@ -113,15 +115,15 @@ Select the **Message Publish** event to process the data when the truck message 
 }
 ```
 
-According to the **Available Fields** prompt, the `device_id` field is equivalent to the client_id that can be selected from the context, and the information such as `speed` is selected from `payload`. The rule SQL is as follows:
+According to the **Available Fields** prompt, the `device_id` field is equivalent to the clientid that can be selected from the context, and the information such as `speed` is selected from `payload`. The rule SQL is as follows:
 
 ```sql
 SELECT 
   payload.speed AS speed, 
   payload.lng AS lng, 
   payload.lat AS lat, 
-  client_id AS device_id 
-FROM "message.publish"
+  clientid AS device_id 
+FROM "#"
 ```
 
 This rule handles all messages by default. In fact, the business only needs to process messages under `/monitor/+/state` topic (using topic wildcards), and the value of speed should be greater than 60. We add restrictions to the rule:
@@ -131,10 +133,9 @@ SELECT
   payload.speed AS speed, 
   payload.lng AS lng, 
   payload.lat AS lat, 
-  client_id AS device_id 
-FROM "message.publish"
+  clientid AS device_id 
+FROM "/monitor/+/state"
 WHERE
-  topic =~ '/monitor/+/state' and
   speed > 60
 ```
 
@@ -218,14 +219,14 @@ Initialize the MySQL device table `devices` and the connection record table `dev
 -- Device table
 CREATE TABLE `emqx`.`devices` (
   `id` INT NOT NULL,
-  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT 'Client ID',
+  `clientid` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT 'Client ID',
   `state` TINYINT(3) NOT NULL DEFAULT 0 COMMENT 'Status 0 Offline 1 Online',
   `connected_at` VARCHAR(45) NULL COMMENT 'Connection time，Millisecond timestamp',
   PRIMARY KEY (`id`));
 
 -- Initialize data
 
-INSERT INTO `emqx`.`devices` (`client_id`) VALUES ('emqx_c');
+INSERT INTO `emqx`.`devices` (`clientid`) VALUES ('emqx_c');
 
 
 ```
@@ -234,7 +235,7 @@ INSERT INTO `emqx`.`devices` (`client_id`) VALUES ('emqx_c');
 -- Connection record table
 CREATE TABLE `emqx`.`device_connect_log` (
   `id` INT NOT NULL,
-  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT 'Client ID',
+  `clientid` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT 'Client ID',
   `action` TINYINT(3) NOT NULL DEFAULT 0 COMMENT 'Action 0 Else 1 Online 2 Offline 3 Subscribe 4 Unsubscribe',
   `target` VARCHAR(255) NULL COMMENT 'Operation target',
   `create_at` VARCHAR(45) NULL COMMENT 'Record time',
@@ -265,7 +266,7 @@ Repeat the resource creation operation to create a WehHook type resource for dev
 
 ### Create rules
 
-After the resource is created, we can create the rule. Click the **New** button in the page of **Rule Engine  -->  Rule ** to enter the rule creation page.
+After the resource is created, we can create the rule. Click the **New** button in the page of **Rule Engine  -->  Rule** to enter the rule creation page.
 
 #### Trigger event selection
 
@@ -279,17 +280,17 @@ The events corresponding to the online and offline of the device are **Connectio
 
 **SQL test and action creation:**
 
-According to the **Available Fields** prompt on the interface, write the rule SQL statement to select `client_id` and `connected_at`:
+According to the **Available Fields** prompt on the interface, write the rule SQL statement to select `clientid` and `connected_at`:
 
 ```sql
-SELECT client_id, connected_at FROM "client.connected"
+SELECT clientid, connected_at FROM "$events/client_connected"
 ```
 
 Click **SQL Test** to perform the SQL output test. The SQL execution output is as follows:
 
 ```json
 {
-  "client_id": "c_emqx",
+  "clientid": "c_emqx",
   "connected_at": 1559639502861
 }
 ```
@@ -298,12 +299,12 @@ The response action  will get the above data.
 
 Create a new response action and select **Save Data to MySQL**, select the MySQL resource created in the preparation work, enter **SQL template** to configure the data writing rule, use magic variable like `${x}` to replace the data filtered by the rule into the SQL statement.
 
-According to `client_id`, update the device's `state` to 1 which indicates that the device is online.
+According to `clientid`, update the device's `state` to 1 which indicates that the device is online.
 
 ```sql
 UPDATE `devices` 
   SET `state`=1, `connected_at`= ${connected_at} 
-  WHERE `client_id`= ${client_id}
+  WHERE `clientid`= ${clientid}
   LIMIT 1
 ```
 
@@ -315,8 +316,8 @@ UPDATE `devices`
 
 ``` sql
 INSERT INTO `device_connect_log` 
-  (`client_id`, `action`, `create_at`) 
-  VALUES (${client_id}, '1', ${connected_at});
+  (`clientid`, `action`, `create_at`) 
+  VALUES (${clientid}, '1', ${connected_at});
 ```
 
 Click **New** to complete the creation of the rule, which contains two actions.
@@ -327,17 +328,17 @@ Click **New** to complete the creation of the rule, which contains two actions.
 
 In the previous step, we have completed the creation of the device online rules through the **Connection completion** trigger event. In the next step, we will complete the device offline rule creation:
 
-Select **Disconnection** as trigger event, and select `client_id` and `connected_at where the rule SQL is as follows:
+Select **Disconnection** as trigger event, and select `clientid` and `connected_at where the rule SQL is as follows:
 
 ```sql
-SELECT client_id, reason_code FROM "client.disconnected"
+SELECT clientid, reason_code FROM "client.disconnected"
 ```
 
 Click **SQL Test** to perform the SQL output test. The SQL execution output is as follows:
 
 ```json
 {
-  "client_id": "c_emqx",
+  "clientid": "c_emqx",
   "reason_code": "normal"
 }
 ```
@@ -349,7 +350,7 @@ Add a response action, select **Save data to MySQL** and write the following SQL
 ```sql
 UPDATE `devices` 
   SET `state`=0, `connected_at`= '' 
-  WHERE `client_id`= ${client_id}
+  WHERE `clientid`= ${clientid}
   LIMIT 1
 ```
 
@@ -359,8 +360,8 @@ Continue to add a response action, and reuse the `target` field here to mark the
 
 ```sql
 INSERT INTO `device_connect_log` 
-  (`client_id`, `action`, `target`) 
-  VALUES (${client_id}, '2', ${reason_code});
+  (`clientid`, `action`, `target`) 
+  VALUES (${clientid}, '2', ${reason_code});
 ```
 
 **Send the offline message to the Web server to trigger the offline notification of the device of the business system:**
@@ -382,10 +383,10 @@ Click **New** to complete the creation of the rule, which contains three actions
 We have successfully created two rules which contain five processing actions totally. The expected effect of the actions is as follows:
 
 1. When the device is online, change the `state` field of the  `device table` in the database to `1 that marks the device is online;
-2. When the device is online, insert an online record in the `Connection Record Table`, including the `client_id` and `create_at` fields, and set `action` to `1` to  mark this is an online record;
+2. When the device is online, insert an online record in the `Connection Record Table`, including the `clientid` and `create_at` fields, and set `action` to `1` to  mark this is an online record;
 3. When the device is offline, change the `state` field of the `device table` in the database to `0 that marks the device is offline;
-4. When the device is offline, insert an offline record in the `Connection Record Table`, include the `client_id` and `target` fields (marking the reason for the offline), and set `action` ` to `2 to mark this is an offline record;
-5. When the device is offline, send a request to the  service gateway of`https://api.emqx.io/v1/connect_hook`. The gateway obtains the client_id and the offline reason of the offline device, and sends a corresponding logical notification to the business system.
+4. When the device is offline, insert an offline record in the `Connection Record Table`, include the `clientid` and `target` fields (marking the reason for the offline), and set `action` ` to `2 to mark this is an offline record;
+5. When the device is offline, send a request to the  service gateway of`https://api.emqx.io/v1/connect_hook`. The gateway obtains the clientid and the offline reason of the offline device, and sends a corresponding logical notification to the business system.
 
 
 

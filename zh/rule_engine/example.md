@@ -1,5 +1,7 @@
 # 配置实例
 
+> 兼容提示: EMQ X v4.0 对规则引擎 SQL 语法做出较大调整，v3.x 升级用户请参照[迁移指南](./rule_engine.md#迁移指南)进行适配。
+
 本篇提供两个示例，通过 Dashboard 可视化界面演示规则引擎的创建于使用。
 
 
@@ -7,7 +9,7 @@
 
 ### 场景描述
 
-该场景中拟设车联网卡车车载传感器通过 `/monitor/:device_id/state` 主题上报如下 JSON 消息(device_id 为车辆连接客户端的 client_id，同车辆 ID)：
+该场景中拟设车联网卡车车载传感器通过 `/monitor/:device_id/state` 主题上报如下 JSON 消息(device_id 为车辆连接客户端的 clientid，同车辆 ID)：
 
 ```js
 {
@@ -114,15 +116,15 @@ node app.js
 }
 ```
 
-根据 **可用字段** 提示，`device_id` 字段相当于 client_id 可以从上下文中选取，`speed` 等信息则从 `payload` 中选取，规则 SQL 如下：
+根据 **可用字段** 提示，`device_id` 字段相当于 clientid 可以从上下文中选取，`speed` 等信息则从 `payload` 中选取，规则 SQL 如下：
 
 ```sql
 SELECT 
   payload.speed AS speed, 
   payload.lng AS lng, 
   payload.lat AS lat, 
-  client_id AS device_id 
-FROM "message.publish"
+  clientid AS device_id 
+FROM "#"
 ```
 
 该条规则默认处理全部的消息，实际上业务仅需处理 `/monitor/+/state`  主题下的消息(使用了主题通配符)，且 `speed` 的值应当大于 60，我们给规则加上限定条件：
@@ -132,10 +134,9 @@ SELECT
   payload.speed AS speed, 
   payload.lng AS lng, 
   payload.lat AS lat, 
-  client_id AS device_id 
-FROM "message.publish"
+  clientid AS device_id 
+FROM "/monitor/+/state"
 WHERE
-  topic =~ '/monitor/+/state' and
   speed > 60
 ```
 
@@ -219,14 +220,14 @@ WHERE
 -- 设备表
 CREATE TABLE `emqx`.`devices` (
   `id` INT NOT NULL,
-  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT '客户端 ID',
+  `clientid` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT '客户端 ID',
   `state` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '状态 0 离线 1 在线',
   `connected_at` VARCHAR(45) NULL COMMENT '连接时间，毫秒级时间戳',
   PRIMARY KEY (`id`));
 
 -- 初始化数据
 
-INSERT INTO `emqx`.`devices` (`client_id`) VALUES ('emqx_c');
+INSERT INTO `emqx`.`devices` (`clientid`) VALUES ('emqx_c');
 
 
 ```
@@ -235,7 +236,7 @@ INSERT INTO `emqx`.`devices` (`client_id`) VALUES ('emqx_c');
 -- 连接记录表
 CREATE TABLE `emqx`.`device_connect_log` (
   `id` INT NOT NULL,
-  `client_id` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT '客户端 ID',
+  `clientid` VARCHAR(255) NOT NULL AUTO_INCREMENT COMMENT '客户端 ID',
   `action` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '动作 0 其他 1 上线 2 下线 3 订阅 4 取消订阅',
   `target` VARCHAR(255) NULL COMMENT '操作目标',
   `create_at` VARCHAR(45) NULL COMMENT '记录时间',
@@ -280,17 +281,17 @@ CREATE TABLE `emqx`.`device_connect_log` (
 
 **SQL 测试与动作创建：**
 
-通过界面上的 **可用字段** 提示，编写规则 SQL 语句选取 `client_id` 与 `connected_at` 如下：
+通过界面上的 **可用字段** 提示，编写规则 SQL 语句选取 `clientid` 与 `connected_at` 如下：
 
 ```sql
-SELECT client_id, connected_at FROM "client.connected"
+SELECT clientid, connected_at FROM "$events/client_connected"
 ```
 
 点击 **SQL 测试**进行 SQL 输出测试，该条 SQL 执行输出为：
 
 ```json
 {
-  "client_id": "c_emqx",
+  "clientid": "c_emqx",
   "connected_at": 1559639502861
 }
 ```
@@ -299,12 +300,12 @@ SELECT client_id, connected_at FROM "client.connected"
 
 新建响应动作并选取 **保存数据到 MySQL**，选择准备工作中创建的 MySQL 资源，输入 **SQL 模板** 配置该条数据写入规则，使用类似 `${x}` 的魔法变量可以将规则筛选出来的数据替换进 SQL 语句。
 
-根据 `client_id` 更新设备的 `state` 为 1，表示设备在线
+根据 `clientid` 更新设备的 `state` 为 1，表示设备在线
 
 ```sql
 UPDATE `devices` 
   SET `state`=1, `connected_at`= ${connected_at} 
-  WHERE `client_id`= ${client_id}
+  WHERE `clientid`= ${clientid}
   LIMIT 1
 ```
 
@@ -316,8 +317,8 @@ UPDATE `devices`
 
 ``` sql
 INSERT INTO `device_connect_log` 
-  (`client_id`, `action`, `create_at`) 
-  VALUES (${client_id}, '1', ${connected_at});
+  (`clientid`, `action`, `create_at`) 
+  VALUES (${clientid}, '1', ${connected_at});
 ```
 
 点击 **新建** 完成规则的创建，该条规则包含两个动作。
@@ -332,17 +333,17 @@ INSERT INTO `device_connect_log`
 
 上一步中我们已经通过 **连接完成** 触发事件完成了设备上线规则的创建，接下来我们完成设备下线规则创建：
 
-触发事件选择 **连接断开** ，同样将 `client_id` 与 `connected_at` 选择出来，规则 SQL 如下：
+触发事件选择 **连接断开** ，同样将 `clientid` 与 `connected_at` 选择出来，规则 SQL 如下：
 
 ```sql
-SELECT client_id, reason_code FROM "client.disconnected"
+SELECT clientid, reason_code FROM "client.disconnected"
 ```
 
 点击 **SQL 测试**进行 SQL 输出测试，该条 SQL 执行输出为：
 
 ```json
 {
-  "client_id": "c_emqx",
+  "clientid": "c_emqx",
   "reason_code": "normal"
 }
 ```
@@ -354,7 +355,7 @@ SELECT client_id, reason_code FROM "client.disconnected"
 ```sql
 UPDATE `devices` 
   SET `state`=0, `connected_at`= '' 
-  WHERE `client_id`= ${client_id}
+  WHERE `clientid`= ${clientid}
   LIMIT 1
 ```
 
@@ -364,8 +365,8 @@ UPDATE `devices`
 
 ```sql
 INSERT INTO `device_connect_log` 
-  (`client_id`, `action`, `target`) 
-  VALUES (${client_id}, '2', ${reason_code});
+  (`clientid`, `action`, `target`) 
+  VALUES (${clientid}, '2', ${reason_code});
 ```
 
 **将下线消息发送到 Web Server，触发业务系统的设备下线通知：**
@@ -387,10 +388,10 @@ INSERT INTO `device_connect_log`
 我们成功创建了两条规则，一共包含五个处理动作，动作期望效果如下：
 
 1. 设备上线时，更改数据库 `设备表` 的 `state` 字段 为 `1`，标记设备在线；
-2. 设备上线时，在 `连接记录表` 插入一条上线记录，包含 `client_id` 与 `create_at` 字段，同时设置 `action` 为 `1` 标记这是一条上线记录；
+2. 设备上线时，在 `连接记录表` 插入一条上线记录，包含 `clientid` 与 `create_at` 字段，同时设置 `action` 为 `1` 标记这是一条上线记录；
 3. 设备下线时，更改数据库 `设备表` 的 `state` 字段 为 `0`，标记设备离线；
-4. 设备下线时，在 `连接记录表` 插入一条下线记录，包含 `client_id` 与 `target` 字段（标记下线原因），同时设置 `action` 为 `2` 标记这是一条下线记录；
-5. 设备下线时，发送一条请求到 `https://api.emqx.io/v1/connect_hook` 服务网关，网关获取到下线设备的 client_id 与下线原因，做出相应逻辑通知到业务系统。
+4. 设备下线时，在 `连接记录表` 插入一条下线记录，包含 `clientid` 与 `target` 字段（标记下线原因），同时设置 `action` 为 `2` 标记这是一条下线记录；
+5. 设备下线时，发送一条请求到 `https://api.emqx.io/v1/connect_hook` 服务网关，网关获取到下线设备的 clientid 与下线原因，做出相应逻辑通知到业务系统。
 
 
 
