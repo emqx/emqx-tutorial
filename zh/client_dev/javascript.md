@@ -201,7 +201,7 @@ client.on('connect', () => {
 ## 取消订阅
 
 ```js
-client.unubscribe(
+client.unsubscribe(
     // topic, topic Array, topic Array-Onject
     'hello',
     (err) => {

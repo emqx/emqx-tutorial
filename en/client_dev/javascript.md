@@ -203,11 +203,11 @@ client.on('connect', () => {
 ## Unsubscribe
 
 ```js
-client.unubscribe(
+client.unsubscribe(
     // topic, topic Array, topic Array-Onject
     'hello',
     (err) => {
-      console.log(err || 'Unubscribe Success')
+      console.log(err || 'Unsubscribe Success')
     },
 )
 ```
