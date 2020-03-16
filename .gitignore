@@ -3,4 +3,4 @@ node_modules
 .idea
 .vscode
 _book
-_book.pdf
+_book.pdf*-error.log
