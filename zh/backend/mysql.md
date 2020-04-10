@@ -18,13 +18,13 @@
 通过 RPM 方式安装的 EMQ X，MySQL 相关的配置文件位于 `/etc/emqx/plugins/emqx_backend_mysql.conf`，如果只是测试 MySQL 持久化的功能，大部分配置不需要做更改。填入用户名、密码、数据库即可：
 
 ```bash
-auth.mysql.server = 127.0.0.1:3306
+backend.mysql.server = 127.0.0.1:3306
 
-auth.mysql.username = root
+backend.mysql.username = root
 
-auth.mysql.password = 123456
+backend.mysql.password = 123456
 
-auth.mysql.database = mqtt
+backend.mysql.database = mqtt
 ```
 
 保持剩下部分的配置文件不变，然后需要启动该插件。启动插件的方式有 `命令行`和 `控制台`两种方式，读者可以任选其一。
